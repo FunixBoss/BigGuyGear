@@ -1,0 +1,56 @@
+<div class="row">
+    <div class="col-lg-6 col-md-12">
+        <nb-card>
+            <nb-card-header class="d-flex justify-content-between align-items-center" >
+                <h6>
+                    Style List
+                </h6>
+                <nb-select 
+                        [placeholder]="'Items Per Page'"
+                        [(selected)]="numberOfItem"
+                        (selectedChange)="numberOfItemsChange()"
+                        >
+                    <nb-select-label>
+                        Number Of Item: {{ numberOfItem }}
+                    </nb-select-label>
+                    <nb-option value="10">10</nb-option>
+                    <nb-option value="20">20</nb-option>
+                    <nb-option value="50">50</nb-option>
+                </nb-select>
+            </nb-card-header>
+            <nb-card-body>
+                <ng2-smart-table id="product-table" 
+                    [settings]="settingsStyle" [source]="sourceStyle"
+                    (mouseover)="changeCursor()">
+                </ng2-smart-table>
+            </nb-card-body>
+        </nb-card>
+    </div>
+    <div class="col-lg-6 col-md-12">
+        <nb-card>
+            <nb-card-header class="d-flex justify-content-between align-items-center" >
+                <h6>
+                    Shape List
+                </h6>
+                <nb-select 
+                        [placeholder]="'Items Per Page'"
+                        [(selected)]="numberOfItem"
+                        (selectedChange)="numberOfItemsChange()"
+                        >
+                    <nb-select-label>
+                        Number Of Item: {{ numberOfItem }}
+                    </nb-select-label>
+                    <nb-option value="10">10</nb-option>
+                    <nb-option value="20">20</nb-option>
+                    <nb-option value="50">50</nb-option>
+                </nb-select>
+            </nb-card-header>
+            <nb-card-body>
+                <ng2-smart-table id="product-table" 
+                    [settings]="settingsShape" [source]="sourceShape"
+                    (mouseover)="changeCursor()">
+                </ng2-smart-table>
+            </nb-card-body>
+        </nb-card>
+    </div>
+</div>

@@ -1,0 +1,77 @@
+<nb-card>
+    <nb-card-header>
+        <div class="d-flex justify-content-between align-items-center">
+            <h6>
+                Order Detail
+            </h6>
+            <button nbButton status="warning" (click)="onEdit()">
+                <nb-icon icon="edit-outline"></nb-icon>
+            </button>
+        </div>
+    </nb-card-header>
+</nb-card>
+<div class="row">
+    <div class="col-lg-6 col-md-12">
+        <nb-card>
+            <nb-card-header>
+                Basic Information
+            </nb-card-header>
+            <nb-card-body>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <p><span class="font-weight-bold">Id: </span>{{data?.orderId}}</p>
+                        <p><span class="font-weight-bold">Customer Email: </span>{{data?.account.accountEmail}}</p>
+                        <p><span class="font-weight-bold">Total Quantity: </span>{{data?.totalQuantity}}</p>
+                        <p><span class="font-weight-bold">Total Price: </span>{{data?.totalPrice}}</p>
+                        <p><span class="font-weight-bold">Coupon Applied: </span>{{ data?.couponApplied }}</p>
+                        <p><span class="font-weight-bold">Order Status: </span>{{data?.orderStatus.statusName}}</p>
+                        <p><span class="font-weight-bold">Payment method: </span>{{data?.paymentMethod.paymentMethodName}} </p>
+                        <p><span class="font-weight-bold">Shipping Address: </span>{{data?.shippingAddress}}</p>
+                        <p><span class="font-weight-bold">Created At: </span>{{data?.createdAt | date: 'short'}}</p>
+                    </div>
+                </div>
+            </nb-card-body>
+            <nb-card-footer></nb-card-footer>
+        </nb-card>
+    </div>
+    <div class="col-lg-6 col-md-12">
+        <nb-card>
+            <nb-card-header class="d-flex justify-content-between align-items-center">
+                <p class="font-weight-bold">Order's Products</p>
+                <div>
+                    <button nbButton size="small" status="info" class="mr-2" (click)="collapseAll()">Collapse All</button>
+                    <button nbButton size="small" status="warning" (click)="openAll()">Open All</button>
+                </div>
+            </nb-card-header>
+            <nb-card-body>
+                <nb-accordion multi>
+                    <nb-accordion-item *ngFor="let detail of data?.products; let i = index">
+                        <nb-accordion-item-header class="d-flex justify-content-between align-items-center">
+                            <p class="font-weight-bold">Product #{{i + 1}}</p>
+                            <p>
+                                id: {{detail.productId}}
+                                h:{{detail.height}}cm -
+                                w:{{detail.width}}cm -
+                                {{detail.price | currency: 'USD'}}*{{detail.quantity}}
+                            </p>    
+                            <div class=""></div>
+                        </nb-accordion-item-header>
+                        <nb-accordion-item-body>
+                            <div class="row">
+                                <div class="col-lg-1"></div>
+                                <div class="col-lg-7 col-md-12">
+                                    <p><span class="font-weight-bold">Height:</span> {{detail.height}}cm</p>
+                                    <p><span class="font-weight-bold">Width:</span> {{detail.width}}cm</p>
+                                    <p><span class="font-weight-bold">Price:</span> {{detail.price | currency: 'USD'}}</p>
+                                    <p><span class="font-weight-bold">Quantity:</span> {{detail.quantity}}</p>
+                                    <p><span class="font-weight-bold">Color:</span> {{detail.color}}</p>
+                                </div>
+                            </div>
+                        </nb-accordion-item-body>
+                    </nb-accordion-item>
+                </nb-accordion>
+            </nb-card-body>
+        </nb-card>
+    </div>
+
+</div>

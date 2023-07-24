@@ -1,0 +1,69 @@
+<nb-card>
+    <nb-card-header>
+        <div class="d-flex justify-content-between align-items-center">
+            <h6>
+                Customer Detail
+            </h6>
+        </div>
+    </nb-card-header>
+</nb-card>
+<div class="row">
+    <div class="col-lg-6 col-md-12">
+        <nb-card>
+            <nb-card-header>
+                Basic Information
+            </nb-card-header>
+            <nb-card-body>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <img #avatar class="d-block w-100">
+                    </div>
+                    <div class="col-lg-6 d-flex flex-column justify-content-center">
+                        <p><span class="font-weight-bold">Email: </span> {{account?.email}}</p>
+                        <p><span class="font-weight-bold">Fullname: </span>{{account?.fullName}}</p>
+                        <p><span class="font-weight-bold">Phone Number: </span>{{account?.phoneNumber}}</p>
+                        <p><span class="font-weight-bold">Registration Date: </span>{{account?.createdAt | date:'short'}}</p>
+                    </div>
+                </div>
+            </nb-card-body>
+            <nb-card-footer></nb-card-footer>
+        </nb-card>
+    </div>
+    <div class="col-lg-6 col-md-12">
+        <nb-card>
+            <nb-card-header class="d-flex justify-content-between align-items-center">
+                <p class="font-weight-bold">Customer's Orders</p>
+                <div>
+                    <button nbButton size="small" status="info" class="mr-2" (click)="collapseAll()">Collapse
+                        All</button>
+                    <button nbButton size="small" status="warning" (click)="openAll()">Open All</button>
+                </div>
+            </nb-card-header>
+            <nb-card-body>
+                <nb-accordion multi>
+                    <nb-accordion-item *ngFor="let order of account?.orders; let i = index">
+                        <nb-accordion-item-header>
+                            <p class="font-weight-bold">Order ##{{order?.orderId}}</p>
+                        </nb-accordion-item-header>
+                        <nb-accordion-item-body>
+                            <div class="row">
+                                <div class="col-lg-6 col-md-12">
+                                    <p><span class="font-weight-bold">Id: </span>{{order?.orderId}}</p>
+                                    <p><span class="font-weight-bold">Total Quantity: </span>{{order?.totalQuantity}}</p>
+                                    <p><span class="font-weight-bold">Total Price: </span>{{order?.totalPrice}}</p>
+                                    <p><span class="font-weight-bold">Coupon Applied: </span>{{ order?.couponCode !== null ? order.couponCode : 'NONE' }}</p>
+                                </div>
+                                <div class="col-lg-6 col-md-12">
+                                    <p><span class="font-weight-bold">Order Status: </span>{{order?.orderStatus}}</p>
+                                    <p><span class="font-weight-bold">Payment method: </span>{{order?.paymentMethod}} </p>
+                                    <p><span class="font-weight-bold">Shipping Address: </span>{{order?.shippingAddress}}</p>
+                                </div>
+                            </div>
+                        </nb-accordion-item-body>
+                    </nb-accordion-item>
+                </nb-accordion>
+            </nb-card-body>
+        </nb-card>
+    </div>
+
+</div>

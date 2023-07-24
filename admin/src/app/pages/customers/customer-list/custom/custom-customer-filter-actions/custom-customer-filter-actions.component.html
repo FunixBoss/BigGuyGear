@@ -1,0 +1,99 @@
+<button nbButton fullWidth status="primary" (click)="onAdd()">
+    <nb-icon icon="plus-square-outline"></nb-icon>
+</button>
+
+<ng-template #createCustomer let-data>
+    <nb-card [formGroup]="addCustomerFormGroup">
+        <nb-card-body>
+            <div class="row">
+                <div class="col-lg-6 col-md-12">
+                    <input type="email" nbInput fullWidth placeholder="Email" formControlName="email">
+                    <div class="alert w-100 alert-danger mt-1"
+                        *ngIf="addCustomerFormGroup.get('email').invalid && (addCustomerFormGroup.get('email').dirty || addCustomerFormGroup.get('email').touched)">
+                        <div *ngIf="addCustomerFormGroup.get('email').errors['required']">
+                            Email is required
+                        </div>
+                        <div *ngIf="addCustomerFormGroup.get('email').errors['maxlength']">
+                            Email must not exceed 100 characters
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 col-md-12">
+                    <input type="password" nbInput fullWidth placeholder="Password" formControlName="password">
+                    <div class="alert w-100 alert-danger mt-1"
+                        *ngIf="addCustomerFormGroup.get('password').invalid && (addCustomerFormGroup.get('password').dirty || addCustomerFormGroup.get('password').touched)">
+                        <div *ngIf="addCustomerFormGroup.get('password').errors['required']">
+                            Password is required
+                        </div>
+                        <div *ngIf="addCustomerFormGroup.get('password').errors['maxlength']">
+                            Password must not exceed 100 characters
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-lg-6 col-md-12 mt-3">
+                    <input type="text" nbInput fullWidth placeholder="Full Name" formControlName="fullName">
+                    <div class="alert w-100 alert-danger mt-1"
+                        *ngIf="addCustomerFormGroup.get('fullName').invalid && (addCustomerFormGroup.get('fullName').dirty || addCustomerFormGroup.get('fullName').touched)">
+                        <div *ngIf="addCustomerFormGroup.get('fullName').errors['required']">
+                            Full Name is required
+                        </div>
+                        <div *ngIf="addCustomerFormGroup.get('fullName').errors['maxlength']">
+                            Full Name must not exceed 100 characters
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 col-md-12  mt-3">
+                    <input type="text" nbInput fullWidth placeholder="Phone Number" formControlName="phoneNumber">
+                    <div class="alert w-100 alert-danger mt-1"
+                        *ngIf="addCustomerFormGroup.get('phoneNumber').invalid && (addCustomerFormGroup.get('phoneNumber').dirty || addCustomerFormGroup.get('phoneNumber').touched)">
+                        <div *ngIf="addCustomerFormGroup.get('phoneNumber').errors['required']">
+                            Phone Number is required
+                        </div>
+                        <div *ngIf="addCustomerFormGroup.get('phoneNumber').errors['maxlength']">
+                            Phone Number must not exceed 100 characters
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 col-md-12 mt-3">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Upload</span>
+                        </div>
+                        <div class="custom-file">
+                            <input type="file" mutliple class="custom-file-input" accept="image/png, image/jpeg"
+                                (change)="selectFile($event)">
+                            <label class="custom-file-label">Choose images</label>
+                        </div>
+                    </div>
+                    <div class="alert alert-danger mt-1 mb-3"
+                        *ngIf="addCustomerFormGroup.get('image').invalid && (addCustomerFormGroup.get('image').dirty || addCustomerFormGroup.get('image').touched)">
+                        <div *ngIf="addCustomerFormGroup.get('image').errors['required']">
+                            Customer Image is required
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 col-md-12 mt-3">
+                    <ng-container *ngIf="addCustomerFormGroup.get('image').value !== null">
+                        <div class="col-12">
+                            <img [src]="addCustomerFormGroup.get('image').value" class="d-block w-100 mx-auto"
+                                alt="Slide Image">
+                        </div>
+                    </ng-container>
+                </div>
+
+            </div>
+
+        </nb-card-body>
+        <nb-card-footer>
+            <button nbButton status="success" class="mt-3" (click)="addCustomer()">
+                CREATE
+            </button>
+        </nb-card-footer>
+    </nb-card>
+</ng-template>

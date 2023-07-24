@@ -1,0 +1,259 @@
+<form [formGroup]="editProductFormGroup" (ngSubmit)="onSubmit()">
+    <nb-card fullWidth>
+        <nb-card-header>
+            <div class="row">
+                <div class="col d-flex align-items-center justify-content-between">
+                    <h6>
+                        Edit Product
+                    </h6>
+                    <button nbButton status="success" size="large">SAVE</button>
+                </div>
+            </div>
+        </nb-card-header>
+    </nb-card>
+    <div class="row">
+        <div class="col-lg-6">
+            <nb-card formGroupName="product">
+                <nb-card-header>Basic Information</nb-card-header>
+                <nb-card-body>
+                    <input type="hidden" formControlName="id">
+                    <input type="text" nbInput fullWidth placeholder="Product Name" formControlName="name" maxlength="200">
+                    <div class="alert alert-danger mt-1" 
+                        *ngIf="product.get('name').invalid && (product.get('name').dirty || product.get('name').touched)">
+                        <div *ngIf="product.get('name').errors['notblank']">
+                            Product Name is required
+                        </div>
+
+                        <div *ngIf="product.get('name').errors['maxlength']">
+                            Product Name must not exceed 200 characters
+                        </div>
+                    </div>
+
+                    <nb-select fullWidth placeholder="Category" formControlName="category">
+                        <nb-select-label>
+                            Category: {{ product.get('category').value }}
+                        </nb-select-label>
+                        <nb-option *ngFor="let cate of categories" value="{{cate.categoryName }}">{{cate.categoryName}}</nb-option>
+                    </nb-select>
+
+                    <nb-select fullWidth placeholder="Shape" formControlName="shape">
+                        <nb-select-label>
+                            Shape: {{ product.get('shape').value }}
+                        </nb-select-label>
+                        <nb-option *ngFor="let shape of shapes" value="{{shape.shapeName}}">{{shape.shapeName}}</nb-option>
+                    </nb-select>
+                    
+                    <nb-select fullWidth placeholder="Style" formControlName="style">
+                        <nb-select-label>
+                            Style: {{ product.get('style').value }}
+                        </nb-select-label>
+                        <nb-option *ngFor="let style of styles" value="{{style.styleName}}">{{style.styleName}}</nb-option>
+                    </nb-select> 
+                    
+                    <ckeditor class="ckeditor" [editor]="Editor" [config]="editorConfig" formControlName="description" maxlength="500"></ckeditor>
+                    <div class="alert alert-danger mt-1" 
+                        *ngIf="product.get('description').invalid && (product.get('description').dirty || product.get('description').touched)">
+                        <div *ngIf="product.get('description').errors['notblank']">
+                            Product description is required
+                        </div>
+
+                        <div *ngIf="product.get('description').errors['maxlength']">
+                            Product description must not exceed 1000 characters
+                        </div>
+                    </div>
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Upload</span>
+                        </div>
+                        <div class="custom-file">
+                            <input type="file" mutliple class="custom-file-input" multiple
+                                accept="image/png, image/jpeg" (change)="selectFiles($event)">
+                            <label class="custom-file-label">Choose images</label>
+                        </div>
+                    </div>
+    
+                    <ngx-images-carousel></ngx-images-carousel>
+                </nb-card-body>
+            </nb-card>
+        </div>
+    
+        <div class="col-lg-6" formArrayName="variants">
+            <nb-card>
+                <nb-card-header>Product Variants</nb-card-header>
+                <nb-card-body>
+                    <nb-accordion multi>
+                        <nb-accordion-item *ngFor="let variantForm of variants.controls; let i = index">
+                            <nb-accordion-item-header class="d-flex justify-content-between align-items-center">
+                                <p class="font-weight-bold">Variant #{{i + 1}}</p>
+                                <p>
+                                    {{ variantForm.get('height').value === null ? '' : 'h:' + variantForm.get('height').value + 'cm'}}
+                                    {{ variantForm.get('width').value === null ? '' : ' - w:' +variantForm.get('width').value +'cm'}}
+                                    {{ variantForm.get('price').value === null ? '' : ' - ' + (variantForm.get('price').value | currency: 'USD')}}
+                                    {{ variantForm.get('quantity').value === null ? '' : '*' + variantForm.get('quantity').value }}
+                                    
+                                    <ng-container *ngIf="variantForm.get('colorType').value === 'Custom Color'">
+                                        {{' - ' + variantForm.get('customColorValue').value}}
+                                    </ng-container>
+                                    <ng-container *ngIf="variantForm.get('colorType').value === 'Basic Color'">
+                                        {{' - ' + variantForm.get('basicColorValue').value}}
+                                    </ng-container>
+                                </p>
+                                <ng-container *ngIf="i !== 0">
+                                    <button nbButton [size]="'small'" [status]="'danger'" 
+                                        class="mr-5" (click)="removeVariant(i, $event)">
+                                        <nb-icon icon="trash-outline"></nb-icon>
+                                    </button>
+                                </ng-container>
+                                <ng-container *ngIf="i === 0">
+                                    <button nbButton [size]="'small'" [status]="'danger'" 
+                                        class="mr-5" (click)="removeVariant(i, $event)" style="visibility: hidden">
+                                    <nb-icon icon="trash-outline"></nb-icon>
+                                    </button>
+                                </ng-container>
+                            </nb-accordion-item-header>
+                            <nb-accordion-item-body [formGroup]="variantForm">
+                                <div class="row">
+                                    <div class="col-lg-6 col-md-12 my-2">
+                                        <input type="hidden" formControlname="id">
+                                        <input type="number" nbInput fullWidth 
+                                            placeholder="Height (cm)" formControlName="height">
+                                        <div class="alert alert-danger mt-1" 
+                                            *ngIf="variantForm.get('height').invalid && (variantForm.get('height').dirty || variantForm.get('height').touched)">
+                                            <div *ngIf="variantForm.get('height').errors['required']">
+                                                Height is required
+                                            </div>
+                                            <div *ngIf="variantForm.get('height').errors['min']">
+                                                Min value is 1
+                                            </div>
+                                            <div *ngIf="variantForm.get('height').errors['max']">
+                                                Max value is 10000
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-md-12 my-2">
+                                        <input type="number" nbInput fullWidth 
+                                            placeholder="Width (cm)" formControlName="width">
+                                        <div class="alert alert-danger mt-1" 
+                                            *ngIf="variantForm.get('width').invalid && (variantForm.get('width').dirty || variantForm.get('width').touched)">
+                                            <div *ngIf="variantForm.get('width').errors['required']">
+                                                Width is required
+                                            </div>
+                                            <div *ngIf="variantForm.get('width').errors['min']">
+                                                Min value is 1
+                                            </div>
+                                            <div *ngIf="variantForm.get('width').errors['max']">
+                                                Max value is 10000
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-md-12 my-2">
+                                        <input type="number" nbInput fullWidth 
+                                            placeholder="Price ($)" formControlName="price">
+                                        <div class="alert alert-danger mt-1" 
+                                            *ngIf="variantForm.get('price').invalid && (variantForm.get('price').dirty || variantForm.get('price').touched)">
+                                            <div *ngIf="variantForm.get('price').errors['required']">
+                                                Price is required
+                                            </div>
+                                            <div *ngIf="variantForm.get('price').errors['min']">
+                                                Min value is 1
+                                            </div>
+                                            <div *ngIf="variantForm.get('price').errors['max']">
+                                                Max value is 10000
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-md-12 my-2">
+                                        <input type="number" nbInput fullWidth 
+                                            placeholder="Quantity" formControlName="quantity">
+                                        <div class="alert alert-danger mt-1" 
+                                            *ngIf="variantForm.get('quantity').invalid && (variantForm.get('quantity').dirty || variantForm.get('quantity').touched)">
+                                            <div *ngIf="variantForm.get('quantity').errors['required']">
+                                                Quantity is required
+                                            </div>
+                                            <div *ngIf="variantForm.get('quantity').errors['min']">
+                                                Min value is 1
+                                            </div>
+                                            <div *ngIf="variantForm.get('quantity').errors['max']">
+                                                Max value is 10000
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 my-2">
+                                        <nb-radio-group formControlName="colorType" name="{{i}}">
+                                            <nb-radio value="Basic Color">Basic Color</nb-radio>
+                                            <nb-radio value="Custom Color">Custom Color</nb-radio>
+                                        </nb-radio-group>
+                                        <div class="alert alert-danger mt-1" 
+                                            *ngIf="variantForm.get('colorType').invalid && (variantForm.get('colorType').dirty || variantForm.get('colorType').touched)">
+                                            <div *ngIf="variantForm.get('colorType').errors['required']">
+                                                Color Type is required
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-9 my-2">
+                                        <ng-container *ngIf="variantForm.get('colorType').value === 'Basic Color'">
+                                            <nb-select fullWidth placeholder="Color" formControlName="basicColorValue">
+                                                <nb-select-label>
+                                                    Color: {{ variantForm.get('basicColorValue').value }}
+                                                </nb-select-label>
+                                                <nb-option *ngFor="let color of colors" value="{{color.colorName}}">{{color.colorName}}</nb-option>
+                                            </nb-select>
+                                        </ng-container>
+                                        <ng-container *ngIf="variantForm.get('colorType').value === 'Custom Color'">
+                                            <input type="text" nbInput fullWidth placeholder="Color name" formControlName="customColorValue">
+                                        </ng-container>
+                                        <div class="alert alert-danger my-2" 
+                                            *ngIf="variantForm.get('colorType').value === 'Basic Color' && 
+                                                    variantForm.get('basicColorValue').invalid &&
+                                                    (variantForm.get('basicColorValue').dirty || variantForm.get('basicColorValue').touched)">
+                                            <div *ngIf="variantForm.get('basicColorValue').errors['required']">
+                                                Color is required
+                                            </div>
+                                        </div>
+                                        <div class="alert alert-danger my-2" 
+                                            *ngIf="variantForm.get('colorType').value === 'Custom Color' && 
+                                                    variantForm.get('customColorValue').invalid &&
+                                                    (variantForm.get('customColorValue').dirty || variantForm.get('customColorValue').touched)">
+                                            <div *ngIf="variantForm.get('customColorValue').errors['required']">
+                                                Color is required
+                                            </div>
+                                            <div *ngIf="variantForm.get('customColorValue').errors['maxlength']">
+                                                Color Name must not exceed 50 characters
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-lg-4">
+                                        <div class="input-group mb-3">
+                                            <div class="custom-file">
+                                                <input type="file" class="custom-file-input"
+                                                    accept="image/png, image/jpeg" (change)="selectFile($event, i)">
+                                                <label class="custom-file-label">Choose images</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <ng-container *ngIf="variantForm.get('image').value !== null">
+                                        <div class="col-lg-8">
+                                            <img [src]="variantForm.get('image').value" class="d-block w-100" alt="Slide Image">
+                                        </div>
+                                    </ng-container>
+                                </div>
+                            </nb-accordion-item-body>
+                        </nb-accordion-item>
+                    </nb-accordion>
+    
+    
+                </nb-card-body>
+                <nb-card-footer>
+                    <button nbButton [status]="'success'" (click)="addVariant($event)">
+                        <nb-icon icon="plus-outline"></nb-icon>
+                    </button>
+                </nb-card-footer>
+            </nb-card>
+    
+    
+        </div>
+    </div>
+</form>
+

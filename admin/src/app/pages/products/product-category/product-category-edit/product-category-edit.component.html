@@ -1,0 +1,49 @@
+<nb-card [formGroup]="editCategoryFormGroup">
+    <nb-card-header>
+        Edit Category Id: {{editCategoryFormGroup.get('id').value}}
+    </nb-card-header>
+    <nb-card-body>
+        <input type="text" nbInput fullWidth placeholder="Category Name" formControlName="name" class="mb-1">
+        <div class="alert alert-danger mt-0 mb-3"
+            *ngIf="editCategoryFormGroup.get('name').invalid && (editCategoryFormGroup.get('name').dirty || editCategoryFormGroup.get('name').touched)">
+            <div *ngIf="editCategoryFormGroup.get('name').errors['notblank']">
+                Category Name is required
+            </div>
+
+            <div *ngIf="editCategoryFormGroup.get('name').errors['maxlength']">
+                Category Name must not exceed 100 characters
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 no-gutters px-0">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Upload</span>
+                    </div>
+                    <div class="custom-file">
+                        <input type="file" mutliple class="custom-file-input" accept="image/png, image/jpeg"
+                            (change)="selectFile($event)">
+                        <label class="custom-file-label">Choose images</label>
+                    </div>
+                </div>
+                <div class="alert alert-danger mt-1 mb-3"
+                    *ngIf="editCategoryFormGroup.get('image').invalid && (editCategoryFormGroup.get('image').dirty || editCategoryFormGroup.get('image').touched)">
+                    <div *ngIf="editCategoryFormGroup.get('image').errors['required']">
+                        Category Image is required
+                    </div>
+                </div>
+            </div>
+            <ng-container *ngIf="editCategoryFormGroup.get('image').value !== null">
+                <div class="col-12">
+                    <img [src]="editCategoryFormGroup.get('image').value" class="d-block w-50 mx-auto mt-3"
+                        alt="Slide Image">
+                </div>
+            </ng-container>
+        </div>
+    </nb-card-body>
+    <nb-card-footer>
+        <div class="d-flex justify-content-between">
+            <button nbButton status="success" (click)="editCategory()">SAVE</button>
+        </div>
+    </nb-card-footer>
+</nb-card>

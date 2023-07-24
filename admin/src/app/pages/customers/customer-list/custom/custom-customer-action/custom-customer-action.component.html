@@ -1,0 +1,92 @@
+<div class="row ">
+    <div class="col-6 d-flex justify-content-center">
+        <button nbButton status="primary" (click)="onGetDetail()">
+            <nb-icon icon="folder-outline"></nb-icon>
+        </button>
+    </div>
+    <div class="col-6 d-flex justify-content-center">
+        <button nbButton status="warning" (click)="onEdit()">
+            <nb-icon icon="edit-2-outline"></nb-icon>
+        </button>
+    </div>
+</div>
+
+<ng-template #editCustomer let-data>
+    <form [formGroup]="editCustomerFormGroup" (submit)="onEditCustomer()">
+        <nb-card>
+            <nb-card-body>
+                <div class="row">
+                    <div class="col-lg-6 col-md-12">
+                        <input type="email" nbInput fullWidth placeholder="Email" formControlName="email" disabled>
+                    </div>
+
+                    <div class="col-lg-6 col-md-12">
+                        <input type="password" nbInput fullWidth placeholder="Password" formControlName="password">
+                    </div>
+
+
+                    <div class="col-lg-6 col-md-12 mt-3">
+                        <input type="text" nbInput fullWidth placeholder="Full Name" formControlName="fullName">
+                        <div class="alert w-100 alert-danger mt-1"
+                            *ngIf="editCustomerFormGroup.get('fullName').invalid && (editCustomerFormGroup.get('fullName').dirty || editCustomerFormGroup.get('fullName').touched)">
+                            <div *ngIf="editCustomerFormGroup.get('fullName').errors['required']">
+                                Full Name is required
+                            </div>
+                            <div *ngIf="editCustomerFormGroup.get('fullName').errors['maxlength']">
+                                Full Name must not exceed 100 characters
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 col-md-12  mt-3">
+                        <input type="text" nbInput fullWidth placeholder="Phone Number" formControlName="phoneNumber">
+                        <div class="alert w-100 alert-danger mt-1"
+                            *ngIf="editCustomerFormGroup.get('phoneNumber').invalid && (editCustomerFormGroup.get('phoneNumber').dirty || editCustomerFormGroup.get('phoneNumber').touched)">
+                            <div *ngIf="editCustomerFormGroup.get('phoneNumber').errors['required']">
+                                Phone Number is required
+                            </div>
+                            <div *ngIf="editCustomerFormGroup.get('phoneNumber').errors['maxlength']">
+                                Phone Number must not exceed 100 characters
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 col-md-12 mt-3">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">Upload</span>
+                            </div>
+                            <div class="custom-file">
+                                <input type="file" mutliple class="custom-file-input" accept="image/png, image/jpeg"
+                                    (change)="selectFile($event)">
+                                <label class="custom-file-label">Choose images</label>
+                            </div>
+                        </div>
+                        <div class="alert alert-danger mt-1 mb-3"
+                            *ngIf="editCustomerFormGroup.get('image').invalid && (editCustomerFormGroup.get('image').dirty || editCustomerFormGroup.get('image').touched)">
+                            <div *ngIf="editCustomerFormGroup.get('image').errors['required']">
+                                Customer Image is required
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 col-md-12 mt-3">
+                        <ng-container *ngIf="editCustomerFormGroup.get('image').value !== null">
+                            <div class="col-12">
+                                <img [src]="editCustomerFormGroup.get('image').value" class="d-block w-100 mx-auto"
+                                    alt="Slide Image">
+                            </div>
+                        </ng-container>
+                    </div>
+
+                </div>
+
+            </nb-card-body>
+            <nb-card-footer>
+                <button nbButton status="success" class="mt-3">
+                    SAVE
+                </button>
+            </nb-card-footer>
+        </nb-card>
+    </form>
+</ng-template>
