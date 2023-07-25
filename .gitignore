@@ -32,16 +32,6 @@ api/*.iws
 api/*.iml
 api/*.ipr
 
-### NetBeans ###
-api/nbproject/private/
-api/nbbuild/
-api/dist/
-api/nbdist/
-api/api/.nb-gradle/
-api/build/
-api/!**/src/main/**/build/
-api/!**/src/test/**/build/
-
 ### VS Code ###
 api/.vscode/
 
