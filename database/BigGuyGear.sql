@@ -15,7 +15,6 @@ CREATE TABLE [AdministrativeUnit] (
 	[short_name_en] NVARCHAR(255), 
 	[code_name] NVARCHAR(255), 
 	[code_name_en] NVARCHAR(255), 
-	[account_id] INT, 
 ) 
 
 DROP TABLE IF EXISTS [Province]
@@ -27,7 +26,6 @@ CREATE TABLE [Province] (
 	[full_name_en] NVARCHAR(255),
 	[code_name] NVARCHAR(255),
 	[administrative_unit_id] INT,
-	[administrative_region_id] INT,
 	CONSTRAINT [provinces_administrative_unit_id_fkey] FOREIGN KEY ([administrative_unit_id]) REFERENCES [AdministrativeUnit] ([id])
 ) 
 
@@ -310,7 +308,7 @@ DROP TABLE IF EXISTS [OrderStatus];
 CREATE TABLE [OrderStatus] (
 	[order_status_id] INT PRIMARY KEY IDENTITY,
 	[status_name] NVARCHAR(50) NOT NULL,
-	[status_description] NVARCHAR(100) NOT NULL
+	[description] NVARCHAR(100) NOT NULL
 )
 
 DROP TABLE IF EXISTS [Order];
