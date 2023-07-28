@@ -23,8 +23,6 @@ import {
 } from '@nebular/theme';
 import { PagesModule } from './pages/pages.module';
 import { CommonModule, registerLocaleData } from '@angular/common';
-import { AuthModule } from './auth/auth.module';
-import { AuthInterceptor } from './@core/services/auth-interceptor.service';
 
 @NgModule({
   declarations: [AppComponent],
@@ -47,18 +45,17 @@ import { AuthInterceptor } from './@core/services/auth-interceptor.service';
     ThemeModule.forRoot(), // @theme
     NbToastrModule.forRoot(),
     PagesModule,
-    AuthModule,
     NbWindowModule.forRoot(),
     NbCardModule,
   ],
   bootstrap: [AppComponent],
-  providers: [
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptor,
-      multi: true
-    }
-  ]
+  // providers: [
+  //   {
+  //     provide: HTTP_INTERCEPTORS,
+  //     useClass: AuthInterceptor,
+  //     multi: true
+  //   }
+  // ]
 })
 export class AppModule {
 }

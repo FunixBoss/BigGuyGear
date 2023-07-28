@@ -1,0 +1,23 @@
+<nb-card [formGroup]="editStyleFormGroup">
+    <nb-card-header>
+        Edit Style Id: {{editStyleFormGroup.get('id').value}}
+    </nb-card-header>
+    <nb-card-body>
+        <input type="text" nbInput fullWidth placeholder="Style Name" formControlName="name" class="mb-1">
+        <div class="alert alert-danger mt-0 mb-3"
+            *ngIf="editStyleFormGroup.get('name').invalid && (editStyleFormGroup.get('name').dirty || editStyleFormGroup.get('name').touched)">
+            <div *ngIf="editStyleFormGroup.get('name').errors['notblank']">
+                Style Name is required
+            </div>
+
+            <div *ngIf="editStyleFormGroup.get('name').errors['maxlength']">
+                Style Name must not exceed 100 characters
+            </div>
+        </div>
+    </nb-card-body>
+    <nb-card-footer>
+        <div class="d-flex justify-content-between">
+            <button nbButton status="success" (click)="editStyle()">SAVE</button>
+        </div>
+    </nb-card-footer>
+</nb-card>

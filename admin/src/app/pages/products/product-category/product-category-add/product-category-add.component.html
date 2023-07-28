@@ -3,19 +3,20 @@
         Add A New Category
     </nb-card-header>
     <nb-card-body>
-        <input type="text" nbInput fullWidth placeholder="Category Name" formControlName="name" class="mb-1">
-        <div class="alert alert-danger mt-0 mb-3"
-            *ngIf="addCategoryFormGroup.get('name').invalid && (addCategoryFormGroup.get('name').dirty || addCategoryFormGroup.get('name').touched)">
-            <div *ngIf="addCategoryFormGroup.get('name').errors['notblank']">
-                Category Name is required
-            </div>
-
-            <div *ngIf="addCategoryFormGroup.get('name').errors['maxlength']">
-                Category Name must not exceed 100 characters
-            </div>
-        </div>
         <div class="row">
             <div class="col-12 no-gutters px-0">
+                <input type="text" nbInput fullWidth placeholder="Category Name" formControlName="name" class="mb-1">
+                <div class="alert alert-danger mt-0 mb-3"
+                    *ngIf="addCategoryFormGroup.get('name').invalid && (addCategoryFormGroup.get('name').dirty || addCategoryFormGroup.get('name').touched)">
+                    <div *ngIf="addCategoryFormGroup.get('name').errors['notblank']">
+                        Category Name is required
+                    </div>
+                    <div *ngIf="addCategoryFormGroup.get('name').errors['maxlength']">
+                        Category Name must not exceed 100 characters
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 no-gutters px-0 mt-3">
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Upload</span>
@@ -33,12 +34,11 @@
                     </div>
                 </div>
             </div>
-            <ng-container *ngIf="addCategoryFormGroup.get('image').value !== null">
-                <div class="col-12">
-                    <img [src]="addCategoryFormGroup.get('image').value" class="d-block w-50 mx-auto mt-3"
-                        alt="Slide Image">
+            <div class="col-12 mt-1">
+                <div *ngIf="uploadedFile">
+                    <img [src]="uploadedFile?.dataUrl" class="d-block w-50 mx-auto mt-3" alt="Slide Image">
                 </div>
-            </ng-container>
+            </div>
         </div>
     </nb-card-body>
     <nb-card-footer>

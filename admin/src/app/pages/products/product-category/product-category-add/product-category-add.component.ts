@@ -12,9 +12,10 @@ import { ProductCategory } from "../../../../@core/models/product/product-catego
   templateUrl: "./product-category-add.component.html",
   styleUrls: ["./product-category-add.component.scss"],
 })
-export class ProductCategoryAddComponent{
+export class ProductCategoryAddComponent {
+
   addCategoryFormGroup: FormGroup;
-  // Setting for List layout
+  uploadedFile: File
 
   constructor(
     private categoryService: ProductCategoryService,
@@ -27,36 +28,46 @@ export class ProductCategoryAddComponent{
       image: [, [Validators.required]]
     })
   }
-  
+
   selectFile(event: any) {
-    if(event.target.files) {
+    const inputElement = event.target as HTMLInputElement;
+
+    if (inputElement.files && inputElement.files.length > 0) {
+      this.uploadedFile = inputElement.files[0];
+      this.addCategoryFormGroup.get('image').setValue('uploaded')
       const reader = new FileReader();
-        reader.onload = (event: any) => {
-            this.addCategoryFormGroup.get('image').setValue(event.target.result)
-        };
-        reader.readAsDataURL(event.target.files[0]);
+      reader.onload = (event: any) => {
+        this.uploadedFile['dataUrl'] = event.target.result;
+      };
+      reader.readAsDataURL(this.uploadedFile);
     }
   }
 
   createCategory() {
-    if(this.addCategoryFormGroup.invalid) {
+    console.log(this.addCategoryFormGroup.value);
+
+    if (this.addCategoryFormGroup.invalid) {
       this.addCategoryFormGroup.markAllAsTouched();
-      this.utilsService.updateToastState(new ToastState('add', 'category', 'danger'))
+      this.utilsService.updateToastState(new ToastState('Add Category Failed!', "danger"))
       return;
     }
 
     let category: ProductCategory = new ProductCategory()
     category.categoryName = this.addCategoryFormGroup.get('name').value
-    category.image = this.addCategoryFormGroup.get('image').value
-    this.categoryService.insert(category).subscribe(
-      data => {
-        if(data) {
-          this.utilsService.updateToastState(new ToastState('add', 'category', 'success'))
-          this.addCategoryFormGroup.reset()
-          this.categoryService.notifyCategoryChange();
 
+    this.categoryService.insert(category, this.uploadedFile).subscribe(
+      data => {
+        if (data) {
+          this.reset()
+          this.categoryService.notifyCategoryChange();
+          this.utilsService.updateToastState(new ToastState('Add Category Successfully!', "success"))
         }
       }
     )
+  }
+
+  reset() {
+    this.addCategoryFormGroup.reset();
+    this.uploadedFile = null;
   }
 }

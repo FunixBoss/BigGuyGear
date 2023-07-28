@@ -87,7 +87,7 @@ CREATE TABLE [Coupon] (
 	[discount] INT NOT NULL,
 	[coupon_type_id] INT NOT NULL,
 	[description] NVARCHAR(200),
-	[started_at] DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	[started_at] DATETIME DEFAULT CURRENT_TIMESTAMP,
 	[expired_at] DATETIME NOT NULL,
 	CONSTRAINT [coupon_ibfk_1] FOREIGN KEY ([coupon_type_id]) REFERENCES [CouponType] ([coupon_type_id])
 )
@@ -119,8 +119,8 @@ CREATE TABLE [Account] (
 	[phone_number] NVARCHAR(20) NOT NULL,
 	[image_id] INT,
 	[role_id] INT NOT NULL DEFAULT '2',
-	[created_at] DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	[updated_at] DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	[created_at] DATETIME DEFAULT CURRENT_TIMESTAMP,
+	[updated_at] DATETIME DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT [account_ibfk_1] FOREIGN KEY ([role_id]) REFERENCES [Role] ([role_id]),
 	CONSTRAINT [account_ibfk_2] FOREIGN KEY ([image_id]) REFERENCES [Image] ([image_id])
 ) 
@@ -130,7 +130,7 @@ CREATE TABLE [Notification] (
 	[notification_id] INT PRIMARY KEY  IDENTITY,
 	[message] NVARCHAR(200) NOT NULL,
 	[account_id] INT,
-	[created_at] DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	[created_at] DATETIME DEFAULT CURRENT_TIMESTAMP,
 	[is_read] BIT,
 	CONSTRAINT [notification_ibfk_1] FOREIGN KEY ([account_id]) REFERENCES [Account] ([id])
 )
@@ -186,6 +186,8 @@ DROP TABLE IF EXISTS [ProductBrand];
 CREATE TABLE [ProductBrand] (
 	[product_brand_id] INT PRIMARY KEY IDENTITY,
 	[brand_name] NVARCHAR(50),
+	[image_id] INT,
+	CONSTRAINT [brand_ibfk_1] FOREIGN KEY ([image_id]) REFERENCES [Image] ([image_id])
 )
 
 DROP TABLE IF EXISTS [ProductSaleType];
@@ -200,8 +202,8 @@ CREATE TABLE [ProductSale] (
 	[discount] INT NOT NULL,
 	[product_sale_type_id] INT NOT NULL,
 	[description] NVARCHAR(200),
-	[started_at] DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	[expired_at] DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	[started_at] DATETIME DEFAULT CURRENT_TIMESTAMP,
+	[expired_at] DATETIME DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT [sale_ibfk_1] FOREIGN KEY ([product_sale_type_id]) REFERENCES [ProductSaleType] ([product_sale_type_id])
 )
 
@@ -218,8 +220,8 @@ CREATE TABLE [Product] (
 	[product_brand_id] INT,
 	[category_id] INT,
 	[product_style_id] INT,
-	[created_at] DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	[updated_at] DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	[created_at] DATETIME DEFAULT CURRENT_TIMESTAMP,
+	[updated_at] DATETIME DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT [product_ibfk_1] FOREIGN KEY ([category_id]) REFERENCES [Category] ([category_id]),
 	CONSTRAINT [product_ibfk_2] FOREIGN KEY ([product_brand_id]) REFERENCES [ProductBrand] ([product_brand_id]),
 	CONSTRAINT [product_ibfk_3] FOREIGN KEY ([product_style_id]) REFERENCES [ProductStyle] ([product_style_id]),
@@ -227,11 +229,7 @@ CREATE TABLE [Product] (
 
 ) 
 
-DROP TABLE IF EXISTS [ProductColor];
-CREATE TABLE [ProductColor] (
-	[product_color_id] INT PRIMARY KEY IDENTITY,
-	[color_name] NVARCHAR(50),
-)
+
 
 DROP TABLE IF EXISTS [ProductImage];
 CREATE TABLE [ProductImage] (
@@ -249,27 +247,41 @@ CREATE TABLE [ProductReview] (
 	[product_id] INT NOT NULL,
 	[content] NVARCHAR(1000) NOT NULL,
 	[rating] tinyINT NOT NULL,
-	[created_at] DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	[updated_at] DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	[created_at] DATETIME DEFAULT CURRENT_TIMESTAMP,
+	[updated_at] DATETIME DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT [product_review_ibfk_1] FOREIGN KEY ([account_id]) REFERENCES[Account] ([id]),
 	CONSTRAINT [product_review_ibfk_2] FOREIGN KEY ([product_id]) REFERENCES[Product] ([product_id])
 )
 
+DROP TABLE IF EXISTS [ProductColor];
+CREATE TABLE [ProductColor] (
+	[product_color_id] INT PRIMARY KEY IDENTITY,
+	[color_type] NVARCHAR(6),
+	[color_name] NVARCHAR(50),
+)
+
+DROP TABLE IF EXISTS [ProductSize];
+CREATE TABLE [ProductSize] (
+	[product_size_id] INT PRIMARY KEY IDENTITY,
+	[size_type] NVARCHAR(10),
+	[size_name] NVARCHAR(50),
+)
+
 DROP TABLE IF EXISTS [ProductVariant];
 CREATE TABLE [ProductVariant] (
-	[product_variant_id] INT NOT NULL IDENTITY,
+	[product_variant_id] INT PRIMARY KEY IDENTITY,
 	[product_id] INT NOT NULL,
-	[height] INT NOT NULL,
-	[width] INT NOT NULL,
+	[size_id] INT NOT NULL,
 	[color_id] INT NOT NULL,
 	[quantity] INT NOT NULL,
 	[price] decimal(18,2) NOT NULL,
 	[image_id] INT,
-	PRIMARY KEY ([product_variant_id]),
 	CONSTRAINT [product_variant_ibfk_1] FOREIGN KEY ([product_id]) REFERENCES [Product] ([product_id]),
 	CONSTRAINT [product_variant_ibfk_2] FOREIGN KEY ([color_id]) REFERENCES [ProductColor] ([product_color_id]),
-	CONSTRAINT [product_variant_ibfk_3] FOREIGN KEY ([image_id]) REFERENCES [Image] ([image_id])
+	CONSTRAINT [product_variant_ibfk_3] FOREIGN KEY ([image_id]) REFERENCES [Image] ([image_id]),
+	CONSTRAINT [product_variant_ibfk_4] FOREIGN KEY ([size_id]) REFERENCES [ProductSize] ([product_size_id])
 )
+
 
 
 -- CART
@@ -277,8 +289,8 @@ DROP TABLE IF EXISTS [Cart];
 CREATE TABLE [Cart] (
 	[cart_id] INT PRIMARY KEY  IDENTITY,
 	[account_id] INT NOT NULL,
-	[created_at] DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	[updated_at] DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	[created_at] DATETIME DEFAULT CURRENT_TIMESTAMP,
+	[updated_at] DATETIME DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT [cart_ibfk_1] FOREIGN KEY ([account_id]) REFERENCES [Account] ([id])
 ) 
 
@@ -317,13 +329,14 @@ CREATE TABLE [Order] (
 	[order_tracking_number] NVARCHAR(50),
 	[account_id] INT NOT NULL,
 	[coupon_id] INT,
+	[coupon_code] NVARCHAR(200),
 	[total_price] decimal(18,2) NOT NULL,
 	[total_quantity] INT NOT NULL,
 	[order_status_id] INT NOT NULL,
 	[payment_method_id] INT NOT NULL,
 	[address_id] INT NOT NULL,
-	[created_at] DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	[updated_at] DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	[created_at] DATETIME DEFAULT CURRENT_TIMESTAMP,
+	[updated_at] DATETIME DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY ([order_id]),
 	CONSTRAINT [order_ibfk_1] FOREIGN KEY ([payment_method_id]) REFERENCES [PaymentMethod] ([payment_method_id]),
 	CONSTRAINT [order_ibfk_2] FOREIGN KEY ([account_id]) REFERENCES [Account] ([id]),

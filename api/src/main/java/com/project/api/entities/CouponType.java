@@ -1,5 +1,6 @@
 package com.project.api.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.util.HashSet;
@@ -30,6 +31,7 @@ public class CouponType implements java.io.Serializable {
 	@Column(name="type_name", nullable=false)
 	private String typeName;
 
+	@JsonIgnore
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "couponType")
 	private Set<Coupon> coupons = new HashSet<Coupon>(0);
 

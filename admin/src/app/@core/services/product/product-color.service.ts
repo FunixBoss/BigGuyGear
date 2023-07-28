@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { BaseURLService } from '../base-url.service';
 import { HttpClient } from '@angular/common/http';
 import { ProductColor } from '../../models/product/product-color.model';
-import { ModelResponse } from '../../models/response/ModelResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -17,9 +16,9 @@ export class ProductColorService {
   ) {
   }
 
-  findAll(): Observable<ProductColor[] | ModelResponse> {
+  findAll(): Observable<ProductColor[]> {
     const url: string = `${this.baseUrlService.baseURL}/color`
-    return this.httpClient.get<ProductColor[] | ModelResponse>(url)
+    return this.httpClient.get<ProductColor[]>(url)
   }
 
   insert(color: ProductColor): Observable<ProductColor> {

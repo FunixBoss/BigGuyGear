@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { BaseURLService } from "../base-url.service";
 import { OrderStatus } from '../../models/order/order-status.model';
-import { ModelResponse } from '../../models/response/ModelResponse';
 
 @Injectable({
     providedIn: 'root'
@@ -35,13 +34,13 @@ export class OrderStatusService {
         return this.httpClient.post<OrderStatus>(url, orderStatus);
     }
 
-    update(orderStatus: OrderStatus): Observable<ModelResponse> {
+    update(orderStatus: OrderStatus): Observable<boolean> {
         const url: string = `${this.baseUrlService.baseURL}/order-status/update`
-        return this.httpClient.post<ModelResponse>(url, orderStatus);
+        return this.httpClient.post<boolean>(url, orderStatus);
     }
 
-    delete(orderStatusId: number): Observable<ModelResponse> {
+    delete(orderStatusId: number): Observable<boolean> {
         const url: string = `${this.baseUrlService.baseURL}/order-status/delete/${orderStatusId}`
-        return this.httpClient.get<ModelResponse>(url);
+        return this.httpClient.get<boolean>(url);
     }
 }

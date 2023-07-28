@@ -53,7 +53,7 @@ export class CustomCustomerFilterActionsComponent extends DefaultFilter implemen
     addCustomer() {
         if (this.addCustomerFormGroup.invalid) {
             this.addCustomerFormGroup.markAllAsTouched();
-            this.utilsService.updateToastState(new ToastState('add', 'account', 'danger'))
+            this.utilsService.updateToastState(new ToastState('Add Account Failed!', "danger"))
             return;
         }
         let account: any = new Account();
@@ -68,7 +68,7 @@ export class CustomCustomerFilterActionsComponent extends DefaultFilter implemen
         this.accountService.insert(account).subscribe(
             data => {
                 if(data) {
-                    this.utilsService.updateToastState(new ToastState('add', 'account', 'success'))
+                    this.utilsService.updateToastState(new ToastState('Add Account Successfully!', "success"))
                     this.accountService.notifyAccountChange()
                     this.windowRef.close();
                 }

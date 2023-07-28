@@ -37,11 +37,11 @@ public class Cart implements java.io.Serializable {
 	private Account account;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "created_at", nullable = false, length = 23)
+	@Column(name = "created_at", length = 23)
 	private Date createdAt;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "updated_at", nullable = false, length = 23)
+	@Column(name = "updated_at", length = 23)
 	private Date updatedAt;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "cart")

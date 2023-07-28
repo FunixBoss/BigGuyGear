@@ -64,18 +64,18 @@ public class Product implements Serializable {
 	@Column(name = "sale")
 	private Boolean sale;
 
-	@Column(name = "top")
+	@Column(name = "[top]")
 	private Boolean top;
 
 	@Column(name = "new")
 	private Boolean new_;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "created_at", nullable = false, length = 23)
+	@Column(name = "created_at", length = 23)
 	private Date createdAt;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "updated_at", nullable = false, length = 23)
+	@Column(name = "updated_at", length = 23)
 	private Date updatedAt;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "product")

@@ -45,11 +45,11 @@ public class ProductSale implements Serializable {
 	private String description;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "started_at", nullable = false, length = 23)
+	@Column(name = "started_at", length = 23)
 	private Date startedAt;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "expired_at", nullable = false, length = 23)
+	@Column(name = "expired_at", length = 23)
 	private Date expiredAt;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "productSale")

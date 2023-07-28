@@ -73,7 +73,7 @@ export class CustomCustomerActionComponent implements ViewCell, OnInit{
     onEditCustomer() {
         if (this.editCustomerFormGroup.invalid) {
             this.editCustomerFormGroup.markAllAsTouched();
-            this.utilsService.updateToastState(new ToastState('edit', 'account', 'danger'))
+            this.utilsService.updateToastState(new ToastState('Edit Account Failed!', "danger"))
             return;
         }
         let account: any = new Account();
@@ -87,12 +87,12 @@ export class CustomCustomerActionComponent implements ViewCell, OnInit{
         
         this.accountService.update(account).subscribe(
             data => {
-                if(data.result) {
-                    this.utilsService.updateToastState(new ToastState('edit', 'account', 'success'))
+                if(data) {
+                    this.utilsService.updateToastState(new ToastState('Edit Account Successfully!', "success"))
                     this.accountService.notifyAccountChange()
                     this.windowRef.close();
                 } else {
-                    this.utilsService.updateToastState(new ToastState('edit', 'account', 'danger'))
+                    this.utilsService.updateToastState(new ToastState('Edit Account Failed!', "danger"))
                 }
             },
             error => console.log(error)

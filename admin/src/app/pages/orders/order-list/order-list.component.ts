@@ -17,7 +17,7 @@ import { DatePipe } from '@angular/common';
   templateUrl: "./order-list.component.html",
   styleUrls: ["./order-list.component.scss"],
 })
-export class OrderListComponent  implements OnInit, AfterViewInit {
+export class OrderListComponent implements OnInit, AfterViewInit {
   numberOfItem: number = localStorage.getItem('itemPerPage') != null ? +localStorage.getItem('itemPerPage') : 10; // default
   source: LocalDataSource = new LocalDataSource();
   // Setting for List layout
@@ -50,7 +50,7 @@ export class OrderListComponent  implements OnInit, AfterViewInit {
     const paymentObservable = this.paymentMethodService.findAll();
     const orderStatusObservable = this.orderStatusService.findAll();
 
-    forkJoin([paymentObservable, orderStatusObservable ]).subscribe(
+    forkJoin([paymentObservable, orderStatusObservable]).subscribe(
       ([paymentData, orderStatusDate]) => {
         this.paymentMethods = paymentData;
         this.orderStatuses = orderStatusDate;
@@ -89,8 +89,8 @@ export class OrderListComponent  implements OnInit, AfterViewInit {
                 config: {
                   selectText: 'Method...',
                   list: this.paymentMethods.map(pm => {
-                    return { value: pm.paymentMethodName, title: pm.paymentMethodName}
-                  }) ,
+                    return { value: pm.paymentMethodName, title: pm.paymentMethodName }
+                  }),
                 },
               },
             },
@@ -102,8 +102,8 @@ export class OrderListComponent  implements OnInit, AfterViewInit {
                 config: {
                   selectText: 'Status...',
                   list: this.orderStatuses.map(status => {
-                    return { value: status.statusName, title: status.statusName}
-                  }) 
+                    return { value: status.statusName, title: status.statusName }
+                  })
                 },
               },
             },
@@ -141,33 +141,27 @@ export class OrderListComponent  implements OnInit, AfterViewInit {
   loadOrders() {
     this.orderService.findAll().subscribe(
       data => {
-        if("result" in data) {
-          console.log(data.message)
-        } else {
-          console.log(data);
-          
-          const mappedOrders: any[] = data.map((order:any) => {
-            return {
-              orderId: order.orderId,
-              customerEmail: order.account.accountEmail,
-              totalPrice: order.totalPrice,
-              totalQuantity: order.totalQuantity,
-              paymentMethod: order.paymentMethod.paymentMethodName,
-              orderStatus: order.orderStatus.statusName,
-              createdAt: new DatePipe('en-US').transform(order.createdAt, 'dd/MM/yyyy').toString()
-            }
-          })
-          this.source.load(mappedOrders)
-        }
+        const mappedOrders: any[] = data.map((order: any) => {
+          return {
+            orderId: order.orderId,
+            customerEmail: order.account.accountEmail,
+            totalPrice: order.totalPrice,
+            totalQuantity: order.totalQuantity,
+            paymentMethod: order.paymentMethod.paymentMethodName,
+            orderStatus: order.orderStatus.statusName,
+            createdAt: new DatePipe('en-US').transform(order.createdAt, 'dd/MM/yyyy').toString()
+          }
+        })
+        this.source.load(mappedOrders)
       }
     )
   }
 
-  
+
   ngOnInit(): void {
     let x;
   }
-  
+
   ngAfterViewInit() {
     const pager = document.querySelector('ng2-smart-table-pager');
     pager.classList.add('d-block')

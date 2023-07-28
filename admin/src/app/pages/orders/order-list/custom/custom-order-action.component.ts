@@ -1,16 +1,12 @@
-import { style } from "@angular/animations";
-import { Component, OnInit, Input, ViewChild, TemplateRef } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { Component, Input, ViewChild, TemplateRef } from "@angular/core";
+import { FormBuilder, FormGroup } from "@angular/forms";
 import { Router } from "@angular/router";
 import { NbWindowRef, NbWindowService } from "@nebular/theme";
 import { ViewCell } from "ng2-smart-table";
 import { ToastState, UtilsService } from "../../../../@core/services/utils.service";
-import { ProductShapeService } from "../../../../@core/services/product/product-shape.service";
-import { ProductShape } from "../../../../@core/models/product/product-shape.model";
 import { OrderStatusService } from "../../../../@core/services/order/order-status.service";
 import { OrderService } from "../../../../@core/services/order/order.service";
 import { OrderStatus } from "../../../../@core/models/order/order-status.model";
-import { Order } from "../../../../@core/models/order/order.model";
 
 @Component({
     selector: 'ngx-custom-action',
@@ -98,14 +94,14 @@ export class CustomOrderActionComponent implements ViewCell {
     editStatus() {
         if (this.editStatusFormGroup.invalid) {
             this.editStatusFormGroup.markAllAsTouched();
-            this.utilsService.updateToastState(new ToastState('edit', 'order', 'danger'))
+            this.utilsService.updateToastState(new ToastState('Edit Order Failed!', 'danger'))
             return;
         }
         let orderStatus: OrderStatus = this.editStatusFormGroup.value['orderStatus'] as OrderStatus
         this.orderService.updateOrderStatus(this.rowData.orderId, orderStatus).subscribe(
             data => {
-                if (data.result) {
-                    this.utilsService.updateToastState(new ToastState('edit', 'order', 'success'))
+                if (data) {
+                    this.utilsService.updateToastState(new ToastState('Edit Order Successfully!', 'success'))
                     this.orderService.notifyOrderChange()
                     this.windowRef.close();
                 }

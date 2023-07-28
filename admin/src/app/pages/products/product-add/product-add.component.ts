@@ -4,11 +4,9 @@ import { AfterViewInit, Component, OnInit, QueryList, ViewChild, ViewChildren } 
 import { NbAccordionItemComponent } from '@nebular/theme';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ProductShapeService } from '../../../@core/services/product/product-shape.service';
 import { ProductStyleService } from '../../../@core/services/product/product-style.service';
 import { ProductService } from '../../../@core/services/product/product.service';
 import { ProductColorService } from '../../../@core/services/product/product-color.service';
-import { ProductShape } from '../../../@core/models/product/product-shape.model';
 import { ProductColor } from '../../../@core/models/product/product-color.model';
 import { ProductStyle } from '../../../@core/models/product/product-style.model';
 import { Product } from '../../../@core/models/product/product.model';
@@ -29,7 +27,6 @@ export class ProductAddComponent implements OnInit, AfterViewInit {
   Editor = ClassicEditor;
   editorConfig: any = { placeholder: 'Description' };
 
-  shapes: ProductShape[];
   colors: ProductColor[];
   styles: ProductStyle[];
   categories: ProductCategory[];
@@ -42,7 +39,6 @@ export class ProductAddComponent implements OnInit, AfterViewInit {
   constructor(
     private formBuilder: FormBuilder,
     private categoryService: ProductCategoryService,
-    private shapeService: ProductShapeService,
     private styleService: ProductStyleService,
     private productService: ProductService,
     private colorService: ProductColorService,
@@ -54,35 +50,12 @@ export class ProductAddComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.categoryService.findAll().subscribe(
       data => {
-        if ("result" in data) {
-          console.error(data.message);
-        } else {
-          this.categories = data
-        }
+        this.categories = data._embedded.categories
       })
-    this.shapeService.findAll().subscribe(
-      data => {
-        if ("result" in data) {
-          console.error(data.message);
-        } else {
-          this.shapes = data
-        }
-      })
-    this.styleService.findAll().subscribe(
-      data => {
-        if ("result" in data) {
-          console.error(data.message);
-        } else {
-          this.styles = data
-        }
-      })
+    this.styleService.findAll().subscribe(data => {this.styles = data._embedded.productStyles})
     this.colorService.findAll().subscribe(
       data => {
-        if ("result" in data) {
-          console.error(data.message);
-        } else {
           this.colors = data
-        }
       })
     this.settingFormGroup()
     this.addVariant()
@@ -169,15 +142,15 @@ export class ProductAddComponent implements OnInit, AfterViewInit {
 
     if (this.addProductFormGroup.invalid) {
       this.addProductFormGroup.markAllAsTouched();
-      this.utilsService.updateToastState(new ToastState('add', 'product', 'danger'))
+      this.utilsService.updateToastState(new ToastState('Add Product Failed!', 'danger'))
       return;
     }
 
     const insertProduct: Product = this.mapFormValue()
     console.log(insertProduct);
     this.productService.insert(insertProduct).subscribe(data => {
-      
-      this.utilsService.updateToastState(new ToastState('add', 'product', 'success'))
+
+      this.utilsService.updateToastState(new ToastState('Add Product Successfully!', 'success'))
       this.router.navigate(['/admin/product/list'])
     })
   }
@@ -188,7 +161,6 @@ export class ProductAddComponent implements OnInit, AfterViewInit {
     insertProduct.description = this.product.get('description').value;
     insertProduct.isHide = false;
     insertProduct.categoryId = this.categories.find(cate => cate.categoryName = this.product.get('category').value).categoryId;
-    insertProduct.productShapeId = this.shapes.find(shape => shape.shapeName = this.product.get('shape').value).productShapeId;
     insertProduct.productStyleId = this.styles.find(style => style.styleName = this.product.get('style').value).productStyleId;
     insertProduct.images = this.product.get('images').value
     insertProduct.createdAt = new Date();

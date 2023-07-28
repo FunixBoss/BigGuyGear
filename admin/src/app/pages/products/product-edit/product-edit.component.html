@@ -36,13 +36,6 @@
                         <nb-option *ngFor="let cate of categories" value="{{cate.categoryName }}">{{cate.categoryName}}</nb-option>
                     </nb-select>
 
-                    <nb-select fullWidth placeholder="Shape" formControlName="shape">
-                        <nb-select-label>
-                            Shape: {{ product.get('shape').value }}
-                        </nb-select-label>
-                        <nb-option *ngFor="let shape of shapes" value="{{shape.shapeName}}">{{shape.shapeName}}</nb-option>
-                    </nb-select>
-                    
                     <nb-select fullWidth placeholder="Style" formControlName="style">
                         <nb-select-label>
                             Style: {{ product.get('style').value }}

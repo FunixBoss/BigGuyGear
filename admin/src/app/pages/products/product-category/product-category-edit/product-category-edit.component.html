@@ -33,12 +33,10 @@
                     </div>
                 </div>
             </div>
-            <ng-container *ngIf="editCategoryFormGroup.get('image').value !== null">
-                <div class="col-12">
-                    <img [src]="editCategoryFormGroup.get('image').value" class="d-block w-50 mx-auto mt-3"
-                        alt="Slide Image">
-                </div>
-            </ng-container>
+            <div class="col-12">
+                <img [src]="isSelectedFile ? (uploadedFile ? uploadedFile['dataUrl'] : '' ) : editCategoryFormGroup.get('image').value"
+                    class="d-block w-50 mx-auto mt-3" alt="uploaded Image">
+            </div>
         </div>
     </nb-card-body>
     <nb-card-footer>

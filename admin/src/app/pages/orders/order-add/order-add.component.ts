@@ -19,9 +19,8 @@ import { Province } from '../../../@core/models/address/provinces.model';
 import { District } from '../../../@core/models/address/districts.model';
 import { Address } from '../../../@core/models/address/address.model';
 import { Product } from '../../../@core/models/product/product.model';
-import { CustomValidator, isCouponExisting, isEmailNotExisting, isProductidNotExisting } from '../../../@core/validators/custom-validator';
+import { CustomValidator, isEmailNotExisting, isProductidNotExisting } from '../../../@core/validators/custom-validator';
 import { Order } from '../../../@core/models/order/order.model';
-import { ModelResponse } from '../../../@core/models/response/ModelResponse';
 import { AddressService } from '../../../@core/services/account/address.service';
 import { ProductCouponService } from '../../../@core/services/product/product-coupon.service';
 import { Router } from '@angular/router';
@@ -162,7 +161,7 @@ export class OrderAddComponent implements OnInit, AfterViewInit {
   onSubmit() {
     if(this.addOrderFormGroup.invalid) {
       this.addOrderFormGroup.markAllAsTouched();
-      this.utilsService.updateToastState(new ToastState('add', 'order', 'danger'))
+      this.utilsService.updateToastState(new ToastState('Add Order Failed!', "danger"))
       return;
     }
 
@@ -172,12 +171,12 @@ export class OrderAddComponent implements OnInit, AfterViewInit {
     this.orderService.insert(order).subscribe(
       data => {
         if(data) {
-          this.utilsService.updateToastState(new ToastState('add', 'order', 'success'))
+          this.utilsService.updateToastState(new ToastState('Add Order Successfully!!', "success"))
           this.router.navigate(['/admin/orders/list'])
         }
       },  
       error => {
-        this.utilsService.updateToastState(new ToastState('add', 'order', 'danger'))
+        this.utilsService.updateToastState(new ToastState('Add Order Failed!', "danger"))
         console.log(error);
         
       }
@@ -268,7 +267,7 @@ export class OrderAddComponent implements OnInit, AfterViewInit {
   }
 
 
-  productCompleter$: Observable<Product[] | ModelResponse>
+  productCompleter$: Observable<Product[]>
   productCompleter(productFormIndex: number) {
     this.productCompleter$ = this.products.at(productFormIndex).get('id').valueChanges.pipe(
       startWith(''),

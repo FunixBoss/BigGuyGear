@@ -1,0 +1,26 @@
+<nb-card [formGroup]="addStyleFormGroup">
+    <nb-card-header>
+        Add A New Style
+    </nb-card-header>
+    <nb-card-body>
+        <div class="row">
+            <div class="col-12 no-gutters px-0">
+                <input type="text" nbInput fullWidth placeholder="Style Name" formControlName="name" class="mb-1">
+                <div class="alert alert-danger mt-0 mb-3"
+                    *ngIf="addStyleFormGroup.get('name').invalid && (addStyleFormGroup.get('name').dirty || addStyleFormGroup.get('name').touched)">
+                    <div *ngIf="addStyleFormGroup.get('name').errors['notblank']">
+                        Style Name is required
+                    </div>
+                    <div *ngIf="addStyleFormGroup.get('name').errors['maxlength']">
+                        Style Name must not exceed 100 characters
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nb-card-body>
+    <nb-card-footer>
+        <div class="d-flex justify-content-between">
+            <button nbButton status="success" (click)="createStyle()">Create</button>
+        </div>
+    </nb-card-footer>
+</nb-card>

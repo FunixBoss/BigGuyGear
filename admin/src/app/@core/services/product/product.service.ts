@@ -3,7 +3,6 @@ import { Observable, of, BehaviorSubject } from 'rxjs';
 import { Product } from '../../models/product/product.model';
 import { BaseURLService } from '../base-url.service';
 import { HttpClient } from '@angular/common/http';
-import { ModelResponse } from '../../models/response/ModelResponse';
 import { Subject } from 'rxjs';
 
 export class ToastState {
@@ -37,17 +36,17 @@ export class ProductService {
     return this.httpClient.get<Product[]>(url);
   }
 
-  findAll(): Observable<Product[] | ModelResponse> {
+  findAll(): Observable<Product[]> {
     const url = `${this.baseUrlService.baseURL}/product`
-    return this.httpClient.get<Product[] | ModelResponse>(url);
+    return this.httpClient.get<Product[]>(url);
   }
   
-  findById(id: number): Observable<Product | ModelResponse>  {
+  findById(id: number): Observable<Product>  {
     const url: string = `${this.baseUrlService.baseURL}/product/edit/${id}`
     return this.httpClient.get<Product>(url);
   } 
 
-  findDetailById(id: number): Observable<Product | ModelResponse>  {
+  findDetailById(id: number): Observable<Product>  {
     const url: string = `${this.baseUrlService.baseURL}/product/detail/${id}`
     return this.httpClient.get<Product>(url);
   } 
@@ -57,23 +56,23 @@ export class ProductService {
     return this.httpClient.post<Product>(url, product);
   }
 
-  update(product: Product): Observable<ModelResponse> {
+  update(product: Product): Observable<boolean> {
     const url: string = `${this.baseUrlService.baseURL}/product/update/${product.productId}`
-    return this.httpClient.post<ModelResponse>(url, product);
+    return this.httpClient.post<boolean>(url, product);
   }
 
-  delete(productId: number): Observable<ModelResponse> {    
+  delete(productId: number): Observable<boolean> {    
     const url: string = `${this.baseUrlService.baseURL}/product/delete/${productId}`
-    return this.httpClient.get<ModelResponse>(url); 
+    return this.httpClient.get<boolean>(url); 
   }
 
-  hideProduct(productId: number): Observable<ModelResponse> {
+  hideProduct(productId: number): Observable<boolean> {
     const url: string = `${this.baseUrlService.baseURL}/product/hide/${productId}`
-    return this.httpClient.get<ModelResponse>(url); 
+    return this.httpClient.get<boolean>(url); 
   }
 
-  getDetails(productId: number): Observable<Product | ModelResponse> {
+  getDetails(productId: number): Observable<Product> {
     const url: string = `${this.baseUrlService.baseURL}/product/details1/${productId}`;
-    return this.httpClient.get<ModelResponse >(url)
+    return this.httpClient.get<Product>(url)
   }
 }

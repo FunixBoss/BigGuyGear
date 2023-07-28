@@ -2,11 +2,9 @@ import { Injectable } from '@angular/core';
 import { BaseURLService } from '../base-url.service';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs-compat';
-import { ProductCategory } from '../../models/product/product-category.model';
-import { of, BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { CouponType } from '../../models/coupon/coupon-type.model';
-import { Coupon } from '../../models/coupon/coupon.model';
-import { ModelResponse } from '../../models/response/ModelResponse';
+import { Coupon, GetCouponResponse } from '../../models/coupon/coupon.model';
 
 @Injectable({
   providedIn: 'root'
@@ -38,46 +36,44 @@ export class ProductCouponService {
     this.couponChangeSubject.next();
   }
 
-  baseUrl = "http://127.0.0.1:8000/api/";
-  
   constructor(
     private baseUrlService: BaseURLService,
     private httpClient: HttpClient
   ) { 
   }
 
-  findAll(): Observable<Coupon[] | ModelResponse> {
-    const url: string = `${this.baseUrlService.baseURL}/coupon`
-    return this.httpClient.get<Coupon[] | ModelResponse>(url)
+  findAll(): Observable<GetCouponResponse> {
+    const url: string = `${this.baseUrlService.baseURL}/coupons`
+    return this.httpClient.get<GetCouponResponse>(url)
   }
 
   insert(coupon: Coupon): Observable<Coupon> {
-    const url: string = `${this.baseUrlService.baseURL}/coupon/create`
-    return this.httpClient.post<Coupon>(url, coupon);
+    let coupon2: any = coupon
+    coupon2.couponType = `/coupon-types/${coupon.couponType.couponTypeId}`
+
+    const url: string = `${this.baseUrlService.baseURL}/coupons`
+    return this.httpClient.post<Coupon>(url, coupon2);
   }
 
-  update(coupon: Coupon): Observable<ModelResponse> {
-    const url: string = `${this.baseUrlService.baseURL}/coupon/update/${coupon.couponId}`
-    console.log(url);
-    
-    return this.httpClient.post<ModelResponse>(url, coupon);
+  update(coupon: Coupon): Observable<boolean> {
+    let coupon2: any = coupon
+    coupon2.couponType = `/coupon-types/${coupon.couponType.couponTypeId}`
+
+    const url: string = `${this.baseUrlService.baseURL}/coupons`
+    return this.httpClient.post<boolean>(url, coupon);
   }
 
-  delete(couponId: number): Observable<ModelResponse> {    
-    const url: string = `${this.baseUrlService.baseURL}/coupon/delete/${couponId}`
-    return this.httpClient.get<ModelResponse>(url); 
+  delete(couponId: number): Observable<void> {    
+    const url: string = `${this.baseUrlService.baseURL}/coupons/${couponId}`
+    return this.httpClient.delete<void>(url); 
   }
 
   findCouponTypeById(id: number): CouponType {
     if(id == 1) {
-      return { couponTypeId: 1, couponTypeName: 'percent' }
+      return { couponTypeId: 1, typeName: 'Fixed' }
     } else {
-      return { couponTypeId: 2, couponTypeName: 'fixed' }
+      return { couponTypeId: 2, typeName: 'Percent' }
     }
-  }
-  findAllCouponType(): Observable<CouponType[]> {
-    const url: string = `${this.baseUrlService.baseURL}/coupon-detail`
-    return this.httpClient.get<CouponType[]>(url)
   }
 
   isCouponExists(couponCode: string): Observable<boolean> {
@@ -88,5 +84,15 @@ export class ProductCouponService {
   findIdByCode(couponCode: string): Observable<string> {
     const url: string = `${this.baseUrlService.baseURL}/findIdByCode/${couponCode}`
     return this.httpClient.get<string>(url);
+  }
+
+  deleteCoupons(coupons: Coupon[]): Observable<void> {
+    let mappedCoupon = coupons.map(c => {
+      return {
+        couponId: c.couponId
+      }
+    })
+    const url: string = `${this.baseUrlService.baseURL}/coupons/delete-coupons`
+    return this.httpClient.post<void>(url, mappedCoupon);
   }
 }

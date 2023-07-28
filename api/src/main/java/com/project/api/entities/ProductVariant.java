@@ -43,11 +43,9 @@ public class ProductVariant implements java.io.Serializable {
 	@JoinColumn(name = "color_id", nullable = false)
 	private ProductColor productColor;
 
-	@Column(name = "height", nullable = false)
-	private int height;
-
-	@Column(name = "width", nullable = false)
-	private int width;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "size_id", nullable = false)
+	private ProductSize productSize;
 
 	@Column(name = "quantity", nullable = false)
 	private int quantity;
@@ -61,23 +59,21 @@ public class ProductVariant implements java.io.Serializable {
 	public ProductVariant() {
 	}
 
-	public ProductVariant(Product product, ProductColor productColor, int height, int width, int quantity,
+	public ProductVariant(Product product, ProductColor productColor, ProductSize productSize, int quantity,
 			BigDecimal price) {
 		this.product = product;
 		this.productColor = productColor;
-		this.height = height;
-		this.width = width;
+		this.productSize = productSize;
 		this.quantity = quantity;
 		this.price = price;
 	}
 
-	public ProductVariant(Image image, Product product, ProductColor productColor, int height, int width, int quantity,
+	public ProductVariant(Image image, Product product, ProductColor productColor, ProductSize productSize, int quantity,
 			BigDecimal price, Set<CartDetail> cartDetails) {
 		this.image = image;
 		this.product = product;
+		this.productSize = productSize;
 		this.productColor = productColor;
-		this.height = height;
-		this.width = width;
 		this.quantity = quantity;
 		this.price = price;
 		this.cartDetails = cartDetails;

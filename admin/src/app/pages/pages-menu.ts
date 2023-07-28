@@ -29,13 +29,17 @@ export const MENU_ITEMS_AUTHORIZED: NbMenuItem[] = [
         link: '/admin/products/category',
       },
       {
+        title: 'Product Brand',
+        link: '/admin/products/product-brand',
+      },
+      {
+        title: 'Product Style',
+        link: '/admin/products/product-style',
+      },
+      {
         title: 'Product Coupon',
         link: '/admin/products/coupon',
       },
-      {
-        title: 'Product Style & Shape',
-        link: '/admin/products/style-n-shape',
-      }
     ],
   },
   {

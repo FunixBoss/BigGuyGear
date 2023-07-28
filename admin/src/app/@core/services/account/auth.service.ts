@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Observable, of, Subject } from 'rxjs';
 import { BaseURLService } from '../base-url.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { ModelResponse } from '../../models/response/ModelResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -33,12 +32,12 @@ export class AuthService {
     return false;
   }
 
-  login(email: string, password: string): Observable<GetResponseToken | ModelResponse> {
+  login(email: string, password: string): Observable<GetResponseToken> {
     const url: string = `${this.baseUrl}/login`
-    return this.httpClient.post<GetResponseToken  | ModelResponse>(url, {email: email, password: password})
+    return this.httpClient.post<GetResponseToken>(url, {email: email, password: password})
   }
 
-  logout(): Observable<ModelResponse> {
+  logout(): Observable<boolean> {
     const url: string = `${this.baseUrl}/logout`
 
     const headers = new HttpHeaders({
@@ -46,7 +45,7 @@ export class AuthService {
       'Authorization': 'Bearer ' + localStorage.getItem('token'), // Replace `token` with your actual token value
     });
 
-    return this.httpClient.get<ModelResponse>(url, { headers });
+    return this.httpClient.get<boolean>(url, { headers });
   }
 
 }

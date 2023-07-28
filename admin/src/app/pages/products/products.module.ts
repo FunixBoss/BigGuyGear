@@ -14,14 +14,19 @@ import { CustomCategoryFilterActionsComponent } from './product-category/custom/
 import { CustomCouponActionComponent } from './product-coupon/custom/custom-coupon-action.component';
 import { CustomCouponFilterActionsComponent } from './product-coupon/custom/custom-coupon-filter-actions.component';
 import { CustomCategoryImageComponent } from './product-category/custom/custom-category-image.component';
-import { CustomStyleActionComponent } from './product-style-shape/custom/custom-style-action.component';
-import { CustomStyleFilterActionsComponent } from './product-style-shape/custom/custom-style-filter-actions.component';
-import { CustomShapeActionComponent } from './product-style-shape/custom/custom-shape-action.component';
-import { CustomShapeFilterActionsComponent } from './product-style-shape/custom/custom-shape-filter-actions.component';
 import { ProductCategoryAddComponent } from './product-category/product-category-add/product-category-add.component';
 import { ProductCategoryEditComponent } from './product-category/product-category-edit/product-category-edit.component';
 import { ProductCouponAddComponent } from './product-coupon/product-coupon-add/product-coupon-add.component';
 import { ProductCouponEditComponent } from './product-coupon/product-coupon-edit/product-coupon-edit.component';
+import { CustomBrandActionComponent } from './product-brand/custom/custom-brand-action.component';
+import { CustomBrandFilterActionsComponent } from './product-brand/custom/custom-brand-filter-actions.component';
+import { CustomBrandImageComponent } from './product-brand/custom/custom-brand-image.component';
+import { ProductBrandAddComponent } from './product-brand/product-brand-add/product-brand-add.component';
+import { ProductBrandEditComponent } from './product-brand/product-brand-edit/product-brand-edit.component';
+import { CustomStyleActionComponent } from './product-style/custom/custom-style-action.component';
+import { CustomStyleFilterActionsComponent } from './product-style/custom/custom-style-filter-actions.component';
+import { ProductStyleAddComponent } from './product-style/product-style-add/product-style-add.component';
+import { ProductStyleEditComponent } from './product-style/product-style-edit/product-style-edit.component';
 
 @NgModule({
   imports: [
@@ -53,17 +58,28 @@ import { ProductCouponEditComponent } from './product-coupon/product-coupon-edit
     CustomProductActionComponent,
     CustomProductFilterActionsComponent,
     ImagesCarouselComponent,
+
     CustomCategoryActionComponent,
     CustomCategoryFilterActionsComponent,
     CustomCategoryImageComponent,
+    ProductCategoryAddComponent,
+    ProductCategoryEditComponent,
+
+    CustomBrandActionComponent,
+    CustomBrandFilterActionsComponent,
+    CustomBrandImageComponent,
+    ProductBrandAddComponent,
+    ProductBrandEditComponent,
+
+    CustomStyleActionComponent,
+    CustomStyleFilterActionsComponent,
+    ProductStyleAddComponent,
+    ProductStyleEditComponent,
+
     CustomCouponActionComponent,
     CustomCouponFilterActionsComponent,
     CustomStyleActionComponent,
     CustomStyleFilterActionsComponent,
-    CustomShapeActionComponent,
-    CustomShapeFilterActionsComponent,
-    ProductCategoryAddComponent,
-    ProductCategoryEditComponent,
     ProductCouponAddComponent,
     ProductCouponEditComponent
 

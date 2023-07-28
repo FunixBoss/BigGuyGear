@@ -27,13 +27,9 @@ export class ProductDetailComponent {
         this.productId = params['id']
         this.productService.findDetailById(params['id'])
           .subscribe(data => {
-            if("result" in data) {
-              console.error(data.message)
-            } else {
-              this.product = data[0] as Product
-              this.imagesUrls = this.product.images.map(
-                image => this.utilsService.getImageFromBase64(image.imageUrl))
-            }
+            this.product = data[0] as Product
+            this.imagesUrls = this.product.images.map(
+              image => this.utilsService.getImageFromBase64(image.imageUrl))
           })
       }
     )

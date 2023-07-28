@@ -46,11 +46,11 @@ public class ProductReview implements Serializable {
 	private byte rating;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "created_at", nullable = false, length = 23)
+	@Column(name = "created_at", length = 23)
 	private Date createdAt;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "updated_at", nullable = false, length = 23)
+	@Column(name = "updated_at", length = 23)
 	private Date updatedAt;
 
 	public ProductReview() {

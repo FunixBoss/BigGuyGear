@@ -44,6 +44,9 @@ public class Image implements java.io.Serializable {
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "image")
 	private Set<Category> categories = new HashSet<Category>(0);
 
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "image")
+	private Set<ProductBrand> productBrands = new HashSet<ProductBrand>(0);
+
 	public Image() {
 	}
 
@@ -52,12 +55,13 @@ public class Image implements java.io.Serializable {
 	}
 
 	public Image(String imageUrl, Set<Account> accounts, Set<ProductVariant> productVariants,
-			Set<Product> products, Set<Category> categories) {
+			Set<Product> products, Set<Category> categories, Set<ProductBrand> productBrands) {
 		this.imageUrl = imageUrl;
 		this.accounts = accounts;
 		this.productVariants = productVariants;
 		this.products = products;
 		this.categories = categories;
+		this.productBrands = productBrands;
 	}
 
 }

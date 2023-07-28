@@ -33,11 +33,7 @@ export class OneColumnLayoutComponent {
   ) {
     this.utilsService.toastState$.subscribe(state => {
       if(state != null) {
-        let message: string = 
-          this.utilsService.capitalizeString(state.behavior) + ' ' +
-          this.utilsService.capitalizeString(state.model) + ' ' +
-          (state.status === 'success' ? 'Successfully' : 'Failed')
-        this.toastService.show(message, 'Notification',
+        this.toastService.show(state.message, 'Notification',
            {status: state.status, duration: 3000, position: NbGlobalLogicalPosition.BOTTOM_END});
       }
     })

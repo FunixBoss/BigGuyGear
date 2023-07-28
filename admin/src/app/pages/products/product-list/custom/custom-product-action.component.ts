@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, ViewChild, TemplateRef } from "@angular/core";
 import { Router } from "@angular/router";
-import { NbWindowRef, NbWindowService } from "@nebular/theme";
+import { NbDataRowOutletDirective, NbWindowRef, NbWindowService } from "@nebular/theme";
 import { ViewCell } from "ng2-smart-table";
 import { ProductService } from "../../../../@core/services/product/product.service";
 import { ToastState, UtilsService } from "../../../../@core/services/utils.service";
@@ -73,20 +73,20 @@ export class CustomProductActionComponent implements ViewCell, OnInit {
     hideProduct() {
         this.productService.hideProduct(this.productId).subscribe(
             data => {
-                if (data.result) {
+                if (data) {
                     this.hideWindowRef.close()
-                    if(data.message == 'Product was hidden!') {
-                        this.utilsService.updateToastState(new ToastState('hide', 'product', 'success'))
+                    if(NbDataRowOutletDirective) {
+                        this.utilsService.updateToastState(new ToastState('Hide Product Successfully!', "success"))
                     } else {
-                        this.utilsService.updateToastState(new ToastState('show', 'product', 'success'))
+                        this.utilsService.updateToastState(new ToastState('Show Product Successfully!', "success"))
                     }
                     this.productService.notifyProductChange();
                 } else {
-                    this.utilsService.updateToastState(new ToastState('hide', 'product', 'danger'))
+                    this.utilsService.updateToastState(new ToastState('Hide Product Failed!', "danger"))
                 }
             }, 
             error => {
-                this.utilsService.updateToastState(new ToastState('hide', 'product', 'danger'))
+                this.utilsService.updateToastState(new ToastState('Hide Product Failed!', "danger"))
             }
         )
     }
@@ -94,16 +94,16 @@ export class CustomProductActionComponent implements ViewCell, OnInit {
     deleteProduct() {
         this.productService.delete(this.productId).subscribe(
             data => {
-                if (data.result) {
-                    this.utilsService.updateToastState(new ToastState('delete', 'product', 'success'))
+                if (data) {
+                    this.utilsService.updateToastState(new ToastState('Delete Product Successfully!', "success"))
                     this.deleteWindowRef.close()
                     this.productService.notifyProductChange();
                 } else {
-                    this.utilsService.updateToastState(new ToastState('delete', 'product', 'danger'))
+                    this.utilsService.updateToastState(new ToastState('Delete Product Failed!', "danger"))
                 }
             }, 
             error => {
-                this.utilsService.updateToastState(new ToastState('delete', 'product', 'danger'))
+                this.utilsService.updateToastState(new ToastState('Delete Product Failed!', "danger"))
             }
         )
     }

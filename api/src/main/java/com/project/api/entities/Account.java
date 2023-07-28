@@ -55,11 +55,11 @@ public class Account implements java.io.Serializable {
 	private String phoneNumber;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "created_at", nullable = false, length = 23)
+	@Column(name = "created_at", length = 23)
 	private Date createdAt;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "updated_at", nullable = false, length = 23)
+	@Column(name = "updated_at", length = 23)
 	private Date updatedAt;
 
 	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "accounts")

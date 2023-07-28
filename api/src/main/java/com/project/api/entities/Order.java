@@ -27,7 +27,7 @@ import javax.persistence.TemporalType;
 
 @Data
 @Entity
-@Table(name = "Order")
+@Table(name = "[Order]")
 public class Order implements Serializable {
 
 	@Id
@@ -65,11 +65,11 @@ public class Order implements Serializable {
 	private int totalQuantity;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "created_at", nullable = false, length = 23)
+	@Column(name = "created_at", length = 23)
 	private Date createdAt;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "updated_at", nullable = false, length = 23)
+	@Column(name = "updated_at", length = 23)
 	private Date updatedAt;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "order")

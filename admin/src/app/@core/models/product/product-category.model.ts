@@ -1,9 +1,15 @@
 import { Image } from "../Image";
+import { Paging } from "../response-page";
 
 export class ProductCategory {
     categoryId: number;
     categoryName: string;
     image: Image;
-    createdAt: Date;
-    updatedAt: Date;
+}
+
+export class GetCategoryResponse {
+    _embedded: {
+        categories: ProductCategory[]
+    }
+    page: Paging
 }

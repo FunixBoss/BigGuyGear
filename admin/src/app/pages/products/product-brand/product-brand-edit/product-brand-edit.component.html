@@ -1,0 +1,47 @@
+<nb-card [formGroup]="editBrandFormGroup">
+    <nb-card-header>
+        Edit Brand Id: {{editBrandFormGroup.get('id').value}}
+    </nb-card-header>
+    <nb-card-body>
+        <input type="text" nbInput fullWidth placeholder="Brand Name" formControlName="name" class="mb-1">
+        <div class="alert alert-danger mt-0 mb-3"
+            *ngIf="editBrandFormGroup.get('name').invalid && (editBrandFormGroup.get('name').dirty || editBrandFormGroup.get('name').touched)">
+            <div *ngIf="editBrandFormGroup.get('name').errors['notblank']">
+                Brand Name is required
+            </div>
+
+            <div *ngIf="editBrandFormGroup.get('name').errors['maxlength']">
+                Brand Name must not exceed 100 characters
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 no-gutters px-0">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Upload</span>
+                    </div>
+                    <div class="custom-file">
+                        <input type="file" mutliple class="custom-file-input" accept="image/png, image/jpeg"
+                            (change)="selectFile($event)">
+                        <label class="custom-file-label">Choose images</label>
+                    </div>
+                </div>
+                <div class="alert alert-danger mt-1 mb-3"
+                    *ngIf="editBrandFormGroup.get('image').invalid && (editBrandFormGroup.get('image').dirty || editBrandFormGroup.get('image').touched)">
+                    <div *ngIf="editBrandFormGroup.get('image').errors['required']">
+                        Brand Image is required
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <img [src]="isSelectedFile ? (uploadedFile ? uploadedFile['dataUrl'] : '' ) : editBrandFormGroup.get('image').value"
+                    class="d-block w-50 mx-auto mt-3" alt="uploaded Image">
+            </div>
+        </div>
+    </nb-card-body>
+    <nb-card-footer>
+        <div class="d-flex justify-content-between">
+            <button nbButton status="success" (click)="editBrand()">SAVE</button>
+        </div>
+    </nb-card-footer>
+</nb-card>

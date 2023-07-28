@@ -32,14 +32,23 @@ public class ProductColor implements Serializable {
 	@Column(name = "color_name")
 	private String colorName;
 
+	@Column(name = "color_type")
+	private String colorType;
+
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "productColor")
 	private Set<ProductVariant> productVariants = new HashSet<ProductVariant>(0);
 
 	public ProductColor() {
 	}
 
-	public ProductColor(String colorName, Set<ProductVariant> productVariants) {
+	public ProductColor(String colorName,String colorType) {
 		this.colorName = colorName;
+		this.colorType = colorType;
+	}
+
+	public ProductColor(String colorName,String colorType, Set<ProductVariant> productVariants) {
+		this.colorName = colorName;
+		this.colorType = colorType;
 		this.productVariants = productVariants;
 	}
 

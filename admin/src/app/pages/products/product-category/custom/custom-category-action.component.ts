@@ -28,7 +28,7 @@ import { NbWindowRef, NbWindowService } from "@nebular/theme";
                         Are you sure you want to delete this category?
                 </nb-card-header>
                 <nb-card-body>
-                    <button nbButton status="success" class="mt-3" (click)="deleteProduct()">
+                    <button nbButton status="success" class="mt-3" (click)="deleteCategory()">
                         CONFIRM
                     </button>
                 </nb-card-body>
@@ -62,23 +62,20 @@ export class CustomCategoryActionComponent implements ViewCell {
             .open(this.deleteWindow, { title: `Delete Product` });
     }
 
-    deleteProduct() {
-        console.log(this.rowData);
-
+    deleteCategory() {
         this.categoryService.delete(this.rowData.categoryId).subscribe(
             data => {
-                if (data.result) {
+                if (data) {
                     this.deleteWindowRef.close()
                     this.categoryService.notifyCategoryChange();
-                    this.utilsService.updateToastState(new ToastState('delete', 'category', 'success'))
+                    this.utilsService.updateToastState(new ToastState('Delete Category Successfully!', "success"))
                 } else {
-                    this.utilsService.updateToastState(new ToastState('delete', 'category', 'danger'))
+                    this.utilsService.updateToastState(new ToastState('Delete Category Failed!', "danger"))
                 }
             },
             error => {
-                this.utilsService.updateToastState(new ToastState('delete', 'category', 'danger'))
+                this.utilsService.updateToastState(new ToastState('Delete Category Failed!', "danger"))
                 console.log(error);
-
             }
         )
     }

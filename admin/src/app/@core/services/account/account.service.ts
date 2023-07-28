@@ -1,16 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, Subject } from 'rxjs';
-import { Order } from '../../models/order/order.model';
+import { Observable, Subject } from 'rxjs';
 import { BaseURLService } from '../base-url.service';
 import { HttpClient } from '@angular/common/http';
 import { Account } from '../../models/account/account.model';
-import { OrderService } from '../order/order.service';
 import { Address } from '../../models/address/address.model';
-import { Province } from '../../models/address/provinces.model';
-import { District } from '../../models/address/districts.model';
-import { Ward } from '../../models/address/wards.model';
-import { Image } from '../../models/Image';
-import { ModelResponse } from '../../models/response/ModelResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -34,9 +27,9 @@ export class AccountService {
   ) {
   }
 
-  findAll(): Observable<Account[] | ModelResponse> {
+  findAll(): Observable<Account[]> {
     const url: string = `${this.baseUrlService.baseURL}/account`
-    return this.httpClient.get<Account[] | ModelResponse>(url)
+    return this.httpClient.get<Account[]>(url)
   }
 
   findById(id: number): Observable<Account> {
@@ -49,14 +42,14 @@ export class AccountService {
     return this.httpClient.post<Account>(url, account);
   }
 
-  update(account: Account): Observable<ModelResponse> {
+  update(account: Account): Observable<boolean> {
     const url: string = `${this.baseUrlService.baseURL}/account/update/${account.id}`
-    return this.httpClient.post<ModelResponse>(url, account);
+    return this.httpClient.post<boolean>(url, account);
   }
 
-  delete(id: number): Observable<ModelResponse> {
+  delete(id: number): Observable<boolean> {
     const url: string = `${this.baseUrlService.baseURL}/account/delete/${id}`
-    return this.httpClient.get<ModelResponse>(url);
+    return this.httpClient.get<boolean>(url);
   }
   
   findByEmailKeyword(emailKeyword: string): Observable<Account[]> {

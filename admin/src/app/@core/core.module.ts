@@ -8,7 +8,6 @@ import { throwIfAlreadyLoaded } from './module-import-guard';
 import {
   AnalyticsService,
   LayoutService,
-  PlayerService,
   SeoService,
   StateService,
 } from './utils';
@@ -83,7 +82,6 @@ export const NB_CORE_PROVIDERS = [
   },
   AnalyticsService,
   LayoutService,
-  PlayerService,
   SeoService,
   StateService,
 ];

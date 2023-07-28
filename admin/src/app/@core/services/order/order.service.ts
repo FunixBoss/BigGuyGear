@@ -6,7 +6,6 @@ import { HttpClient } from '@angular/common/http';
 import { OrderStatus } from '../../models/order/order-status.model';
 import { OrderStatusService } from './order-status.service';
 import { PaymentMethodService } from './payment-method.service';
-import { ModelResponse } from '../../models/response/ModelResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -37,9 +36,9 @@ export class OrderService {
   }
   
 
-  findAll(): Observable<Order[] | ModelResponse> {
+  findAll(): Observable<Order[]> {
     const url: string = `${this.baseUrlService.baseURL}/order`
-    return this.httpClient.get<Order[]  | ModelResponse>(url)
+    return this.httpClient.get<Order[]>(url)
   }
 
   insert(order: Order): Observable<Order> {
@@ -47,14 +46,14 @@ export class OrderService {
     return this.httpClient.post<Order>(url, order);
   }
 
-  updateOrderStatus(orderId: number, orderStatus: OrderStatus): Observable<ModelResponse> {
+  updateOrderStatus(orderId: number, orderStatus: OrderStatus): Observable<boolean> {
     const url: string = `${this.baseUrlService.baseURL}/order/update/${orderId}`
-    return this.httpClient.post<ModelResponse>(url, orderStatus);
+    return this.httpClient.post<boolean>(url, orderStatus);
   }
 
-  delete(orderId: number): Observable<ModelResponse> {    
+  delete(orderId: number): Observable<boolean> {    
     const url: string = `${this.baseUrlService.baseURL}/order/delete/${orderId}`
-    return this.httpClient.delete<ModelResponse>(url); 
+    return this.httpClient.delete<boolean>(url); 
   }
 
   findSizesFromProductId(id: number): Observable<string[]> {

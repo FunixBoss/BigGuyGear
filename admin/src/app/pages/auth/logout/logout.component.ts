@@ -14,7 +14,7 @@ export class LogoutComponent  {
   ) {
     this.authService.logout().subscribe(
       data => {
-        if(data.result) {
+        if(data) {
           localStorage.removeItem("token")
           authService.authChange()
           router.navigate(['/admin/auth/login'])

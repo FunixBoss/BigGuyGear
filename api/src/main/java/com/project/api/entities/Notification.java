@@ -39,7 +39,7 @@ public class Notification implements Serializable {
 	private String message;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "created_at", nullable = false, length = 23)
+	@Column(name = "created_at", length = 23)
 	private Date createdAt;
 
 	@Column(name = "is_read")

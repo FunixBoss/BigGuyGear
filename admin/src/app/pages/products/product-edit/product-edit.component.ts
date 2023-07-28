@@ -1,14 +1,12 @@
 import { ProductCategory } from './../../../@core/models/product/product-category.model';
 import { ProductCategoryService } from './../../../@core/services/product/product-category.service';
-import { AfterViewInit, Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { NbAccordionItemComponent } from '@nebular/theme';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ProductShapeService } from '../../../@core/services/product/product-shape.service';
 import { ProductStyleService } from '../../../@core/services/product/product-style.service';
 import { ProductService } from '../../../@core/services/product/product.service';
 import { ProductColorService } from '../../../@core/services/product/product-color.service';
-import { ProductShape } from '../../../@core/models/product/product-shape.model';
 import { ProductColor } from '../../../@core/models/product/product-color.model';
 import { ProductStyle } from '../../../@core/models/product/product-style.model';
 import { Product } from '../../../@core/models/product/product.model';
@@ -33,7 +31,6 @@ export class ProductEditComponent implements OnInit {
 
   edittingProduct: Product;
   edittingProductId: string;
-  shapes: ProductShape[];
   colors: ProductColor[];
   styles: ProductStyle[];
   categories: ProductCategory[];
@@ -44,7 +41,6 @@ export class ProductEditComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private categoryService: ProductCategoryService,
-    private shapeService: ProductShapeService,
     private styleService: ProductStyleService,
     private productService: ProductService,
     private colorService: ProductColorService,
@@ -58,12 +54,7 @@ export class ProductEditComponent implements OnInit {
         this.edittingProductId = params['id']
         this.productService.findById(+this.edittingProductId).subscribe(
           data => {
-            if ("result" in data) {
-              console.error(data.message);
-            } else {
-              this.edittingProduct = data[0] as Product;
-              
-            }
+            this.edittingProduct = data[0] as Product;
           }
         )
       }
@@ -75,35 +66,14 @@ export class ProductEditComponent implements OnInit {
 
   ngOnInit() {
     const category$ = this.categoryService.findAll();
-    const shape$ = this.shapeService.findAll();
     const style$ = this.styleService.findAll();
     const color$ = this.colorService.findAll();
 
-    forkJoin([category$, shape$, style$, color$]).subscribe(
-      ([categoryData, shapeData, styleData, colorData]) => {
-        if ("result" in categoryData) {
-          console.error(categoryData.message);
-        } else {
-          this.categories = categoryData;
-        }
-
-        if ("result" in shapeData) {
-          console.error(shapeData.message);
-        } else {
-          this.shapes = shapeData;
-        }
-
-        if ("result" in styleData) {
-          console.error(styleData.message);
-        } else {
-          this.styles = styleData;
-        }
-
-        if ("result" in colorData) {
-          console.error(colorData.message);
-        } else {
-          this.colors = colorData;
-        }
+    forkJoin([category$, style$, color$]).subscribe(
+      ([categoryData, styleData, colorData]) => {
+        this.categories = categoryData._embedded.categories;
+        this.styles = styleData._embedded.productStyles;
+        this.colors = colorData;
 
         this.fillFormValues();
       },
@@ -118,7 +88,6 @@ export class ProductEditComponent implements OnInit {
     this.product.get('id').setValue(this.edittingProduct.productId);
     this.product.get('name').setValue(this.edittingProduct.productName)
     this.product.get('category').setValue(this.edittingProduct.category.categoryName)
-    this.product.get('shape').setValue(this.edittingProduct.productShape.shapeName)
     this.product.get('style').setValue(this.edittingProduct.productStyle.styleName)
     this.product.get('description').setValue(this.edittingProduct.description)
     this.product.get('images').setValue(this.edittingProduct.images)
@@ -150,7 +119,7 @@ export class ProductEditComponent implements OnInit {
         variantForm.get('colorType').setValue('Custom Color')
         variantForm.get('customColorValue').setValue(variant.color.colorName)
       }
-      if(variant.image != undefined) { 
+      if (variant.image != undefined) {
         variantForm.get('image').setValue(
           this.utilsService.getImageFromBase64(variant.image.imageUrl)
         )
@@ -232,7 +201,7 @@ export class ProductEditComponent implements OnInit {
     }
     if (this.editProductFormGroup.invalid) {
       this.editProductFormGroup.markAllAsTouched();
-      this.utilsService.updateToastState(new ToastState('edit', 'product', 'danger'))
+      this.utilsService.updateToastState(new ToastState('Edit Product Failed!', "danger"))
       return;
     }
 
@@ -240,11 +209,11 @@ export class ProductEditComponent implements OnInit {
     console.log(editedProduct)
 
     this.productService.update(editedProduct).subscribe(data => {
-      if (data.result) {
-        this.utilsService.updateToastState(new ToastState('edit', 'product', 'success'))
+      if (data) {
+        this.utilsService.updateToastState(new ToastState('Edit Product Successfully!', "success"))
         this.router.navigate(['/admin/product/list'])
       } else {
-        this.utilsService.updateToastState(new ToastState('edit', 'product', 'danger'))
+        this.utilsService.updateToastState(new ToastState('Edit Product Failed!', "danger"))
       }
     })
   }
@@ -256,7 +225,6 @@ export class ProductEditComponent implements OnInit {
     editedProduct.description = this.product.get('description').value;
     editedProduct.isHide = false;
     editedProduct.categoryId = this.categories.find(cate => cate.categoryName == this.product.get('category').value).categoryId;
-    editedProduct.productShapeId = this.shapes.find(shape => shape.shapeName == this.product.get('shape').value).productShapeId;
     editedProduct.productStyleId = this.styles.find(style => style.styleName == this.product.get('style').value).productStyleId;
     editedProduct.images = this.product.get('images').value
     editedProduct.createdAt = new Date();

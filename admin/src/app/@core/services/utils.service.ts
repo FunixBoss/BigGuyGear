@@ -3,8 +3,7 @@ import { Observable, of, BehaviorSubject } from 'rxjs';
 
 export class ToastState {
     constructor(
-        public behavior: string,
-        public model: string,
+        public message: string,
         public status: string,
     ) {}
     

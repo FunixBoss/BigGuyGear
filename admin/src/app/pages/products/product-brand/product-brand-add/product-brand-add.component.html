@@ -1,0 +1,49 @@
+<nb-card [formGroup]="addBrandFormGroup">
+    <nb-card-header>
+        Add A New Brand
+    </nb-card-header>
+    <nb-card-body>
+        <div class="row">
+            <div class="col-12 no-gutters px-0">
+                <input type="text" nbInput fullWidth placeholder="Brand Name" formControlName="name" class="mb-1">
+                <div class="alert alert-danger mt-0 mb-3"
+                    *ngIf="addBrandFormGroup.get('name').invalid && (addBrandFormGroup.get('name').dirty || addBrandFormGroup.get('name').touched)">
+                    <div *ngIf="addBrandFormGroup.get('name').errors['notblank']">
+                        Brand Name is required
+                    </div>
+                    <div *ngIf="addBrandFormGroup.get('name').errors['maxlength']">
+                        Brand Name must not exceed 100 characters
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 no-gutters px-0 mt-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Upload</span>
+                    </div>
+                    <div class="custom-file">
+                        <input type="file" mutliple class="custom-file-input" accept="image/png, image/jpeg"
+                            (change)="selectFile($event)">
+                        <label class="custom-file-label">Choose images</label>
+                    </div>
+                </div>
+                <div class="alert alert-danger mt-1 mb-3"
+                    *ngIf="addBrandFormGroup.get('image').invalid && (addBrandFormGroup.get('image').dirty || addBrandFormGroup.get('image').touched)">
+                    <div *ngIf="addBrandFormGroup.get('image').errors['required']">
+                        Brand Image is required
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 mt-1">
+                <div *ngIf="uploadedFile">
+                    <img [src]="uploadedFile?.dataUrl" class="d-block w-50 mx-auto mt-3" alt="Slide Image">
+                </div>
+            </div>
+        </div>
+    </nb-card-body>
+    <nb-card-footer>
+        <div class="d-flex justify-content-between">
+            <button nbButton status="success" (click)="createBrand()">Create</button>
+        </div>
+    </nb-card-footer>
+</nb-card>
