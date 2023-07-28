@@ -1,82 +1,88 @@
-<form [formGroup]="addCouponFormGroup" (ngSubmit)="submitAddCoupon()">
+<form [formGroup]="addSaleFormGroup" (ngSubmit)="submitAddSale()">
 <nb-card >
     <nb-card-header>
-        Add A New Coupon
+        Add A New Product Sale
     </nb-card-header>
     <nb-card-body>
-        <input type="text" nbInput fullWidth placeholder="Coupon Code" formControlName="code">
+        <input type="text" nbInput fullWidth placeholder="Sale Name" formControlName="name">
         <div class="alert alert-danger mt-0 mb-3"
-            *ngIf="addCouponFormGroup.get('code').invalid && (addCouponFormGroup.get('code').dirty || addCouponFormGroup.get('code').touched)">
-            <div *ngIf="addCouponFormGroup.get('code').errors['notblank']">
-                Coupon code is required
+            *ngIf="addSaleFormGroup.get('name').invalid && (addSaleFormGroup.get('name').dirty || addSaleFormGroup.get('name').touched)">
+            <div *ngIf="addSaleFormGroup.get('name').errors['notblank']">
+                Sale name is required
             </div>
 
-            <div *ngIf="addCouponFormGroup.get('code').errors['maxlength']">
-                Coupon Name must not exceed 20 characters
+            <div *ngIf="addSaleFormGroup.get('name').errors['maxlength']">
+                Sale Name must not exceed 50 characters
             </div>
         </div>
 
         <textarea rows="3" nbInput fullWidth placeholder="Short Description" formControlName="description"
             style="resize: none"></textarea>
         <div class="alert alert-danger mt-0 mb-3"
-            *ngIf="addCouponFormGroup.get('description').invalid && (addCouponFormGroup.get('description').dirty || addCouponFormGroup.get('description').touched)">
-            <div *ngIf="addCouponFormGroup.get('description').errors['notblank']">
-                Coupon description is required
+            *ngIf="addSaleFormGroup.get('description').invalid && (addSaleFormGroup.get('description').dirty || addSaleFormGroup.get('description').touched)">
+            <div *ngIf="addSaleFormGroup.get('description').errors['notblank']">
+                Sale description is required
             </div>
 
-            <div *ngIf="addCouponFormGroup.get('description').errors['maxlength']">
-                Coupon description must not exceed 50 characters
+            <div *ngIf="addSaleFormGroup.get('description').errors['maxlength']">
+                Sale description must not exceed 50 characters
             </div>
         </div>
 
         <nb-select fullWidth selected="1" placeholder="Discount Type" formControlName="discountType">
             <nb-select-label>
-                Type: {{ addCouponFormGroup.get('discountType').value }}
+                Type: {{ addSaleFormGroup.get('discountType').value }}
             </nb-select-label>
             <nb-option value="Fixed">Fixed</nb-option>
             <nb-option value="Percent">Percent</nb-option>
         </nb-select>
         <div class="alert alert-danger mt-0 mb-3"
-            *ngIf="addCouponFormGroup.get('discountType').invalid && (addCouponFormGroup.get('discountType').dirty || addCouponFormGroup.get('discountType').touched)">
-            <div *ngIf="addCouponFormGroup.get('discountType').errors['required']">
+            *ngIf="addSaleFormGroup.get('discountType').invalid && (addSaleFormGroup.get('discountType').dirty || addSaleFormGroup.get('discountType').touched)">
+            <div *ngIf="addSaleFormGroup.get('discountType').errors['required']">
                 Discount Type is required
             </div>
         </div>
 
         <input type="number" nbInput fullWidth placeholder="Discount Value" formControlName="discountValue">
         <div class="alert alert-danger mt-0 mb-3"
-            *ngIf="addCouponFormGroup.get('discountValue').invalid && (addCouponFormGroup.get('discountValue').dirty || addCouponFormGroup.get('discountValue').touched)">
-            <div *ngIf="addCouponFormGroup.get('discountValue').errors['required']">
+            *ngIf="addSaleFormGroup.get('discountValue').invalid && (addSaleFormGroup.get('discountValue').dirty || addSaleFormGroup.get('discountValue').touched)">
+            <div *ngIf="addSaleFormGroup.get('discountValue').errors['required']">
                 Discount Value is required
             </div>
 
-            <div *ngIf="addCouponFormGroup.get('discountValue').errors['max']">
+            <div *ngIf="addSaleFormGroup.get('discountValue').errors['max']">
                 Discount Value must not be larger than 100%
             </div>
         </div>
 
         <div class="row">
             <div class="col-lg-6 col-md-12 pl-0">
-                <input nbInput placeholder="Start Date" [nbDatepicker]="startDate" formControlName="startedDate">
+                <input nbInput placeholder="Start Date" [nbDatepicker]="startDate" formControlName="startedAt">
                 <nb-datepicker #startDate></nb-datepicker>
                 <div class="alert alert-danger mt-2 mb-3"
-                    *ngIf="addCouponFormGroup.get('startedDate').invalid && (addCouponFormGroup.get('startedDate').dirty || addCouponFormGroup.get('startedDate').touched)">
-                    <div *ngIf="addCouponFormGroup.get('startedDate').errors['required']">
+                    *ngIf="addSaleFormGroup.get('startedAt').invalid && (addSaleFormGroup.get('startedAt').dirty || addSaleFormGroup.get('startedAt').touched)">
+                    <div *ngIf="addSaleFormGroup.get('startedAt').errors['required']">
                         Start Date is required
                     </div>
                 </div>
             </div>
             <div class="col-lg-6 col-md-12 pr-0">
-                <input nbInput placeholder="Expire Date" [nbDatepicker]="expireDate" formControlName="expiredDate">
+                <input nbInput placeholder="Expire Date" [nbDatepicker]="expireDate" formControlName="expiredAt">
                 <nb-datepicker #expireDate></nb-datepicker>
                 <div class="alert alert-danger mt-2 mb-3"
-                    *ngIf="addCouponFormGroup.get('expiredDate').invalid && (addCouponFormGroup.get('expiredDate').dirty || addCouponFormGroup.get('expiredDate').touched)">
-                    <div *ngIf="addCouponFormGroup.get('expiredDate').errors['required']">
+                    *ngIf="addSaleFormGroup.get('expiredAt').invalid && (addSaleFormGroup.get('expiredAt').dirty || addSaleFormGroup.get('expiredAt').touched)">
+                    <div *ngIf="addSaleFormGroup.get('expiredAt').errors['required']">
                         Expire Date is required
                     </div>
                 </div>
             </div>
         </div>
+
+        <nb-checkbox (checkedChange)="addSaleFormGroup.get('active').setValue($event)" status="success" 
+            [checked]="addSaleFormGroup.get('active').value">
+            Active
+        </nb-checkbox>
+
     </nb-card-body>
     <nb-card-footer>
         <div class="d-flex justify-content-between">

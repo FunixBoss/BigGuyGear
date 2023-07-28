@@ -47,6 +47,9 @@ public class Order implements Serializable {
 	@JoinColumn(name = "coupon_id")
 	private Coupon coupon;
 
+	@Column(name = "coupon_code")
+	private String couponCode;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "order_status_id", nullable = false)
 	private OrderStatus orderStatus;

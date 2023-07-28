@@ -73,7 +73,7 @@ export class ProductEditComponent implements OnInit {
       ([categoryData, styleData, colorData]) => {
         this.categories = categoryData._embedded.categories;
         this.styles = styleData._embedded.productStyles;
-        this.colors = colorData;
+        this.colors = colorData._embedded.productColors;
 
         this.fillFormValues();
       },
@@ -108,16 +108,15 @@ export class ProductEditComponent implements OnInit {
       this.addVariant()
       let variantForm: FormGroup = this.variants.at(i) as FormGroup
       variantForm.get('id').setValue(variant.productVariantId)
-      variantForm.get('height').setValue(variant.height)
-      variantForm.get('width').setValue(variant.width)
+      variantForm.get('size').setValue(variant.productSize)
       variantForm.get('quantity').setValue(variant.quantity)
       variantForm.get('price').setValue(variant.price)
-      if (this.colorService.isBasicColor(variant.color)) {
+      if (this.colorService.isBasicColor(variant.productColor)) {
         variantForm.get('colorType').setValue('Basic Color')
-        variantForm.get('basicColorValue').setValue(variant.color.colorName)
+        variantForm.get('basicColorValue').setValue(variant.productColor.colorName)
       } else {
         variantForm.get('colorType').setValue('Custom Color')
-        variantForm.get('customColorValue').setValue(variant.color.colorName)
+        variantForm.get('customColorValue').setValue(variant.productColor.colorName)
       }
       if (variant.image != undefined) {
         variantForm.get('image').setValue(
@@ -230,17 +229,16 @@ export class ProductEditComponent implements OnInit {
     editedProduct.createdAt = new Date();
     editedProduct.updatedAt = new Date();
 
-    const productVariants: ProductVariant[] = this.variants.controls.map(group => {
+    const productVariants: ProductVariant[] = this.variants.controls.map(variantForm => {
       return {
-        productVariantId: group.get('id').value as number,
-        height: group.get('height').value as number,
-        width: group.get('width').value as number,
-        price: group.get('price').value as number,
-        quantity: group.get('quantity').value as number,
-        color: group.get('colorType').value == 'Basic Color' ?
-          this.getColorValueFromType(group.get('colorType').value, group.get('basicColorValue').value) :
-          this.getColorValueFromType(group.get('colorType').value, group.get('customColorValue').value),
-        image: group.get('image').value
+        productSize: variantForm.get('size').value,
+        productVariantId: variantForm.get('id').value as number,
+        price: variantForm.get('price').value as number,
+        quantity: variantForm.get('quantity').value as number,
+        productColor: variantForm.get('colorType').value == 'Basic Color' ?
+          this.getColorValueFromType(variantForm.get('colorType').value, variantForm.get('basicColorValue').value) :
+          this.getColorValueFromType(variantForm.get('colorType').value, variantForm.get('customColorValue').value),
+        image: variantForm.get('image').value
       };
     });
     editedProduct.productVariants = productVariants;

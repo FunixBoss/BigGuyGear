@@ -27,6 +27,12 @@ import { CustomStyleActionComponent } from './product-style/custom/custom-style-
 import { CustomStyleFilterActionsComponent } from './product-style/custom/custom-style-filter-actions.component';
 import { ProductStyleAddComponent } from './product-style/product-style-add/product-style-add.component';
 import { ProductStyleEditComponent } from './product-style/product-style-edit/product-style-edit.component';
+import { CustomSaleFilterActionsComponent } from './product-sale/custom/custom-sale-filter-actions.component';
+import { ProductSaleAddComponent } from './product-sale/product-sale-add/product-sale-add.component';
+import { ProductSaleEditComponent } from './product-sale/product-sale-edit/product-sale-edit.component';
+import { CustomSaleActionComponent } from './product-sale/custom/custom-sale-action.component';
+import { CustomSaleActiveActionComponent } from './product-sale/custom/custom-sale-active-action.component';
+import { ProductSaleMultiComponent } from './product-sale/product-sale-multi/product-sale-multi.component';
 
 @NgModule({
   imports: [
@@ -78,10 +84,15 @@ import { ProductStyleEditComponent } from './product-style/product-style-edit/pr
 
     CustomCouponActionComponent,
     CustomCouponFilterActionsComponent,
-    CustomStyleActionComponent,
-    CustomStyleFilterActionsComponent,
     ProductCouponAddComponent,
-    ProductCouponEditComponent
+    ProductCouponEditComponent,
+
+    CustomSaleActionComponent,
+    CustomSaleFilterActionsComponent,
+    CustomSaleActiveActionComponent,
+    ProductSaleAddComponent,
+    ProductSaleEditComponent,
+    ProductSaleMultiComponent
 
   ],
 })

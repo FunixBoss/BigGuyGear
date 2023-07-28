@@ -38,11 +38,17 @@ public class ProductSale implements Serializable {
 	@JoinColumn(name = "product_sale_type_id", nullable = false)
 	private ProductSaleType productSaleType;
 
+	@Column(name = "sale_name", nullable = false)
+	private String saleName;
+
 	@Column(name = "discount", nullable = false)
 	private int discount;
 
 	@Column(name = "description")
 	private String description;
+
+	@Column(name = "active")
+	private boolean active;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "started_at", length = 23)
@@ -58,17 +64,19 @@ public class ProductSale implements Serializable {
 	public ProductSale() {
 	}
 
-	public ProductSale(ProductSaleType productSaleType, int discount, Date startedAt, Date expiredAt) {
+	public ProductSale(ProductSaleType productSaleType, int discount, boolean active, Date startedAt, Date expiredAt) {
 		this.productSaleType = productSaleType;
 		this.discount = discount;
+		this.active = active;
 		this.startedAt = startedAt;
 		this.expiredAt = expiredAt;
 	}
 
-	public ProductSale(ProductSaleType productSaleType, int discount, String description, Date startedAt,
+	public ProductSale(ProductSaleType productSaleType, int discount, boolean active, String description, Date startedAt,
 			Date expiredAt, Set<Product> products) {
 		this.productSaleType = productSaleType;
 		this.discount = discount;
+		this.active = active;
 		this.description = description;
 		this.startedAt = startedAt;
 		this.expiredAt = expiredAt;

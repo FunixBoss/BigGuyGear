@@ -5,6 +5,4 @@ export class Wishlist {
     wishlistId: number;
     account?: Account
     product?: Product
-    createdAt: Date
-    updatedAt: Date
 }

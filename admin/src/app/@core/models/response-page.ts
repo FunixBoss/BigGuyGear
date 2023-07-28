@@ -1,4 +1,3 @@
-
 export class Paging {
     size: number;
     totalElements: number;

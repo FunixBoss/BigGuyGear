@@ -1,7 +1,6 @@
-import { Component, OnChanges, OnInit, SimpleChanges, Output, EventEmitter } from '@angular/core';
+import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { DefaultFilter } from 'ng2-smart-table';
-import { ProductCategoryService } from '../../../../@core/services/product/product-category.service';
-import { ProductCouponService } from '../../../../@core/services/product/product-coupon.service';
+import { ProductSaleService } from '../../../../@core/services/product/product-sale.service';
 
 @Component({
     template: `
@@ -11,14 +10,14 @@ import { ProductCouponService } from '../../../../@core/services/product/product
         </button>
     `,
 })
-export class CustomCouponFilterActionsComponent extends DefaultFilter implements OnInit, OnChanges {
+export class CustomSaleFilterActionsComponent extends DefaultFilter implements OnInit, OnChanges {
 
-    constructor(private couponService: ProductCouponService) {
+    constructor(private saleService: ProductSaleService) {
         super()
     }
 
     onAdd() {
-        this.couponService.updateHandleAndRowData('add');
+        this.saleService.updateHandleAndRowData('add');
     }
 
     ngOnInit() {let x}

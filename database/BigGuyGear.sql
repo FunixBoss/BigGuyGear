@@ -199,7 +199,9 @@ CREATE TABLE [ProductSaleType] (
 DROP TABLE IF EXISTS [ProductSale];
 CREATE TABLE [ProductSale] (
 	[product_sale_id] INT PRIMARY KEY IDENTITY,
+	[sale_name] NVARCHAR(50),
 	[discount] INT NOT NULL,
+	[active] BIT NOT NULL,
 	[product_sale_type_id] INT NOT NULL,
 	[description] NVARCHAR(200),
 	[started_at] DATETIME DEFAULT CURRENT_TIMESTAMP,

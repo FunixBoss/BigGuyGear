@@ -15,6 +15,12 @@ import { ImagesCarouselComponent } from '../images-carousel.component';
 import { ProductVariant } from '../../../@core/models/product/product-variant.model';
 import { ToastState, UtilsService } from '../../../@core/services/utils.service';
 import { Router } from '@angular/router';
+import { BRAND_IMAGE_DIRECTORY, CATEGORY_IMAGE_DIRECTORY } from '../../../@core/utils/image-storing-directory';
+import { ProductBrandService } from '../../../@core/services/product/product-brand.service';
+import { ProductBrand } from '../../../@core/models/product/product-brand.model';
+import { ProductSaleService } from '../../../@core/services/product/product-sale.service';
+import { ProductSale } from '../../../@core/models/sale/product-sale.model';
+import { ProductSize } from '../../../@core/models/product/product-size.model';
 
 @Component({
   selector: 'ngx-product-add',
@@ -27,9 +33,13 @@ export class ProductAddComponent implements OnInit, AfterViewInit {
   Editor = ClassicEditor;
   editorConfig: any = { placeholder: 'Description' };
 
-  colors: ProductColor[];
   styles: ProductStyle[];
   categories: ProductCategory[];
+  sales: ProductSale[];
+  brands: ProductBrand[];
+  sizes: ProductSize[]
+  colors: ProductColor[];
+
 
   // form chosen values
   addProductFormGroup: FormGroup
@@ -39,7 +49,9 @@ export class ProductAddComponent implements OnInit, AfterViewInit {
   constructor(
     private formBuilder: FormBuilder,
     private categoryService: ProductCategoryService,
+    private brandService: ProductBrandService,
     private styleService: ProductStyleService,
+    private saleService: ProductSaleService,
     private productService: ProductService,
     private colorService: ProductColorService,
     private utilsService: UtilsService,
@@ -48,35 +60,69 @@ export class ProductAddComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.categoryService.findAll().subscribe(
-      data => {
-        this.categories = data._embedded.categories
+    this.categoryService.findAll().subscribe(data => {
+      this.categories = data._embedded.categories.map(cate => {
+        return {
+          categoryId: cate.categoryId,
+          categoryName: cate.categoryName,
+          image: {
+            imageId: cate.image.imageId,
+            imageUrl: CATEGORY_IMAGE_DIRECTORY + cate.image.imageUrl
+          }
+        }
       })
-    this.styleService.findAll().subscribe(data => {this.styles = data._embedded.productStyles})
-    this.colorService.findAll().subscribe(
-      data => {
-          this.colors = data
+    })
+    this.brandService.findAll().subscribe(data => {
+      this.brands = data._embedded.productBrands.map(brand => {
+        return {
+          productBrandId: brand.productBrandId,
+          brandName: brand.brandName,
+          image: {
+            imageId: brand.image.imageId,
+            imageUrl: BRAND_IMAGE_DIRECTORY + brand.image.imageUrl
+          }
+        }
       })
+    })
+    this.styleService.findAll().subscribe(data => { this.styles = data._embedded.productStyles })
+    this.saleService.findAll().subscribe(data => { 
+      this.sales = data._embedded.productSales.filter(sale => sale.active != false) 
+    })
+    this.colorService.findAll().subscribe(data => { this.colors = data._embedded.productColors })
     this.settingFormGroup()
     this.addVariant()
   }
 
   ngAfterViewInit(): void {
-    this.accordions.first.toggle()
+    // this.accordions.first.toggle()
+    1
   }
 
   settingFormGroup(): void {
     this.addProductFormGroup = this.formBuilder.group({
       product: this.formBuilder.group({
         name: ['', [CustomValidator.notBlank, Validators.maxLength(200)]],
-        category: [''],
-        shape: [''],
-        style: [''],
+        category: [null],
+        brand: [null],
+        style: [null],
+        productSale: [null],
+        new: [true],
+        top: [false],
+        active: [true],
+        sale: [false],
         description: ['', [CustomValidator.notBlank, Validators.maxLength(1000)]],
         images: [this.images] // Initialize with the array of URLs, e.g., this.urls is the array obtained from selectFile method
       }),
       variants: this.formBuilder.array([])
     })
+  }
+
+  selectProductSale() {
+    if(this.product.get('productSale').value != null) {
+      this.product.get('sale').setValue(true);
+    } else {
+      this.product.get('sale').setValue(false);
+    }
   }
 
   // for variants
@@ -98,7 +144,6 @@ export class ProductAddComponent implements OnInit, AfterViewInit {
         reader.onload = (event: any) => {
           this.images.push(event.target.result);
         };
-
         reader.readAsDataURL(event.target.files[i]);
       }
     }
@@ -112,12 +157,13 @@ export class ProductAddComponent implements OnInit, AfterViewInit {
   addVariant(event?: Event): void {
     event != undefined ? event.preventDefault() : "";
     const variantForm = this.formBuilder.group({
-      height: [, [Validators.required, Validators.min(1), Validators.max(10000)]],
-      width: [, [Validators.required, Validators.min(1), Validators.max(10000)]],
       price: [, [Validators.required, Validators.min(1), Validators.max(10000)]],
       quantity: [, [Validators.required, Validators.min(1), Validators.max(100000)]],
+
+      size: [null, [Validators.required]],
+
       colorType: ['', [Validators.required]],
-      basicColorValue: ['', [Validators.required]],
+      basicColorValue: [null, [Validators.required]],
       customColorValue: ['', [Validators.required, Validators.maxLength(50)]],
       image: []
     })
@@ -130,12 +176,14 @@ export class ProductAddComponent implements OnInit, AfterViewInit {
   }
 
   onSubmit() {
+    console.log(this.product.value);
+    
     for (let group of this.variants.controls) {
-      if (group.get('colorType').value === 'Basic Color') {
+      if (group.get('colorType').value === 'basic') {
         group.get('customColorValue').setErrors(null);
       }
 
-      if (group.get('colorType').value === 'Custom Color') {
+      if (group.get('colorType').value === 'basic') {
         group.get('basicColorValue').setErrors(null)
       }
     }
@@ -156,26 +204,32 @@ export class ProductAddComponent implements OnInit, AfterViewInit {
   }
 
   mapFormValue(): Product {
-    let insertProduct: any = new Product();
+    let insertProduct: Product = new Product();
     insertProduct.productName = this.product.get('name').value;
     insertProduct.description = this.product.get('description').value;
-    insertProduct.isHide = false;
-    insertProduct.categoryId = this.categories.find(cate => cate.categoryName = this.product.get('category').value).categoryId;
-    insertProduct.productStyleId = this.styles.find(style => style.styleName = this.product.get('style').value).productStyleId;
+    insertProduct.category = this.product.get('category').value as ProductCategory;
+    insertProduct.productBrand = this.product.get('brand').value as ProductBrand;
+    insertProduct.productSale = this.product.get('sale').value as ProductSale;
+    insertProduct.productStyle = this.product.get('style').value as ProductStyle;
+    insertProduct.active = this.product.get('active').value as boolean;
+    insertProduct.top = this.product.get('top').value as boolean;
+    insertProduct.new = this.product.get('new').value as boolean;
+    insertProduct.sale = this.product.get('sale').value as boolean;
+
     insertProduct.images = this.product.get('images').value
     insertProduct.createdAt = new Date();
     insertProduct.updatedAt = new Date();
-    const productVariants: ProductVariant[] = this.variants.controls.map(group => {
+
+    const productVariants: ProductVariant[] = this.variants.controls.map(variantForm => {
       return {
         productVariantId: null,
-        height: +group.get('height').value as number,
-        width: +group.get('width').value as number,
-        price: +group.get('price').value as number,
-        quantity: +group.get('quantity').value as number,
-        color: group.get('colorType').value == 'Basic Color' ?
-          this.getColorValueFromType(group.get('colorType').value, group.get('basicColorValue').value) :
-          this.getColorValueFromType(group.get('colorType').value, group.get('customColorValue').value),
-        image: group.get('image').value
+        productSize: variantForm.get('size').value,
+        price: +variantForm.get('price').value as number,
+        quantity: +variantForm.get('quantity').value as number,
+        productColor: variantForm.get('colorType').value == 'Basic Color' ?
+          this.getColorValueFromType(variantForm.get('colorType').value, variantForm.get('basicColorValue').value) :
+          this.getColorValueFromType(variantForm.get('colorType').value, variantForm.get('customColorValue').value),
+        image: variantForm.get('image').value
       };
     });
     insertProduct.productVariants = productVariants;

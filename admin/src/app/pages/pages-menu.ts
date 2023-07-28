@@ -40,6 +40,10 @@ export const MENU_ITEMS_AUTHORIZED: NbMenuItem[] = [
         title: 'Product Coupon',
         link: '/admin/products/coupon',
       },
+      {
+        title: 'Product Sale',
+        link: '/admin/products/product-sale',
+      },
     ],
   },
   {

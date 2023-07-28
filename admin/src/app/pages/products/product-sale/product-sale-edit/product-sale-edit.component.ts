@@ -1,96 +1,97 @@
 import { Component, OnInit } from "@angular/core";
-import { Router } from "@angular/router";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { ProductCouponService } from "../../../../@core/services/product/product-coupon.service";
 import { ToastState, UtilsService } from "../../../../@core/services/utils.service";
 import { CustomValidator } from "../../../../@core/validators/custom-validator";
-import { Coupon } from "../../../../@core/models/coupon/coupon.model";
+import { ProductSale } from "../../../../@core/models/sale/product-sale.model";
+import { ProductSaleService } from "../../../../@core/services/product/product-sale.service";
 
 @Component({
-  selector: "ngx-products-coupon-edit",
-  templateUrl: "./product-coupon-edit.component.html",
-  styleUrls: ["./product-coupon-edit.component.scss"],
+  selector: "ngx-products-sale-edit",
+  templateUrl: "./product-sale-edit.component.html",
+  styleUrls: ["./product-sale-edit.component.scss"],
 })
-export class ProductCouponEditComponent implements OnInit {
-  editCouponFormGroup: FormGroup;
-
-  // Setting for List layout
-
+export class ProductSaleEditComponent implements OnInit {
+  editSaleFormGroup: FormGroup;
 
   constructor(
-    private couponService: ProductCouponService,
+    private saleService: ProductSaleService,
     private formBuilder: FormBuilder,
     private utilsService: UtilsService,
-    private router: Router
   ) {
-    this.editCouponFormGroup = this.formBuilder.group({
+    this.editSaleFormGroup = this.formBuilder.group({
       id: [],
-      code: ['', [CustomValidator.notBlank, Validators.maxLength(20)]],
+      name: ['', [CustomValidator.notBlank, Validators.maxLength(50)]],
       description: ['', [CustomValidator.notBlank, Validators.maxLength(50)]],
       discountType: ['', [Validators.required]],
+      active: [false],
       discountValue: [, [Validators.required, CustomValidator.maxCouponValue]],
-      startedDate: [, Validators.required],
-      expiredDate: [, Validators.required]
+      startedAt: [, Validators.required],
+      expiredAt: [, Validators.required]
     })
   }
 
   ngOnInit() {
-    this.couponService.rowData$.subscribe((rowData) => {
+    this.saleService.rowData$.subscribe((rowData) => {
       if (rowData) {
-        this.editCouponFormGroup.get('id').setValue(rowData.couponId)
-        this.editCouponFormGroup.get('code').setValue(rowData.code)
-        this.editCouponFormGroup.get('description').setValue(rowData.description)
+        console.log(rowData);
+        
+        this.editSaleFormGroup.get('id').setValue(rowData.productSaleId)
+        this.editSaleFormGroup.get('name').setValue(rowData.saleName)
+        this.editSaleFormGroup.get('description').setValue(rowData.description)
         if (rowData.discount.toString().indexOf('%') > -1) {
-          this.editCouponFormGroup.get('discountType').setValue('Percent')
-          this.editCouponFormGroup.get('discountValue').setValue(+rowData.discount.toString().slice(0, -1))
+          this.editSaleFormGroup.get('discountType').setValue('Percent')
+          this.editSaleFormGroup.get('discountValue').setValue(+rowData.discount.toString().slice(0, -1))
         } else {
-          this.editCouponFormGroup.get('discountType').setValue('Fixed')
-          this.editCouponFormGroup.get('discountValue').setValue(+rowData.discount.toString().slice(1))
+          this.editSaleFormGroup.get('discountType').setValue('Fixed')
+          this.editSaleFormGroup.get('discountValue').setValue(+rowData.discount.toString().slice(1))
         }
-        this.editCouponFormGroup.get('startedDate')
+        this.editSaleFormGroup.get('startedAt')
           .setValue(this.utilsService.parseStringToDate(rowData.startedAt.toString()))
-        this.editCouponFormGroup.get('expiredDate')
+        this.editSaleFormGroup.get('expiredAt')
           .setValue(this.utilsService.parseStringToDate(rowData.expiredAt.toString()))
+        this.editSaleFormGroup.get('active').setValue(rowData.active)
+
       }
     });
   }
 
-  submitEditCoupon() {
-    if (this.editCouponFormGroup.invalid) {
-      this.editCouponFormGroup.markAllAsTouched();
-      this.utilsService.updateToastState(new ToastState('Edit Coupon Failed!', "danger"))
+  submitEditSale() {
+    if (this.editSaleFormGroup.invalid) {
+      this.editSaleFormGroup.markAllAsTouched();
+      this.utilsService.updateToastState(new ToastState('Edit Product Sale Failed!', "danger"))
       return;
     }
 
-    const coupon = this.mapFormValue();
-    console.log(coupon);
-    
-    this.couponService.update(coupon).subscribe(
+    const sale = this.mapFormValue();
+    console.log(sale);
+
+    this.saleService.update(sale).subscribe(
       data => {
         if (data) {
-          this.utilsService.updateToastState(new ToastState('Edit Coupon Successfully!', "success"))
-          this.couponService.updateHandleAndRowData('add');
-          this.couponService.notifyCouponChange();
+          this.utilsService.updateToastState(new ToastState('Edit Product Sale Successfully!', "success"))
+          this.saleService.updateHandleAndRowData('add');
+          this.saleService.notifyProductSaleChange();
         } else {
-          this.utilsService.updateToastState(new ToastState('Edit Coupon Failed!', "danger"))
+          this.utilsService.updateToastState(new ToastState('Edit Product Sale Failed!', "danger"))
         }
       },
       error => {
-        this.utilsService.updateToastState(new ToastState('Edit Coupon Failed!', "danger"))
+        this.utilsService.updateToastState(new ToastState('Edit Product Sale Failed!', "danger"))
         console.log(error)
       }
     )
   }
 
-  mapFormValue(): Coupon {
-    let coupon: any = new Coupon();
-    coupon.couponId = this.editCouponFormGroup.get('id').value
-    coupon.code = this.editCouponFormGroup.get('code').value
-    coupon.discount = this.editCouponFormGroup.get('discountValue').value
-    coupon.description = this.editCouponFormGroup.get('description').value
-    coupon.couponType = this.couponService.findCouponTypeById(this.editCouponFormGroup.get('discountType').value == 'Fixed' ? 1 : 2);
-    coupon.startedAt = this.editCouponFormGroup.get('startedDate').value
-    coupon.expiredAt = this.editCouponFormGroup.get('expiredDate').value
-    return coupon
+  mapFormValue(): ProductSale {
+    let sale: ProductSale = new ProductSale();
+    sale.productSaleId = this.editSaleFormGroup.get('id').value
+    sale.saleName = this.editSaleFormGroup.get('name').value
+    sale.discount = this.editSaleFormGroup.get('discountValue').value
+    sale.description = this.editSaleFormGroup.get('description').value
+    sale.productSaleType = this.saleService.findProductSaleTypeById(this.editSaleFormGroup.get('discountType').value == 'Fixed' ? 1 : 2);
+    sale.active = this.editSaleFormGroup.get('active').value
+    sale.startedAt = this.editSaleFormGroup.get('startedAt').value
+    sale.expiredAt = this.editSaleFormGroup.get('expiredAt').value
+    return sale
   }
 }

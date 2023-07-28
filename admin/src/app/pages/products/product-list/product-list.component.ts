@@ -170,7 +170,7 @@ export class ProductListComponent implements OnInit, AfterViewInit {
           return {
             productId: pro.productId,
             productName: pro.productName,
-            isHide: pro.isHide,
+            isHide: pro.active,
             category: pro.category.categoryName,
             style: pro.productStyle.styleName,
             image: (pro.images != undefined) ? this.utilsService.getImageFromBase64(pro.images[0].imageUrl) : 'assets/images/default-product.png',

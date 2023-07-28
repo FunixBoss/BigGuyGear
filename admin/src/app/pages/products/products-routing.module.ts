@@ -10,6 +10,7 @@ import { ProductCategoryComponent } from './product-category/product-category.co
 import { ProductCouponComponent } from './product-coupon/product-coupon.component';
 import { ProductBrandComponent } from './product-brand/product-brand.component';
 import { ProductStyleComponent } from './product-style/product-style.component';
+import { ProductSaleComponent } from './product-sale/product-sale.component';
 
 const routes: Routes = [{
   path: '',
@@ -44,6 +45,10 @@ const routes: Routes = [{
       component: ProductCouponComponent,
     },
     {
+      path: 'product-sale',
+      component: ProductSaleComponent,
+    },
+    {
       path: 'product-style',
       component: ProductStyleComponent,
     },
@@ -65,5 +70,6 @@ export const routedComponents = [
   ProductCategoryComponent,
   ProductCouponComponent,
   ProductBrandComponent,
-  ProductStyleComponent
+  ProductStyleComponent,
+  ProductSaleComponent
 ];

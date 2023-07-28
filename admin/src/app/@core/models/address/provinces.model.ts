@@ -8,5 +8,4 @@ export class Province {
     fullNameEn: string;
     codeName: string;
     administrativeUnit: AdministrativeUnits
-    // administrativeRegion: 
 }

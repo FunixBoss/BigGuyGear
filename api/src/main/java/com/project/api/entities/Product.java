@@ -58,7 +58,7 @@ public class Product implements Serializable {
 	@Column(name = "description")
 	private String description;
 
-	@Column(name = "active")
+	@Column(name = "active")	
 	private Boolean active;
 
 	@Column(name = "sale")
@@ -83,8 +83,15 @@ public class Product implements Serializable {
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "product")
 	private Set<CartDetail> cartDetails = new HashSet<CartDetail>(0);
+
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "product")
 	private Set<OrderDetail> orderDetails = new HashSet<OrderDetail>(0);
+
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "Wishlist", joinColumns = {
+			@JoinColumn(name = "product_id", nullable = false, updatable = false) }, inverseJoinColumns = {
+			@JoinColumn(name = "account_id", nullable = false, updatable = false) })
+	private Set<Account> accounts = new HashSet<Account>(0);
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "ProductImage", joinColumns = {

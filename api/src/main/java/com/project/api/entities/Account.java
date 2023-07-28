@@ -65,6 +65,9 @@ public class Account implements java.io.Serializable {
 	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "accounts")
 	private Set<Address> addresses = new HashSet<Address>(0);
 
+	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "accounts")
+	private Set<Product> wishlists = new HashSet<Product>(0);
+
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "account")
 	private Set<ProductReview> productReviews = new HashSet<ProductReview>(0);
 
