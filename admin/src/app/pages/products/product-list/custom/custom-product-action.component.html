@@ -1,44 +1,20 @@
 <div class="row ">
-    <div class="col-lg-3 col-md-6 d-flex justify-content-center">
+    <div class="col-lg-4 col-md-6 d-flex justify-content-center">
         <button nbButton status="primary" (click)="onGetDetail()">
             <nb-icon icon="folder-outline"></nb-icon>
         </button>
     </div>
-    <div class="col-lg-3 col-md-6  d-flex justify-content-center">
+    <div class="col-lg-4 col-md-6  d-flex justify-content-center">
         <button nbButton status="warning" (click)="onEdit()">
             <nb-icon icon="edit-2-outline"></nb-icon>
         </button>
     </div>
-    <div class="col-lg-3 col-md-6  d-flex justify-content-center">
+    <div class="col-lg-4 col-md-6  d-flex justify-content-center">
         <button nbButton status="danger" (click)="onDelete($event)">
             <nb-icon icon="trash-outline"></nb-icon>
         </button>
     </div>
-    <div class="col-lg-3 col-md-6  d-flex justify-content-center">
-        <button nbButton status="info" (click)="onHide()">
-            <nb-icon *ngIf="isHide()" icon="eye-off-outline"></nb-icon>
-            <nb-icon *ngIf="!isHide()" icon="eye-outline"></nb-icon>
-        </button>
-    </div>
 </div>
-<ng-template #onHideTemplate let-data>
-    <nb-card>
-        <nb-card-header>
-            <ng-container *ngIf="isHide()">
-                Are you sure you want to hide this product?
-            </ng-container>
-            <ng-container *ngIf="!isHide()">
-                Are you sure you want to show this product?
-            </ng-container>
-        </nb-card-header>
-        <nb-card-body>
-            <button nbButton status="success" class="mt-3" (click)="hideProduct()">
-                CONFIRM
-            </button>
-        </nb-card-body>
-    </nb-card>
-</ng-template>
-
 <ng-template #onDeleteTemplate let-data>
     <nb-card>
         <nb-card-header>

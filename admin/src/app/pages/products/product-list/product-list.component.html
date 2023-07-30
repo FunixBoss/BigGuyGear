@@ -17,7 +17,22 @@
         </nb-select>
     </nb-card-header>
     <nb-card-body>
-        <ng2-smart-table id="product-table" [settings]="settings" [source]="source">
+        <ng2-smart-table id="product-table" [settings]="settings"
+            [source]="source" [ngClass]="'smart-table'"
+            (userRowSelect)="onRowSelect($event)">
         </ng2-smart-table>
     </nb-card-body>
+    <nb-card-footer>
+        <ng-container *ngIf="selectedProducts.length > 0">
+            <ngx-products-list-multi 
+                [selectedProducts]="selectedProducts"
+                (isDeleted)="onDelete($event)"
+                (isUpdatedNewStatus)="onUpdateNewStatus($event)"
+                (isUpdatedTopStatus)="onUpdateTopStatus($event)"
+                (isUpdatedActiveStatus)="onUpdateActiveStatus($event)"
+                (isAppliedSale)="onAppliedSale($event)"
+                (isUpdatedStatuses)="onUpdateStatuses($event)">
+            </ngx-products-list-multi>
+        </ng-container>
+    </nb-card-footer>
 </nb-card>

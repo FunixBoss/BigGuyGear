@@ -14,6 +14,11 @@ export class ProductColorService {
     private httpClient: HttpClient
   ) { }
 
+  findAllBasic(): Observable<GetColorResponse> {
+    const url: string = `${this.baseUrlService.baseURL}/product-colors/search/findByColorType?colorType=basic`
+    return this.httpClient.get<GetColorResponse>(url)
+  }
+
   findAll(): Observable<GetColorResponse> {
     const url: string = `${this.baseUrlService.baseURL}/product-colors`
     return this.httpClient.get<GetColorResponse>(url)
@@ -32,9 +37,5 @@ export class ProductColorService {
   delete(colorId: number): Observable<boolean> {    
     const url: string = `${this.baseUrlService.baseURL}/product-colors/delete/${colorId}`
     return this.httpClient.delete<boolean>(url); 
-  }
-
-  isBasicColor(color: ProductColor): boolean {
-    return (color.productColorId >= 1 && color.productColorId <= 10)
   }
 }

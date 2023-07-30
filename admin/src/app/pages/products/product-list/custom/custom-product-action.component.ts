@@ -44,7 +44,6 @@ export class CustomProductActionComponent implements ViewCell, OnInit {
     }
     
     ngOnInit(): void {
-        console.log(this.rowData);
         this.productId = this.rowData.productId
     }
 
@@ -63,32 +62,6 @@ export class CustomProductActionComponent implements ViewCell, OnInit {
     onDelete(event: any) {
         this.deleteWindowRef = this.windowService
             .open(this.deleteWindow, { title: `Delete Product` }); 
-    }
-
-    onHide() {
-        this.hideWindowRef = this.windowService
-            .open(this.hideWindow, { title: `Hide Product` });
-    }
-
-    hideProduct() {
-        this.productService.hideProduct(this.productId).subscribe(
-            data => {
-                if (data) {
-                    this.hideWindowRef.close()
-                    if(NbDataRowOutletDirective) {
-                        this.utilsService.updateToastState(new ToastState('Hide Product Successfully!', "success"))
-                    } else {
-                        this.utilsService.updateToastState(new ToastState('Show Product Successfully!', "success"))
-                    }
-                    this.productService.notifyProductChange();
-                } else {
-                    this.utilsService.updateToastState(new ToastState('Hide Product Failed!', "danger"))
-                }
-            }, 
-            error => {
-                this.utilsService.updateToastState(new ToastState('Hide Product Failed!', "danger"))
-            }
-        )
     }
 
     deleteProduct() {

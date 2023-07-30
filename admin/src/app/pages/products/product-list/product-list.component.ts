@@ -1,20 +1,23 @@
 import { takeUntil } from 'rxjs/operators';
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
-import { Router } from '@angular/router';
 import { CustomProductActionComponent } from './custom/custom-product-action.component';
 import { CustomProductFilterActionsComponent } from './custom/custom-product-filter-actions.component';
 import { ProductService } from '../../../@core/services/product/product.service';
 import { ProductCategoryService } from '../../../@core/services/product/product-category.service';
 import { ProductStyleService } from '../../../@core/services/product/product-style.service';
-import { ProductColorService } from '../../../@core/services/product/product-color.service';
 import { ProductStyle } from '../../../@core/models/product/product-style.model';
 import { ProductCategory } from '../../../@core/models/product/product-category.model';
 import { CustomCategoryImageComponent } from '../product-category/custom/custom-category-image.component';
-import { NbToastrService } from '@nebular/theme';
-import { Product } from '../../../@core/models/product/product.model';
 import { forkJoin, Subject } from 'rxjs';
-import { UtilsService } from '../../../@core/services/utils.service';
+import { PRODUCT_IMAGE_DIRECTORY } from '../../../@core/utils/image-storing-directory';
+import { ProductBrand } from '../../../@core/models/product/product-brand.model';
+import { ProductSale } from '../../../@core/models/sale/product-sale.model';
+import { ProductBrandService } from '../../../@core/services/product/product-brand.service';
+import { ProductSaleService } from '../../../@core/services/product/product-sale.service';
+import { CustomProductStatusComponent } from './custom/custom-product-status.component';
+import { CustomProductStatusFilterComponent } from './custom/custom-product-status-filter.component';
+import { ToastState, UtilsService } from '../../../@core/services/utils.service';
 
 @Component({
   selector: 'ngx-product-list',
@@ -25,11 +28,17 @@ export class ProductListComponent implements OnInit, AfterViewInit {
   private unsubscribe = new Subject<void>();
   numberOfItem: number = localStorage.getItem('itemPerPage') != null ? +localStorage.getItem('itemPerPage') : 10; // default
   source: LocalDataSource = new LocalDataSource();
+  
   // Setting for List layout
-  styles: ProductStyle[];
   categories: ProductCategory[];
+  brands: ProductBrand[];
+  styles: ProductStyle[];
+  sales: ProductSale[];
 
+  // for select multi
+  selectedProducts: any[] = []
   settings = {
+    selectMode: 'multi',
     actions: {
       position: 'right',
       edit: false,
@@ -47,11 +56,10 @@ export class ProductListComponent implements OnInit, AfterViewInit {
 
   constructor(
     private productService: ProductService,
-    private router: Router,
     private categoryService: ProductCategoryService,
     private styleService: ProductStyleService,
-    private colorService: ProductColorService,
-    private toastService: NbToastrService,
+    private brandService: ProductBrandService,
+    private saleService: ProductSaleService,
     private utilsService: UtilsService
   ) {
 
@@ -59,15 +67,19 @@ export class ProductListComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     const categoryObservable = this.categoryService.findAll();
+    const brandObservable = this.brandService.findAll();
     const styleObservable = this.styleService.findAll();
+    const saleObservable = this.saleService.findAll();
 
-    forkJoin([categoryObservable, styleObservable]).subscribe(
-      ([categoryData, styleData]) => {
+    forkJoin([categoryObservable, brandObservable, styleObservable, saleObservable]).subscribe(
+      ([categoryData, brandData, styleData, saleData]) => {
         this.categories = categoryData._embedded.categories;
+        this.brands = brandData._embedded.productBrands;
         this.styles = styleData._embedded.productStyles;
+        this.sales = saleData._embedded.productSales;
 
-        // after run all of them, then load settings
         this.settings = {
+          selectMode: 'multi',
           actions: {
             position: 'right',
             edit: false,
@@ -105,6 +117,19 @@ export class ProductListComponent implements OnInit, AfterViewInit {
                 },
               },
             },
+            brand: {
+              title: 'Brand',
+              type: 'string',
+              filter: {
+                type: 'list',
+                config: {
+                  selectText: 'Brand...',
+                  list: this.brands.map(brand => {
+                    return { value: brand.brandName, title: brand.brandName }
+                  })
+                },
+              },
+            },
             style: {
               title: 'Style',
               type: 'string',
@@ -118,7 +143,20 @@ export class ProductListComponent implements OnInit, AfterViewInit {
                 },
               },
             },
-            quantitySold: {
+            sale: {
+              title: 'Sale',
+              type: 'string',
+              filter: {
+                type: 'list',
+                config: {
+                  selectText: 'Sale...',
+                  list: this.sales.map(sale => {
+                    return { value: sale.saleName, title: sale.saleName }
+                  })
+                },
+              },
+            },
+            totalSold: {
               title: 'Sold',
               type: 'number',
               width: '5%'
@@ -128,10 +166,30 @@ export class ProductListComponent implements OnInit, AfterViewInit {
               type: 'number',
               width: '5%'
             },
-            rating: {
+            totalRating: {
               title: 'Rating',
               type: 'number',
-              width: '3%'
+              width: '5%'
+            },
+            status: {
+              title: 'Status',
+              type: 'custom',
+              sort: false,
+              width: "7%",
+              filter: {
+                type: 'custom',
+                component: CustomProductStatusFilterComponent,
+              },
+              renderComponent: CustomProductStatusComponent,
+              filterFunction : (value, query) => {
+                value = JSON.parse(value)
+                query = JSON.parse(query)
+                const result: boolean = query.every((status) => value[status] === true);
+                value = JSON.stringify(value);
+                query = JSON.stringify(query);
+
+                return result
+              }
             },
             actions: {
               title: 'Actions',
@@ -166,17 +224,24 @@ export class ProductListComponent implements OnInit, AfterViewInit {
   loadProducts() {
     this.productService.findAll().subscribe(
       data => {
-        const mappedProducts: any[] = (data as Product[]).map(pro => {
+        const mappedProducts: any[] = data.map(pro => {
           return {
             productId: pro.productId,
             productName: pro.productName,
-            isHide: pro.active,
-            category: pro.category.categoryName,
-            style: pro.productStyle.styleName,
-            image: (pro.images != undefined) ? this.utilsService.getImageFromBase64(pro.images[0].imageUrl) : 'assets/images/default-product.png',
-            quantitySold: pro.quantitySold,
+            category: pro.categoryName,
+            brand: pro.brandName,
+            style: pro.styleName,
+            sale: pro.saleName,
+            image: PRODUCT_IMAGE_DIRECTORY + pro.imageUrl,
+            status: JSON.stringify({
+              new: pro.new_,
+              top: pro.top,
+              active: pro.active,
+              sale: pro.sale,
+            }),
+            totalSold: pro.totalSold,
             totalLikes: pro.totalLikes,
-            rating: pro.rating
+            totalRating: pro.totalRating,
           }
         })
         this.source.load(mappedProducts)
@@ -188,15 +253,73 @@ export class ProductListComponent implements OnInit, AfterViewInit {
     pager.classList.add('d-block')
   }
 
-  changeCursor(): void {
-    const element = document.getElementById('product-table'); // Replace 'myElement' with the ID of your element
-    if (element) {
-      element.style.cursor = 'pointer';
-    }
-  }
-
   numberOfItemsChange() {
     localStorage.setItem('itemPerPage', this.numberOfItem.toString())
     this.source.setPaging(1, this.numberOfItem)
+  }
+
+  onRowSelect(event: any): void {
+    this.selectedProducts = (event.selected)
+    
+  }
+
+  onDelete(isDeleted: boolean) {
+    if(isDeleted) {
+      this.loadProducts();
+      this.selectedProducts = []
+      this.utilsService.updateToastState(new ToastState('Delete The Product\'s Status Successfully!', "success"))
+    } else {
+      this.utilsService.updateToastState(new ToastState('Delete The Product\'s Status Failed!', "danger"))
+    }
+  }
+
+  onUpdateNewStatus(isUpdated: boolean) {
+    if(isUpdated) {
+      this.selectedProducts = []
+      this.loadProducts();
+      this.utilsService.updateToastState(new ToastState("Updated The Product's Status New Successfully!", "success"))
+    } else {
+      this.utilsService.updateToastState(new ToastState("Updated The Product's Status New Failed!", "danger"))
+    }
+  }
+
+  onUpdateTopStatus(isUpdated: boolean) {
+    if(isUpdated) {
+      this.selectedProducts = []
+      this.loadProducts();
+      this.utilsService.updateToastState(new ToastState("Updated The Product's Status Top Successfully!", "success"))
+    } else {
+      this.utilsService.updateToastState(new ToastState("Updated The Product's Status Top Failed!", "danger"))
+    }
+  }
+
+  onUpdateActiveStatus(isUpdated: boolean) {
+    if(isUpdated) {
+      this.selectedProducts = []
+      this.loadProducts();
+      this.utilsService.updateToastState(new ToastState("Updated The Product's Status Active Successfully!", "success"))
+    } else {
+      this.utilsService.updateToastState(new ToastState("Updated The Product's Status Active Failed!", "danger"))
+    }
+  }
+
+  onAppliedSale(isAppliedSale: boolean) {
+    if(isAppliedSale) {
+      this.selectedProducts = []
+      this.loadProducts();
+      this.utilsService.updateToastState(new ToastState("Updated The Product's Sale Successfully!", "success"))
+    } else {
+      this.utilsService.updateToastState(new ToastState("Updated The Product's Sale Failed!", "danger"))
+    }
+  }
+
+  onUpdateStatuses(isUpdated: boolean) {
+    if(isUpdated) {
+      this.selectedProducts = []
+      this.loadProducts();
+      this.utilsService.updateToastState(new ToastState("Updated Statuses Successfully!", "success"))
+    } else {
+      this.utilsService.updateToastState(new ToastState("Updated Statuses Failed!", "danger"))
+    }
   }
 }

@@ -34,7 +34,8 @@
                         <div class="col-lg-6 col-md-12 mt-3">
                             <nb-select fullWidth placeholder="Category" formControlName="category">
                                 <nb-select-label>
-                                    Category: {{ product.get('category').value !== null ? product.get('category').value['categoryName'] : null}}
+                                    Category: {{ product.get('category').value !== null ?
+                                    product.get('category').value['categoryName'] : null}}
                                 </nb-select-label>
                                 <nb-option>Reset</nb-option>
                                 <nb-option *ngFor="let cate of categories" [value]="cate">
@@ -53,7 +54,8 @@
                         <div class="col-lg-6 col-md-12 mt-3">
                             <nb-select fullWidth placeholder="Brand" formControlName="brand">
                                 <nb-select-label>
-                                    Brand: {{ product.get('brand').value !== null ? product.get('brand').value['brandName'] : null}}
+                                    Brand: {{ product.get('brand').value !== null ?
+                                    product.get('brand').value['brandName'] : null}}
                                 </nb-select-label>
                                 <nb-option>Reset</nb-option>
                                 <nb-option *ngFor="let brand of brands" [value]="brand">
@@ -72,7 +74,8 @@
                         <div class="col-lg-6 col-md-12  mt-3">
                             <nb-select fullWidth placeholder="Style" formControlName="style">
                                 <nb-select-label>
-                                    Style: {{ product.get('style').value !== null ? product.get('style').value['styleName'] : null}}
+                                    Style: {{ product.get('style').value !== null ?
+                                    product.get('style').value['styleName'] : null}}
                                 </nb-select-label>
                                 <nb-option>Reset</nb-option>
                                 <nb-option *ngFor="let style of styles" [value]="style">{{style.styleName}}</nb-option>
@@ -83,7 +86,8 @@
                             <nb-select fullWidth placeholder="Product Sale" formControlName="productSale"
                                 (selectedChange)="selectProductSale()">
                                 <nb-select-label>
-                                    Sale: {{ product.get('productSale').value !== null ? product.get('productSale').value['saleName'] : null}}
+                                    Sale: {{ product.get('productSale').value !== null ?
+                                    product.get('productSale').value['saleName'] : null}}
                                 </nb-select-label>
                                 <nb-option>Reset</nb-option>
                                 <nb-option *ngFor="let sale of sales" [value]="sale">
@@ -107,34 +111,27 @@
                         <div class="col-6 mt-3">
                             <div class="row">
                                 <div class="col-6">
-                                    <nb-checkbox 
-                                        (checkedChange)="product.get('new').setValue($event)"
-                                        [checked]="product.get('new').value"
-                                        status="success" >
+                                    <nb-checkbox (checkedChange)="product.get('new').setValue($event)"
+                                        [checked]="product.get('new').value" status="success">
                                         New
                                     </nb-checkbox>
                                 </div>
                                 <div class="col-6">
-                                    <nb-checkbox 
-                                        (checkedChange)="product.get('active').setValue($event)"
-                                        [checked]="product.get('active').value"    
-                                        status="warning">
+                                    <nb-checkbox (checkedChange)="product.get('active').setValue($event)"
+                                        [checked]="product.get('active').value" status="warning">
                                         Active
                                     </nb-checkbox>
                                 </div>
                                 <div class="col-6 mt-2">
-                                    <nb-checkbox 
-                                        (checkedChange)="product.get('top').setValue($event)"
-                                        [checked]="product.get('top').value"
-                                        status="danger">
+                                    <nb-checkbox (checkedChange)="product.get('top').setValue($event)"
+                                        [checked]="product.get('top').value" status="danger">
                                         Top
                                     </nb-checkbox>
                                 </div>
                                 <div class="col-6 mt-2">
-                                    <nb-checkbox 
-                                        (checkedChange)="product.get('sale').setValue($event)"
-                                        [checked]="product.get('sale').value"
-                                        status="info" [disabled]="true">
+                                    <nb-checkbox (checkedChange)="product.get('sale').setValue($event)"
+                                        [checked]="product.get('sale').value" status="info"
+                                        (click)="$event.preventDefault()">
                                         Sale
                                     </nb-checkbox>
                                 </div>
@@ -155,6 +152,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="col-12 mt-3">
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
@@ -164,6 +162,12 @@
                                     <input type="file" mutliple class="custom-file-input" multiple
                                         accept="image/png, image/jpeg" (change)="selectFiles($event)">
                                     <label class="custom-file-label">Choose images</label>
+                                </div>
+                            </div>
+                            <div class="alert alert-danger mt-1"
+                                *ngIf="product.get('images').invalid && (product.get('images').dirty || product.get('images').touched)">
+                                <div *ngIf="product.get('images').errors['required']">
+                                    Must upload at least 1 image
                                 </div>
                             </div>
                             <div class="row">
@@ -236,7 +240,8 @@
                                     </div>
 
                                     <div class="col-lg-3 my-2">
-                                        <nb-radio-group formControlName="colorType" status="success" [name]="i">
+                                        <nb-radio-group formControlName="colorType" status="success"
+                                            [name]="'color' + i">
                                             <nb-radio value="basic">Basic Color</nb-radio>
                                             <nb-radio value="custom">Custom Color</nb-radio>
                                         </nb-radio-group>
@@ -247,14 +252,16 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-9 my-2 d-flex align-items-center">
+                                    <div class="col-lg-9 my-2">
                                         <ng-container *ngIf="variantForm.get('colorType').value === 'basic'">
                                             <nb-select fullWidth placeholder="Color" formControlName="basicColorValue">
                                                 <nb-select-label>
-                                                    Color: {{ variantForm.get('basicColorValue').value !== null ? variantForm.get('basicColorValue').value['colorName'] : null}}
+                                                    Color: {{ variantForm.get('basicColorValue').value !== null ?
+                                                    variantForm.get('basicColorValue').value['colorName'] : null}}
                                                 </nb-select-label>
                                                 <nb-option>Reset</nb-option>
-                                                <nb-option *ngFor="let color of colors" [value]="color">{{color.colorName}}</nb-option>
+                                                <nb-option *ngFor="let color of colors"
+                                                    [value]="color">{{color.colorName}}</nb-option>
                                             </nb-select>
                                         </ng-container>
                                         <ng-container *ngIf="variantForm.get('colorType').value === 'custom'">
@@ -263,7 +270,7 @@
                                         </ng-container>
 
                                         <div class="alert alert-danger my-2"
-                                            *ngIf="variantForm.get('colorType').value === 'Basic Color' && 
+                                            *ngIf="variantForm.get('colorType').value === 'basic' && 
                                                     variantForm.get('basicColorValue').invalid &&
                                                     (variantForm.get('basicColorValue').dirty || variantForm.get('basicColorValue').touched)">
                                             <div *ngIf="variantForm.get('basicColorValue').errors['required']">
@@ -271,7 +278,7 @@
                                             </div>
                                         </div>
                                         <div class="alert alert-danger my-2"
-                                            *ngIf="variantForm.get('colorType').value === 'Custom Color' && 
+                                            *ngIf="variantForm.get('colorType').value === 'custom' && 
                                                     variantForm.get('customColorValue').invalid &&
                                                     (variantForm.get('customColorValue').dirty || variantForm.get('customColorValue').touched)">
                                             <div *ngIf="variantForm.get('customColorValue').errors['required']">
@@ -283,12 +290,62 @@
                                         </div>
                                     </div>
 
+                                    <div class="col-lg-3 my-2">
+                                        <nb-radio-group formControlName="sizeType" status="info" [name]="'size' + i">
+                                            <nb-radio value="basic">Basic Size</nb-radio>
+                                            <nb-radio value="custom">Custom Size</nb-radio>
+                                        </nb-radio-group>
+                                        <div class="alert alert-danger mt-1"
+                                            *ngIf="variantForm.get('sizeType').invalid && (variantForm.get('sizeType').dirty || variantForm.get('sizeType').touched)">
+                                            <div *ngIf="variantForm.get('sizeType').errors['required']">
+                                                Size Type is required
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-9 my-2">
+                                        <ng-container *ngIf="variantForm.get('sizeType').value === 'basic'">
+                                            <nb-select fullWidth placeholder="Size" formControlName="basicSizeValue">
+                                                <nb-select-label>
+                                                    Size: {{ variantForm.get('basicSizeValue').value !== null ?
+                                                    variantForm.get('basicSizeValue').value['sizeName'] : null}}
+                                                </nb-select-label>
+                                                <nb-option>Reset</nb-option>
+                                                <nb-option *ngFor="let size of sizes"
+                                                    [value]="size">{{size.sizeName}}</nb-option>
+                                            </nb-select>
+                                        </ng-container>
+                                        <ng-container *ngIf="variantForm.get('sizeType').value === 'custom'">
+                                            <input type="text" nbInput fullWidth placeholder="Size"
+                                                formControlName="customSizeValue">
+                                        </ng-container>
+
+                                        <div class="alert alert-danger my-2"
+                                            *ngIf="variantForm.get('sizeType').value === 'basic' && 
+                                                    variantForm.get('basicSizeValue').invalid &&
+                                                    (variantForm.get('basicSizeValue').dirty || variantForm.get('basicSizeValue').touched)">
+                                            <div *ngIf="variantForm.get('basicSizeValue').errors['required']">
+                                                Size is required
+                                            </div>
+                                        </div>
+                                        <div class="alert alert-danger my-2"
+                                            *ngIf="variantForm.get('sizeType').value === 'custom' && 
+                                                    variantForm.get('customSizeValue').invalid &&
+                                                    (variantForm.get('customSizeValue').dirty || variantForm.get('customSizeValue').touched)">
+                                            <div *ngIf="variantForm.get('customSizeValue').errors['required']">
+                                                Size is required
+                                            </div>
+                                            <div *ngIf="variantForm.get('customSizeValue').errors['maxlength']">
+                                                Size Name must not exceed 50 characters
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="col-lg-4">
                                         <div class="input-group mb-3">
                                             <div class="custom-file">
                                                 <input type="file" class="custom-file-input"
                                                     accept="image/png, image/jpeg" (change)="selectFile($event, i)">
-                                                <label class="custom-file-label">Choose images</label>
+                                                <label class="custom-file-label">Choose image</label>
                                             </div>
                                         </div>
                                     </div>

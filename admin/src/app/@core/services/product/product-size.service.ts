@@ -16,6 +16,11 @@ export class ProductSizeService {
   ) {
   }
 
+  findAllBasic(): Observable<GetProductSizeResponse> {
+    const url: string = `${this.baseUrlService.baseURL}/product-sizes/search/findBySizeType?sizeType=basic`
+    return this.httpClient.get<GetProductSizeResponse>(url)
+  }
+
   findAll(): Observable<GetProductSizeResponse> {
     const url: string = `${this.baseUrlService.baseURL}/product-sizes`
     return this.httpClient.get<GetProductSizeResponse>(url)

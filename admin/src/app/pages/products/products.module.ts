@@ -33,6 +33,9 @@ import { ProductSaleEditComponent } from './product-sale/product-sale-edit/produ
 import { CustomSaleActionComponent } from './product-sale/custom/custom-sale-action.component';
 import { CustomSaleActiveActionComponent } from './product-sale/custom/custom-sale-active-action.component';
 import { ProductSaleMultiComponent } from './product-sale/product-sale-multi/product-sale-multi.component';
+import { CustomProductStatusComponent } from './product-list/custom/custom-product-status.component';
+import { CustomProductStatusFilterComponent } from './product-list/custom/custom-product-status-filter.component';
+import { ProductListMultiComponent } from './product-list/product-list-multi/product-list-multi.component';
 
 @NgModule({
   imports: [
@@ -63,7 +66,10 @@ import { ProductSaleMultiComponent } from './product-sale/product-sale-multi/pro
     ...routedComponents,
     CustomProductActionComponent,
     CustomProductFilterActionsComponent,
+    CustomProductStatusComponent,
     ImagesCarouselComponent,
+    CustomProductStatusFilterComponent,
+    ProductListMultiComponent,
 
     CustomCategoryActionComponent,
     CustomCategoryFilterActionsComponent,

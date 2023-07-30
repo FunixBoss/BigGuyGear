@@ -199,7 +199,7 @@ CREATE TABLE [ProductSaleType] (
 DROP TABLE IF EXISTS [ProductSale];
 CREATE TABLE [ProductSale] (
 	[product_sale_id] INT PRIMARY KEY IDENTITY,
-	[sale_name] NVARCHAR(50),
+	[sale_name] NVARCHAR(50) NOT NULL,
 	[discount] INT NOT NULL,
 	[active] BIT NOT NULL,
 	[product_sale_type_id] INT NOT NULL,
@@ -248,7 +248,7 @@ CREATE TABLE [ProductReview] (
 	[account_id] INT NOT NULL,
 	[product_id] INT NOT NULL,
 	[content] NVARCHAR(1000) NOT NULL,
-	[rating] tinyINT NOT NULL,
+	[rating] INT NOT NULL,
 	[created_at] DATETIME DEFAULT CURRENT_TIMESTAMP,
 	[updated_at] DATETIME DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT [product_review_ibfk_1] FOREIGN KEY ([account_id]) REFERENCES[Account] ([id]),
@@ -285,6 +285,14 @@ CREATE TABLE [ProductVariant] (
 )
 
 
+DROP TABLE IF EXISTS [Wishlist];
+CREATE TABLE [Wishlist] (
+	[account_id] INT NOT NULL,
+	[product_id] INT NOT NULL,
+	PRIMARY KEY ([account_id], [product_id]),
+	CONSTRAINT [wishlist_ibfk_1] FOREIGN KEY ([account_id]) REFERENCES [Account] ([id]),
+	CONSTRAINT [wishlist_ibfk_2] FOREIGN KEY ([product_id]) REFERENCES [Product] ([product_id])
+) 
 
 -- CART
 DROP TABLE IF EXISTS [Cart];
@@ -298,13 +306,12 @@ CREATE TABLE [Cart] (
 
 DROP TABLE IF EXISTS [CartDetail];
 CREATE TABLE [CartDetail] (
-	[cart_detail_id] INT NOT NULL IDENTITY,
+	[cart_detail_id] INT PRIMARY KEY IDENTITY,
 	[product_id] INT NOT NULL,
 	[quantity] INT NOT NULL,
 	[price] decimal(18,2) NOT NULL,
 	[cart_id] INT NOT NULL,
 	[product_variant_id] INT,
-	PRIMARY KEY ([cart_detail_id]),
 	CONSTRAINT [cart_detail_ibfk_1] FOREIGN KEY ([product_variant_id]) REFERENCES [ProductVariant] ([product_variant_id]),
 	CONSTRAINT [cart_detail_ibfk_2] FOREIGN KEY ([cart_id]) REFERENCES [Cart] ([cart_id]),
 	CONSTRAINT [cart_detail_ibfk_3] FOREIGN KEY ([product_id]) REFERENCES [Product] ([product_id])
@@ -327,7 +334,7 @@ CREATE TABLE [OrderStatus] (
 
 DROP TABLE IF EXISTS [Order];
 CREATE TABLE [Order] (
-	[order_id] INT NOT NULL IDENTITY,
+	[order_id] INT PRIMARY KEY IDENTITY,
 	[order_tracking_number] NVARCHAR(50),
 	[account_id] INT NOT NULL,
 	[coupon_id] INT,
@@ -339,7 +346,6 @@ CREATE TABLE [Order] (
 	[address_id] INT NOT NULL,
 	[created_at] DATETIME DEFAULT CURRENT_TIMESTAMP,
 	[updated_at] DATETIME DEFAULT CURRENT_TIMESTAMP,
-	PRIMARY KEY ([order_id]),
 	CONSTRAINT [order_ibfk_1] FOREIGN KEY ([payment_method_id]) REFERENCES [PaymentMethod] ([payment_method_id]),
 	CONSTRAINT [order_ibfk_2] FOREIGN KEY ([account_id]) REFERENCES [Account] ([id]),
 	CONSTRAINT [order_ibfk_3] FOREIGN KEY ([order_status_id]) REFERENCES [OrderStatus] ([order_status_id]),

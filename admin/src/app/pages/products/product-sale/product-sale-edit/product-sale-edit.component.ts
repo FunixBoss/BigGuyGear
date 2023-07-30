@@ -33,8 +33,6 @@ export class ProductSaleEditComponent implements OnInit {
   ngOnInit() {
     this.saleService.rowData$.subscribe((rowData) => {
       if (rowData) {
-        console.log(rowData);
-        
         this.editSaleFormGroup.get('id').setValue(rowData.productSaleId)
         this.editSaleFormGroup.get('name').setValue(rowData.saleName)
         this.editSaleFormGroup.get('description').setValue(rowData.description)

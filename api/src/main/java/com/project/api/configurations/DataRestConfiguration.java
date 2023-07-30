@@ -29,15 +29,16 @@ public class DataRestConfiguration  implements RepositoryRestConfigurer {
     }
 
     @Override
-    public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config, CorsRegistry cors) {
+    public void configureRepositoryRestConfiguration(
+            RepositoryRestConfiguration config, CorsRegistry cors) {
         exposeIds(config);
 
-        cors.addMapping(config.getBasePath() + "/**")
-                .allowedOrigins(allowedOrigins);
-//                .allowedMethods("GET", "POST", "PUT", "DELETE")
-//                .allowCredentials(true);
-
+        cors.addMapping("/*")
+                .allowedOrigins("http://localhost:4200")
+                .allowedMethods("GET", "POST", "PUT", "DELETE");
     }
+
+
     private void exposeIds(RepositoryRestConfiguration config) {
         // - get a list of all entity classes from the entity manager
         Set<EntityType<?>> entities = entityManager.getMetamodel().getEntities();

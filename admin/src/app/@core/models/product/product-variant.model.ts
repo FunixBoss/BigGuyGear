@@ -10,3 +10,14 @@ export class ProductVariant {
     price: number;
     image?: Image;
 }
+
+export class ProductVariantDTO {
+    productVariantId: number;
+    productSizeId: number;
+    sizeName: string;
+    productColorId: number;
+    colorName: string;
+    quantity: number;
+    price: number;
+    imageUrl: string;
+}

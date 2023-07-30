@@ -1,3 +1,4 @@
+import { map } from 'rxjs/operators';
 import { ProductCategory } from './../../../@core/models/product/product-category.model';
 import { ProductCategoryService } from './../../../@core/services/product/product-category.service';
 import { AfterViewInit, Component, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
@@ -21,6 +22,7 @@ import { ProductBrand } from '../../../@core/models/product/product-brand.model'
 import { ProductSaleService } from '../../../@core/services/product/product-sale.service';
 import { ProductSale } from '../../../@core/models/sale/product-sale.model';
 import { ProductSize } from '../../../@core/models/product/product-size.model';
+import { ProductSizeService } from '../../../@core/services/product/product-size.service';
 
 @Component({
   selector: 'ngx-product-add',
@@ -43,7 +45,6 @@ export class ProductAddComponent implements OnInit, AfterViewInit {
 
   // form chosen values
   addProductFormGroup: FormGroup
-  descriptionContent: string;
   images: string[] = []
 
   constructor(
@@ -52,12 +53,12 @@ export class ProductAddComponent implements OnInit, AfterViewInit {
     private brandService: ProductBrandService,
     private styleService: ProductStyleService,
     private saleService: ProductSaleService,
+    private sizeService: ProductSizeService,
     private productService: ProductService,
     private colorService: ProductColorService,
     private utilsService: UtilsService,
     private router: Router
-  ) {
-  }
+  ) { }
 
   ngOnInit() {
     this.categoryService.findAll().subscribe(data => {
@@ -85,17 +86,17 @@ export class ProductAddComponent implements OnInit, AfterViewInit {
       })
     })
     this.styleService.findAll().subscribe(data => { this.styles = data._embedded.productStyles })
-    this.saleService.findAll().subscribe(data => { 
-      this.sales = data._embedded.productSales.filter(sale => sale.active != false) 
+    this.saleService.findAll().subscribe(data => {
+      this.sales = data._embedded.productSales.filter(sale => sale.active != false)
     })
-    this.colorService.findAll().subscribe(data => { this.colors = data._embedded.productColors })
+    this.sizeService.findAllBasic().subscribe(data => { this.sizes = data._embedded.productSizes })
+    this.colorService.findAllBasic().subscribe(data => { this.colors = data._embedded.productColors })
     this.settingFormGroup()
     this.addVariant()
   }
 
   ngAfterViewInit(): void {
-    // this.accordions.first.toggle()
-    1
+    this.accordions.first.toggle()
   }
 
   settingFormGroup(): void {
@@ -111,14 +112,14 @@ export class ProductAddComponent implements OnInit, AfterViewInit {
         active: [true],
         sale: [false],
         description: ['', [CustomValidator.notBlank, Validators.maxLength(1000)]],
-        images: [this.images] // Initialize with the array of URLs, e.g., this.urls is the array obtained from selectFile method
+        images: [this.images, [Validators.required]]
       }),
       variants: this.formBuilder.array([])
     })
   }
 
   selectProductSale() {
-    if(this.product.get('productSale').value != null) {
+    if (this.product.get('productSale').value != null) {
       this.product.get('sale').setValue(true);
     } else {
       this.product.get('sale').setValue(false);
@@ -138,6 +139,7 @@ export class ProductAddComponent implements OnInit, AfterViewInit {
 
   // for product
   selectFiles(event: any) {
+    this.images = []
     if (event.target.files) {
       for (let i = 0; i < event.target.files.length; i++) {
         const reader = new FileReader();
@@ -147,7 +149,8 @@ export class ProductAddComponent implements OnInit, AfterViewInit {
         reader.readAsDataURL(event.target.files[i]);
       }
     }
-
+    this.product.get('images').setValue(this.images)
+    this.product.get('images').setErrors(null)
     this.carousel.show(this.images);
   }
 
@@ -160,7 +163,9 @@ export class ProductAddComponent implements OnInit, AfterViewInit {
       price: [, [Validators.required, Validators.min(1), Validators.max(10000)]],
       quantity: [, [Validators.required, Validators.min(1), Validators.max(100000)]],
 
-      size: [null, [Validators.required]],
+      sizeType: [null, [Validators.required]],
+      basicSizeValue: [null, [Validators.required]],
+      customSizeValue: ['', [Validators.required, Validators.maxLength(50)]],
 
       colorType: ['', [Validators.required]],
       basicColorValue: [null, [Validators.required]],
@@ -176,15 +181,19 @@ export class ProductAddComponent implements OnInit, AfterViewInit {
   }
 
   onSubmit() {
-    console.log(this.product.value);
+    console.log(this.product.get('images').value);
     
     for (let group of this.variants.controls) {
       if (group.get('colorType').value === 'basic') {
         group.get('customColorValue').setErrors(null);
+      } else if (group.get('colorType').value === 'custom') {
+        group.get('basicColorValue').setErrors(null)
       }
 
-      if (group.get('colorType').value === 'basic') {
-        group.get('basicColorValue').setErrors(null)
+      if (group.get('sizeType').value === 'basic') {
+        group.get('customSizeValue').setErrors(null);
+      } else if (group.get('sizeType').value === 'custom') {
+        group.get('basicSizeValue').setErrors(null)
       }
     }
 
@@ -196,55 +205,66 @@ export class ProductAddComponent implements OnInit, AfterViewInit {
 
     const insertProduct: Product = this.mapFormValue()
     console.log(insertProduct);
-    this.productService.insert(insertProduct).subscribe(data => {
-
-      this.utilsService.updateToastState(new ToastState('Add Product Successfully!', 'success'))
-      this.router.navigate(['/admin/product/list'])
-    })
+    this.productService.insert(insertProduct).subscribe(
+      data => {
+        if (data) {
+          this.utilsService.updateToastState(new ToastState('Add Product Successfully!', 'success'))
+          this.router.navigate(['/admin/product/list'])
+        } else {
+          this.utilsService.updateToastState(new ToastState('Add Product Failed!', 'danger'))
+        }
+      },
+      error => {
+        console.log(error);
+        this.utilsService.updateToastState(new ToastState('Add Product Failed!', 'danger'))
+      }  
+    )
   }
 
   mapFormValue(): Product {
     let insertProduct: Product = new Product();
     insertProduct.productName = this.product.get('name').value;
     insertProduct.description = this.product.get('description').value;
-    insertProduct.category = this.product.get('category').value as ProductCategory;
-    insertProduct.productBrand = this.product.get('brand').value as ProductBrand;
-    insertProduct.productSale = this.product.get('sale').value as ProductSale;
-    insertProduct.productStyle = this.product.get('style').value as ProductStyle;
-    insertProduct.active = this.product.get('active').value as boolean;
-    insertProduct.top = this.product.get('top').value as boolean;
-    insertProduct.new = this.product.get('new').value as boolean;
-    insertProduct.sale = this.product.get('sale').value as boolean;
+    insertProduct.category = this.product.get('category').value;
+    insertProduct.productBrand = this.product.get('brand').value;
+    insertProduct.productSale = this.product.get('productSale').value;
+    insertProduct.productStyle = this.product.get('style').value;
+    insertProduct.active = this.product.get('active').value;
+    insertProduct.top = this.product.get('top').value;
+    insertProduct.new_ = this.product.get('new').value;
+    insertProduct.sale = this.product.get('sale').value;
 
-    insertProduct.images = this.product.get('images').value
+    insertProduct.images = this.product.get('images').value.map(imageStr => {
+      return {
+        imageId: null,
+        imageUrl: imageStr
+      }
+    })
     insertProduct.createdAt = new Date();
     insertProduct.updatedAt = new Date();
 
     const productVariants: ProductVariant[] = this.variants.controls.map(variantForm => {
       return {
         productVariantId: null,
-        productSize: variantForm.get('size').value,
         price: +variantForm.get('price').value as number,
         quantity: +variantForm.get('quantity').value as number,
-        productColor: variantForm.get('colorType').value == 'Basic Color' ?
-          this.getColorValueFromType(variantForm.get('colorType').value, variantForm.get('basicColorValue').value) :
-          this.getColorValueFromType(variantForm.get('colorType').value, variantForm.get('customColorValue').value),
-        image: variantForm.get('image').value
+
+        productSize: (variantForm.get('sizeType').value == 'basic' ?
+          variantForm.get('basicSizeValue').value :
+          new ProductSize(null, variantForm.get('customSizeValue').value, 'custom')),
+
+        productColor: (variantForm.get('colorType').value == 'basic' ?
+          variantForm.get('basicColorValue').value :
+          new ProductColor(null, variantForm.get('customColorValue').value, 'custom')),
+
+        image: (variantForm.get('image').value != null)
+          ? { imageId: null, imageUrl: variantForm.get('image').value } 
+          : null
       };
     });
     insertProduct.productVariants = productVariants;
     return insertProduct;
   }
 
-  getColorValueFromType(colorType, value): ProductColor {
-    if (colorType == 'Basic Color') {
-      return this.colors.find(color => color.colorName == value)
-    } else {
-      let newColor = new ProductColor();
-      newColor.productColorId = null
-      newColor.colorName = value
-      return newColor;
-    }
-  }
 }
 

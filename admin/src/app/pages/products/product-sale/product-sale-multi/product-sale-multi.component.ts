@@ -61,6 +61,11 @@ export class ProductSaleMultiComponent implements OnInit {
   }
 
   onUpdateStatus() {
+    if (this.statusFormGroup.invalid) {
+      this.statusFormGroup.markAllAsTouched();
+      return;
+    }
+    
     this.saleService.updateStatus(this.selectedSales, this.statusFormGroup.get('active').value).subscribe(
       () => {
         this.selectedSales = []

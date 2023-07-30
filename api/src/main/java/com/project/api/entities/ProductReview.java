@@ -43,7 +43,7 @@ public class ProductReview implements Serializable {
 	private String content;
 
 	@Column(name = "rating", nullable = false)
-	private byte rating;
+	private Integer rating;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_at", length = 23)
@@ -56,7 +56,7 @@ public class ProductReview implements Serializable {
 	public ProductReview() {
 	}
 
-	public ProductReview(Account account, Product product, String content, byte rating, Date createdAt,
+	public ProductReview(Account account, Product product, String content, Integer rating, Date createdAt,
 			Date updatedAt) {
 		this.account = account;
 		this.product = product;
