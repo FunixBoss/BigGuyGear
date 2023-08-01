@@ -1,6 +1,7 @@
 package com.project.api.services.impl;
 
 import com.project.api.dtos.CategoryDTO;
+import com.project.api.dtos.CouponDTO;
 import com.project.api.entities.Category;
 import com.project.api.entities.Coupon;
 import com.project.api.repositories.CategoryRepository;
@@ -12,6 +13,7 @@ import com.project.api.utilities.ImageUploadUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -50,5 +52,36 @@ public class CouponServiceImpl implements CouponService {
         }
 
     }
+
+    @Override
+    public Boolean isCouponExist(String code) {
+        try {
+            return couponRepository.existsByCode(code);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean isCouponCanBeUsed(String code) {
+        try {
+            return couponRepository.isCouponCanBeUsed(code, new Date());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public CouponDTO findByCode(String code) {
+        try {
+            return new CouponDTO(couponRepository.findCouponByCode(code));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 
 }

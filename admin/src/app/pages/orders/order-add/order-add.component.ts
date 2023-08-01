@@ -19,11 +19,12 @@ import { Province } from '../../../@core/models/address/provinces.model';
 import { District } from '../../../@core/models/address/districts.model';
 import { Address } from '../../../@core/models/address/address.model';
 import { Product } from '../../../@core/models/product/product.model';
-import { CustomValidator, isEmailNotExisting, isProductidNotExisting } from '../../../@core/validators/custom-validator';
+import { CustomValidator, isCouponCantBeUsed, isCouponNotExisting, isEmailNotExisting, isProductidNotExisting } from '../../../@core/validators/custom-validator';
 import { Order } from '../../../@core/models/order/order.model';
 import { AddressService } from '../../../@core/services/account/address.service';
 import { ProductCouponService } from '../../../@core/services/product/product-coupon.service';
 import { Router } from '@angular/router';
+import { ACCOUNT_IMAGE_DIRECTORY } from '../../../@core/utils/image-storing-directory';
 
 @Component({
   selector: 'ngx-order-add',
@@ -36,23 +37,18 @@ export class OrderAddComponent implements OnInit, AfterViewInit {
   
   addOrderFormGroup: FormGroup
   // basic information
-  chosenAccount: Account;
-  accountDetail: Account;
 
   paymentMethods: PaymentMethod[]
   orderStatuses: OrderStatus[]
   provinces: Province[]
   districts: District[]
   wards: Ward[]
-  existingAddress: Address[]
+  existingAddresses: Address[]
 
   addressOptions = [
     { value: 'existing', label: 'Use Existing Address', disabled: true },
     { value: 'new', label: 'New Address', disabled: true },
   ];
-  applyCoupon: boolean = false;
-
-  // for order's products
 
   constructor(
     private orderService: OrderService,
@@ -65,32 +61,45 @@ export class OrderAddComponent implements OnInit, AfterViewInit {
     private addressService: AddressService,
     private couponService: ProductCouponService,
     private router: Router
-  ) {
-      this.orderStatusService.findAll().subscribe(data => this.orderStatuses = data)
-      this.paymentMethodService.findAll().subscribe(data => this.paymentMethods = data)
-  }
+  ) { }
   
 
   settingFormGroup() {
     this.addOrderFormGroup = this.formBuilder.group({
-      email: ['', CustomValidator.notBlank, isEmailNotExisting(this.accountService)],
-      coupon: [''],
-      totalPrice: [0, Validators.required],
-      totalQuantity: [0, Validators.required],
-      orderStatus: ['', Validators.required],
-      paymentMethod: ['', Validators.required],
-      addressOption: ['', Validators.required],
-      province: ['', Validators.required],
-      district: ['', Validators.required],
-      ward: ['', Validators.required],
-      address: ['', Validators.required, Validators.maxLength(50)],
+      accountForm: this.formBuilder.group({
+        email: ['', 
+          [CustomValidator.notBlank],
+          [isEmailNotExisting(this.accountService)]],
+        applyCoupon: [false],
+        coupon: ['', 
+          [Validators.required],
+          [isCouponNotExisting(this.couponService), isCouponCantBeUsed(this.couponService)]],
+
+        totalPrice: [0, Validators.required],
+        totalQuantity: [0, Validators.required],
+        orderStatus: ['', Validators.required],
+        paymentMethod: ['', Validators.required],
+
+        addressOption: ['', Validators.required],
+        // for address option = new
+        province: ['', Validators.required],
+        district: ['', Validators.required],
+        ward: ['', Validators.required],
+        roadName: ['', [Validators.required, Validators.maxLength(50)]],
+
+        // for address option = existing
+        address: [null, [Validators.required]]
+      }),
       products: this.formBuilder.array([])
     })
-
-    this.checkCouponExists()
   }
 
+  get accountForm() { return this.addOrderFormGroup.controls["accountForm"] as FormGroup }
+  get products() { return this.addOrderFormGroup.controls["products"] as FormArray }
+
   ngOnInit() {
+    this.orderStatusService.findAll().subscribe(data => this.orderStatuses = data._embedded.orderStatuses)
+    this.paymentMethodService.findAll().subscribe(data => this.paymentMethods = data._embedded.paymentMethods)
     this.settingFormGroup()
     this.addProduct()
     this.accountCompleter()
@@ -99,27 +108,71 @@ export class OrderAddComponent implements OnInit, AfterViewInit {
   
   accountCompleter$: Observable<Account[]>;
   accountCompleter() {
-    this.accountCompleter$ = this.addOrderFormGroup.get('email').valueChanges.pipe(
+    this.accountCompleter$ = this.accountForm.get('email').valueChanges.pipe(
       startWith(''),
       switchMap(enteredEmail => {
-        if(this.addOrderFormGroup.get('email').value == '') {
-          return this.accountService.findByEmailKeyword('')
-        }
         return this.accountService.findByEmailKeyword(enteredEmail)
       })
     );
   }
 
+  selectCustomer(account: Account) {
+    this.accountForm.get('email').setValue(account.email);
+
+    this.addressService.findByAccountId(account.id).subscribe(data => {
+      this.existingAddresses = data
+      if(this.existingAddresses.length > 0) {
+        this.addressOptions[1].disabled = false
+        this.addressOptions[0].disabled = false
+        this.accountForm.get('addressOption').setValue('existing')
+      } else {
+        this.addressOptions[1].disabled = false 
+        this.accountForm.get('addressOption').setValue('new')
+        this.loadProvinces()
+      }
+    })
+  }
+
+  loadProvinces() {
+    this.addressService.findAllProvinces().subscribe(
+      data => {
+        this.provinces = data._embedded.provinces
+        this.accountForm.get('district').setValue({})
+        this.accountForm.get('ward').setValue({})
+      }
+    )
+  }
+
+  loadDistricts(event: any) {
+    const selectedProvince: Province = this.accountForm.get('province').value
+    this.addressService.findAllDistrictByProvince(selectedProvince.code).subscribe(
+      data => {
+        this.districts = data._embedded.districts
+      }
+    );
+  }
+
+  loadWards(event: any) {
+    const selectedDistrict: District = this.accountForm.get('district').value
+    this.addressService.findAllWardByDistrict(selectedDistrict.code).subscribe(
+      data => {
+        this.wards = data._embedded.wards
+        this.accountForm.get('ward').setValue({})
+      }
+    );
+  }
+
+
   onAddressChange() {
-    this.addOrderFormGroup.get('province').valueChanges.subscribe(data => {
-      this.addOrderFormGroup.patchValue({
+    this.accountForm.get('province').valueChanges.subscribe(data => {
+      this.accountForm.patchValue({
         district: '',
         wards: '',
         address: ''
       });
     });
-    this.addOrderFormGroup.get('district').valueChanges.subscribe(data => {
-      this.addOrderFormGroup.patchValue({
+    this.accountForm.get('district').valueChanges.subscribe(data => {
+      this.accountForm.patchValue({
         wards: '',
         address: ''
       });
@@ -131,42 +184,24 @@ export class OrderAddComponent implements OnInit, AfterViewInit {
     1
   }
   
-  selectCustomer(account: Account) {
-    this.chosenAccount = account;
-    this.accountService.findById(this.chosenAccount.id).subscribe(
-      data => {
-        this.accountDetail = data
-        this.setUpAccountAddress()
-      }
-    )
-  }
+  
 
-  setUpAccountAddress() {
-    this.addOrderFormGroup.get('email').setValue(this.chosenAccount.email)
-    
-    if(this.accountDetail.address == undefined) {
-      this.addressOptions[1].disabled = false
-      this.addOrderFormGroup.get('addressOption').setValue('new')
-      this.loadProvinces()
-    } else {
-      this.addressOptions[0].disabled = true
-      this.addressOptions[1].disabled = true
-
-      this.existingAddress = this.chosenAccount.address
-    }
-  }
+  
 
 
 
   onSubmit() {
+    let order: Order = this.mapFormValue()
+    console.log(order)
+
     if(this.addOrderFormGroup.invalid) {
       this.addOrderFormGroup.markAllAsTouched();
       this.utilsService.updateToastState(new ToastState('Add Order Failed!', "danger"))
       return;
     }
 
-    let order: any = this.mapFormValue()
-    console.log(order)
+    // let order: Order = this.mapFormValue()
+    // console.log(order)
 
     this.orderService.insert(order).subscribe(
       data => {
@@ -187,84 +222,44 @@ export class OrderAddComponent implements OnInit, AfterViewInit {
   }
 
   mapFormValue(): any {
-    let order:any  = new Order()
-    order.customerEmail = this.addOrderFormGroup.get('email').value
-    if(this.applyCoupon) {
-      this.couponService.findIdByCode(this.addOrderFormGroup.get('coupon').value)
-        .subscribe(data => order.couponId = data)
+    let order: Order   = new Order()
+    order.accountEmail = this.accountForm.get('email').value
+    if(this.accountForm.get('applyCoupon').value) {
+      this.couponService.findByCode(this.accountForm.get('coupon').value)
+        .subscribe(data => order.coupon = data)
     }
-    order.roadName = this.addOrderFormGroup.get('address').value
-    order.wardCode = this.addOrderFormGroup.get('ward').value['code']
-    order.districtCode = this.addOrderFormGroup.get('district').value['code']
-    order.provinceCode = this.addOrderFormGroup.get('province').value['code']
-    order.orderStatusId = this.addOrderFormGroup.get('orderStatus').value['orderStatusId']
-    order.paymentMethodId = this.addOrderFormGroup.get('paymentMethod').value['paymentMethodId']
-    order.totalQuantity = this.addOrderFormGroup.get('totalQuantity').value
-    order.totalPrice = this.addOrderFormGroup.get('totalPrice').value;
+    if(this.accountForm.get('addressOption').value == 'new') {
+      order.address = {
+        addressId: null,
+        roadName: this.accountForm.get('roadName').value,
+        ward: this.accountForm.get('ward').value,
+        district: this.accountForm.get('district').value,
+        province: this.accountForm.get('province').value
+      }
+    } else {
+      order.address = this.accountForm.get('address').value
+    }
+    order.orderStatus = this.accountForm.get('orderStatus').value
+    order.paymentMethod = this.accountForm.get('paymentMethod').value
+    order.totalQuantity = this.accountForm.get('totalQuantity').value
+    order.totalPrice = this.accountForm.get('totalPrice').value;
     order.products = [];
 
-    for(let i = 0; i < this.products.length; i++) {
-      const productForm: FormGroup = this.products.at(i) as FormGroup;
-      let product: any = {}
-      product.productId = productForm.get('id').value
-      product.size = productForm.get('size').value
-      product.color = productForm.get('color').value
-      product.quantity = productForm.get('quantity').value
-      product.price = parseFloat(productForm.get('price').value)
-      order.products.push(product)
-    }
+    // for(let i = 0; i < this.products.length; i++) {
+    //   const productForm: FormGroup = this.products.at(i) as FormGroup;
+    //   let product: any = {}
+    //   product.productId = productForm.get('id').value
+    //   product.size = productForm.get('size').value
+    //   product.color = productForm.get('color').value
+    //   product.quantity = productForm.get('quantity').value
+    //   product.price = parseFloat(productForm.get('price').value)
+    //   order.products.push(product)
+    // }
     return order;
   }
 
-  loadProvinces() {
-    this.addressService.findAllProvinces().subscribe(
-      data => {
-        this.provinces = data.provinces
-        this.addOrderFormGroup.get('district').setValue({})
-        this.addOrderFormGroup.get('ward').setValue({})
-      }
-    )
-  }
-
-  loadDistricts(event: any) {
-    const selectedProvince: Province = this.addOrderFormGroup.get('province').value
-    this.addressService.findAllDistrictByProvince(selectedProvince.code).subscribe(
-      data => {
-        this.districts = data.districts
-      }
-    );
-  }
-
-  loadWards(event: any) {
-    const selectedDistrict: District = this.addOrderFormGroup.get('district').value
-    this.addressService.findAllWardByDistrict(selectedDistrict.code).subscribe(
-      data => {
-        this.wards = data.wards
-        this.addOrderFormGroup.get('ward').setValue({})
-      }
-    );
-  }
-
-  checkCouponExists() {
-    this.addOrderFormGroup.get('coupon').valueChanges.subscribe(
-      () => {
-        const couponValue = this.addOrderFormGroup.get('coupon').value
-        console.log(couponValue);
-        if(this.applyCoupon && couponValue == '') {
-          this.addOrderFormGroup.get('coupon').setErrors({couponNotExists : true})
-          return;
-        }
-        this.couponService.isCouponExists(couponValue).subscribe(
-          result => {
-            if(!result) {
-              this.addOrderFormGroup.get('coupon').setErrors({couponNotExists : true})
-            }
-        
-          }
-        )
-      }
-    )
-  }
+  
+  
 
 
   productCompleter$: Observable<Product[]>
@@ -280,7 +275,6 @@ export class OrderAddComponent implements OnInit, AfterViewInit {
     );
   }
 
-  get products() { return this.addOrderFormGroup.controls["products"] as FormArray }
 
   addProduct(): void {
     const productForm = this.formBuilder.group({
@@ -345,9 +339,8 @@ export class OrderAddComponent implements OnInit, AfterViewInit {
       totalQuantity += parseInt(productForm.get('quantity').value, 10);
       totalPrice += parseFloat(productForm.get('price').value) * totalQuantity;
     }
-    this.addOrderFormGroup.get('totalQuantity').setValue(totalQuantity);
-    this.addOrderFormGroup.get('totalPrice').setValue(totalPrice);
-    
+    this.accountForm.get('totalQuantity').setValue(totalQuantity);
+    this.accountForm.get('totalPrice').setValue(totalPrice);
   }
 
 }

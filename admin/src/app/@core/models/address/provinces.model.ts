@@ -9,3 +9,9 @@ export class Province {
     codeName: string;
     administrativeUnit: AdministrativeUnits
 }
+
+export interface GetProvinceResponse {
+    _embedded: {
+        provinces: Province[]
+    }
+}

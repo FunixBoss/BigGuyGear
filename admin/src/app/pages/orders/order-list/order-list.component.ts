@@ -52,8 +52,8 @@ export class OrderListComponent implements OnInit, AfterViewInit {
 
     forkJoin([paymentObservable, orderStatusObservable]).subscribe(
       ([paymentData, orderStatusDate]) => {
-        this.paymentMethods = paymentData;
-        this.orderStatuses = orderStatusDate;
+        this.paymentMethods = paymentData._embedded.paymentMethods;
+        this.orderStatuses = orderStatusDate._embedded.orderStatuses;
 
         this.settings = {
           actions: {
@@ -89,7 +89,7 @@ export class OrderListComponent implements OnInit, AfterViewInit {
                 config: {
                   selectText: 'Method...',
                   list: this.paymentMethods.map(pm => {
-                    return { value: pm.paymentMethodName, title: pm.paymentMethodName }
+                    return { value: pm.methodName, title: pm.methodName }
                   }),
                 },
               },

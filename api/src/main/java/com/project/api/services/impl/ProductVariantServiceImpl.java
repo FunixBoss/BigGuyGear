@@ -33,12 +33,11 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     public Boolean deleteById(Integer id) {
         try {
             ProductVariant variant = this.productVariantRepository.findById(id).get();
+            productVariantRepository.deleteById(variant.getProductVariantId());
 
             if (variant.getImage() != null) {
                 imageUploadUtils.delete("variant", variant.getImage().getImageUrl());
             }
-
-            productVariantRepository.deleteById(variant.getProductVariantId());
 
             if (variant.getProductSize().getSizeType().equals("custom")) {
                 sizeRepository.deleteById(variant.getProductSize().getProductSizeId());

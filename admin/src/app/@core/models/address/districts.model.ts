@@ -11,3 +11,9 @@ export class District {
     province?: Province;
     administrativeUnit?: AdministrativeUnits
 }
+
+export interface GetDistrictResponse {
+    _embedded: {
+        districts: District[]
+    }
+}

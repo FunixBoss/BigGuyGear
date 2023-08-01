@@ -28,37 +28,52 @@ export class AccountService {
   }
 
   findAll(): Observable<Account[]> {
-    const url: string = `${this.baseUrlService.baseURL}/account`
+    const url: string = `${this.baseUrlService.baseURL}/accounts/findAll`
     return this.httpClient.get<Account[]>(url)
   }
 
   findById(id: number): Observable<Account> {
-    const url: string = `${this.baseUrlService.baseURL}/account/detail/${id}`
+    const url: string = `${this.baseUrlService.baseURL}/accounts/detail/${id}`
     return this.httpClient.get<Account>(url);
   }
 
   insert(account: Account): Observable<Account> {
-    const url: string = `${this.baseUrlService.baseURL}/account/create`
+    const url: string = `${this.baseUrlService.baseURL}/accounts/create`
     return this.httpClient.post<Account>(url, account);
   }
 
   update(account: Account): Observable<boolean> {
-    const url: string = `${this.baseUrlService.baseURL}/account/update/${account.id}`
+    const url: string = `${this.baseUrlService.baseURL}/accounts/update`
     return this.httpClient.post<boolean>(url, account);
   }
 
+  updateStatus(accounts: Account[], active: boolean) {
+    const mappedAccounts = accounts.map(acc => {
+      return { 
+        id: acc.id
+      }
+    })
+    let formData = new FormData()
+    formData.append("accounts", JSON.stringify(mappedAccounts));
+    formData.append("active", active.toString());
+
+    const url: string = `${this.baseUrlService.baseURL}/accounts/update-status`
+    return this.httpClient.post<boolean>(url, formData);
+  }
+
   delete(id: number): Observable<boolean> {
-    const url: string = `${this.baseUrlService.baseURL}/account/delete/${id}`
+    const url: string = `${this.baseUrlService.baseURL}/accounts/delete/${id}`
     return this.httpClient.get<boolean>(url);
   }
+
   
   findByEmailKeyword(emailKeyword: string): Observable<Account[]> {
-    const url: string = `${this.baseUrlService.baseURL}/customerByEmail/${emailKeyword}`
+    const url: string = `${this.baseUrlService.baseURL}/accounts/findByEmailKeyword?keyword=${emailKeyword}`
     return this.httpClient.get<Account[]>(url);
   }
 
   isEmailExists(email: string): Observable<boolean> {
-    const url: string = `${this.baseUrlService.baseURL}/isEmailExists/${email}`
+    const url: string = `${this.baseUrlService.baseURL}/accounts/isEmailExist?email=${email}`
     return this.httpClient.get<boolean>(url);
   }
 

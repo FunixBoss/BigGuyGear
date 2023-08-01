@@ -77,13 +77,18 @@ export class ProductCouponService {
   }
 
   isCouponExists(couponCode: string): Observable<boolean> {
-    const url: string = `${this.baseUrlService.baseURL}/isCouponExists/${couponCode}`
+    const url: string = `${this.baseUrlService.baseURL}/coupons/isCouponExist?code=${couponCode}`
     return this.httpClient.get<boolean>(url);
   }
 
-  findIdByCode(couponCode: string): Observable<string> {
-    const url: string = `${this.baseUrlService.baseURL}/findIdByCode/${couponCode}`
-    return this.httpClient.get<string>(url);
+  isCouponCanBeUsed(couponCode: string): Observable<boolean> {
+    const url: string = `${this.baseUrlService.baseURL}/coupons/isCouponCanBeUsed?code=${couponCode}`
+    return this.httpClient.get<boolean>(url);
+  }
+
+  findByCode(couponCode: string): Observable<Coupon> {
+    const url: string = `${this.baseUrlService.baseURL}/coupons/findByCode?code=${couponCode}`
+    return this.httpClient.get<Coupon>(url);
   }
 
   deleteCoupons(coupons: Coupon[]): Observable<void> {

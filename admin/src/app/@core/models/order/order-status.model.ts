@@ -3,3 +3,9 @@ export class OrderStatus {
     statusName: string;
     statusDescription: string;
 }
+
+export class GetOrderStatusResponse {
+    _embedded: {
+        orderStatuses: OrderStatus[]
+    }
+}

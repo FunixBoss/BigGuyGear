@@ -4,6 +4,7 @@ package com.project.api.entities;
 import lombok.Data;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -73,6 +74,11 @@ public class Province implements java.io.Serializable {
 		this.codeName = codeName;
 		this.districts = districts;
 		this.addresses = addresses;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(code);
 	}
 
 }

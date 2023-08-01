@@ -11,3 +11,9 @@ export class Ward {
     district?: District
     administrativeUnit: AdministrativeUnits
 }
+
+export interface GetWardResponse {
+    _embedded: {
+        wards: Ward[]
+    }
+}

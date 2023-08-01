@@ -2,17 +2,16 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BaseURLService } from '../base-url.service';
 import { HttpClient } from '@angular/common/http';
-import { Address } from '../../models/address/address.model';
-import { Province } from '../../models/address/provinces.model';
-import { District } from '../../models/address/districts.model';
-import { Ward } from '../../models/address/wards.model';
+import { Address, GetAddressResponse } from '../../models/address/address.model';
+import { GetProvinceResponse, Province } from '../../models/address/provinces.model';
+import { District, GetDistrictResponse } from '../../models/address/districts.model';
+import { GetWardResponse, Ward } from '../../models/address/wards.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AddressService {
 
-  baseUrl = "http://127.0.0.1:8000/api"
   constructor(
     private baseUrlService: BaseURLService,
     private httpClient: HttpClient,
@@ -25,20 +24,18 @@ export class AddressService {
   }
 
   findAllProvinces(): Observable<GetProvinceResponse> {
-    const url: string = `${this.baseUrl}/provinces`
+    const url: string = `${this.baseUrlService.baseURL}/provinces`
     return this.httpClient.get<GetProvinceResponse>(url);
   }
 
   findAllDistrictByProvince(provinceCode: string ): Observable<GetDistrictResponse> {
-    const url: string = `${this.baseUrl}/provinces/${provinceCode}/districts`
-    console.log(url);
-    
+    const url: string = `${this.baseUrlService.baseURL}/provinces/${provinceCode}/districts`
     return this.httpClient.get<GetDistrictResponse>(url);
   }
 
 
   findAllWardByDistrict(districtCode: string): Observable<GetWardResponse> {
-    const url: string = `${this.baseUrl}/districts/${districtCode}/wards`
+    const url: string = `${this.baseUrlService.baseURL}/districts/${districtCode}/wards`
     return this.httpClient.get<GetWardResponse>(url);
   }
 
@@ -46,16 +43,13 @@ export class AddressService {
     const url: string = `${this.baseUrlService.baseURL}/account/insertAddress`
     return this.httpClient.post<Address>(url, address);
   }
-}
 
-export interface GetProvinceResponse {
-  provinces: Province[]
-}
+  findByAccountId(accountId: number): Observable<Address[]> {
+    const url: string = `${this.baseUrlService.baseURL}/accounts/${accountId}/addresses`
+    return this.httpClient.get<Address[]>(url);
+  }
 
-export interface GetDistrictResponse {
-  districts: District[]
-}
-
-export interface GetWardResponse {
-  wards: Ward[]
+  getAddressStringFormAddress(address: Address) {
+    return `${address.roadName}, ${address.ward.fullName}, ${address.district.fullName}, ${address.province.fullName}`
+  }
 }

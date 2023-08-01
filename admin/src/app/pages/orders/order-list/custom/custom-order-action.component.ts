@@ -83,7 +83,7 @@ export class CustomOrderActionComponent implements ViewCell {
         this.windowRef = this.windowService.open(
             this.editOrderStatusWindow, { title: 'Edit Order Status' },
         );
-        this.orderStatusService.findAll().subscribe(data => this.orderStatuses = data)
+        this.orderStatusService.findAll().subscribe(data => this.orderStatuses = data._embedded.orderStatuses)
         this.orderService.findOrderStatusById(this.rowData.orderId).subscribe(
             data => {
                 this.editStatusFormGroup.get('orderStatus').setValue(data)

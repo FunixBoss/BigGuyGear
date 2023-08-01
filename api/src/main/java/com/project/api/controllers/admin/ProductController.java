@@ -7,6 +7,7 @@ import com.project.api.dtos.ProductFindAllDTO;
 import com.project.api.entities.Product;
 import com.project.api.entities.ProductSale;
 import com.project.api.services.ProductService;
+import com.project.api.services.ProductVariantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,9 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ProductVariantService productVariantService;
 
     @GetMapping("{productId}")
     public ResponseEntity<ProductDetailDTO> findById(@PathVariable Integer productId) {
@@ -185,4 +189,5 @@ public class ProductController {
             return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
         }
     }
+
 }

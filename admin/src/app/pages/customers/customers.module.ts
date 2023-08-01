@@ -11,6 +11,8 @@ import { CustomCustomerActionComponent } from './customer-list/custom/custom-cus
 import { CustomCustomerImageComponent } from './customer-list/custom/custom-customer-image.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CustomCustomerFilterActionsComponent } from './customer-list/custom/custom-customer-filter-actions/custom-customer-filter-actions.component';
+import { CustomCustomerActiveActionComponent } from './customer-list/custom/custom-customer-active-action.component';
+import { CustomerListMultiComponent } from './customer-list/customer-list-multi/customer-list-multi.component';
 
 
 
@@ -22,6 +24,8 @@ import { CustomCustomerFilterActionsComponent } from './customer-list/custom/cus
     CustomCustomerActionComponent,
     CustomCustomerImageComponent,
     CustomCustomerFilterActionsComponent,
+    CustomCustomerActiveActionComponent,
+    CustomerListMultiComponent
   ],
   imports: [
     CustomersRoutingModule,

@@ -1,9 +1,12 @@
 package com.project.api.entities;
 // Generated Jul 25, 2023, 8:08:56 PM by Hibernate Tools 4.3.6.Final
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,23 +25,35 @@ public class AdministrativeUnit implements java.io.Serializable {
 
 	@Id
 	@Column(name = "id", unique = true, nullable = false)
-	private int id;
+	private Integer id;
+
 	@Column(name = "full_name")
 	private String fullName;
+
 	@Column(name = "full_name_en")
 	private String fullNameEn;
+
 	@Column(name = "short_name")
 	private String shortName;
+
 	@Column(name = "short_name_en")
 	private String shortNameEn;
+
 	@Column(name = "code_name")
 	private String codeName;
+
 	@Column(name = "code_name_en")
 	private String codeNameEn;
+
+	@JsonIgnore
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "administrativeUnit")
 	private Set<Province> provinces = new HashSet<Province>(0);
+
+	@JsonIgnore
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "administrativeUnit")
 	private Set<District> districts = new HashSet<District>(0);
+
+	@JsonIgnore
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "administrativeUnit")
 	private Set<Ward> wards = new HashSet<Ward>(0);
 
@@ -62,5 +77,10 @@ public class AdministrativeUnit implements java.io.Serializable {
 		this.provinces = provinces;
 		this.districts = districts;
 		this.wards = wards;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
 	}
 }

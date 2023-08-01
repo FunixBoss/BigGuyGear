@@ -1,6 +1,7 @@
 import { Account } from "../account/account.model";
 import { Address } from "../address/address.model";
 import { Coupon } from "../coupon/coupon.model";
+import { Product } from "../product/product.model";
 import { OrderDetail } from "./order-detail.model";
 import { OrderStatus } from "./order-status.model";
 import { PaymentMethod } from "./payment-method.model";
@@ -13,9 +14,10 @@ export class Order {
     totalQuantity: number;
     coupon?: Coupon;
     orderStatus?: OrderStatus
-    shippingAddress?: Address;
+    address: Address;
     paymentMethod: PaymentMethod
     orderDetails?: OrderDetail[];
     createdAt: Date
     updatedAt: Date
+    products?: Product[]
 }

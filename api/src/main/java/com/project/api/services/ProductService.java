@@ -14,7 +14,7 @@ public interface ProductService {
     List<ProductFindAllDTO> findAllDTO();
     Product save(Product product);
 
-    Product update(Product product);
+    Boolean update(Product product);
     Boolean updateNewStatus(List<Product> products, boolean new_);
     Boolean updateTopStatus(List<Product> products, boolean top);
     Boolean updateActiveStatus(List<Product> products, boolean active);

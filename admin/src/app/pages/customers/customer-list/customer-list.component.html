@@ -20,9 +20,19 @@
                 </nb-select>
             </nb-card-header>
             <nb-card-body>
-                <ng2-smart-table id="product-table" [settings]="settings" [source]="source">
+                <ng2-smart-table id="product-table" [settings]="settings" 
+                    [source]="source" [ngClass]="'smart-table'"
+                    (userRowSelect)="onRowSelect($event)">
                 </ng2-smart-table>
             </nb-card-body>
+            <nb-card-footer>
+                <ng-container *ngIf="selectedCustomers.length > 0">
+                    <ngx-customers-list-multi
+                        [selectedCustomers]="selectedCustomers"
+                        (isUpdated)="onUpdateStatus($event)">
+                    </ngx-customers-list-multi>
+                </ng-container>
+            </nb-card-footer>
         </nb-card>
     </div>
 </div>

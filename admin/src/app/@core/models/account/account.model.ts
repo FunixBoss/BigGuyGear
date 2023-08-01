@@ -13,10 +13,12 @@ export class Account {
     phoneNumber: string;
     role?: Role;
     image: Image;
+    active: boolean;
     createdAt: Date
     updatedAt: Date
     address?: Address[]
     cart?: Cart;
     wishlist?: Wishlist[];
     orders?: Order[]
+    totalOrders?: number;
 }

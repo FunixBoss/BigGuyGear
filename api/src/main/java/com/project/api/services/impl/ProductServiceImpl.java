@@ -96,7 +96,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product update(Product product) {
+    public Boolean update(Product product) {
         try {
             Product oldProduct = productRepository.findById(product.getProductId()).get();
 
@@ -121,8 +121,8 @@ public class ProductServiceImpl implements ProductService {
                 boolean foundInCurrentVariants = false;
 
                 for (ProductVariant var : product.getProductVariants()) {
-                    if (oldVar.getProductVariantId() != null &&
-                            oldVar.getProductVariantId().compareTo(var.getProductVariantId()) == 0
+                    if (oldVar.getProductVariantId() != null && // for new variant
+                            oldVar.getProductVariantId().compareTo(var.getProductVariantId()) == 0 // existing variant
                     ) {
                         foundInCurrentVariants = true;
                         break; // Found a matching variant in the current product, no need to check further
@@ -134,8 +134,8 @@ public class ProductServiceImpl implements ProductService {
                 }
             }
 
-            for (ProductVariant variantToDelete : variantsToRemove) {
-                productVariantService.deleteById(variantToDelete.getProductVariantId());
+            for (ProductVariant variant : variantsToRemove) {
+                productVariantService.deleteById(variant.getProductVariantId());
             }
 
             Set<ProductVariant> updatedVariants = new HashSet<>();
@@ -144,13 +144,13 @@ public class ProductServiceImpl implements ProductService {
                 updatedVariant.setProduct(product);
                 updatedVariants.add(updatedVariant);
             }
-            product.getProductVariants().clear();
+            product.setProductVariants(new HashSet<>());
             product.getProductVariants().addAll(updatedVariants);
-
-            return productRepository.save(product);
+            productRepository.save(product);
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return false;
         }
     }
 

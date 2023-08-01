@@ -4,6 +4,7 @@ package com.project.api.entities;
 import lombok.Data;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -68,5 +69,11 @@ public class Address implements java.io.Serializable {
 		this.accounts = accounts;
 		this.orders = orders;
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(addressId);
+	}
+
 
 }

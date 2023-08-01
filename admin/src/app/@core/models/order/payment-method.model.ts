@@ -1,4 +1,10 @@
 export class PaymentMethod {
     paymentMethodId: number;
-    paymentMethodName: string;
+    methodName: string;
+}
+
+export class GetPaymentMethodResponse {
+    _embedded: {
+        paymentMethods: PaymentMethod[]
+    }
 }

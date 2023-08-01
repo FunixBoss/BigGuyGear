@@ -1,4 +1,4 @@
-DROP DATABASE IF EXISTS BigGuyGear
+﻿DROP DATABASE IF EXISTS BigGuyGear
 CREATE DATABASE BigGuyGear
 GO
 
@@ -71,8 +71,6 @@ CREATE TABLE [Address] (
 
 
 
-
-
 -- COUPON
 DROP TABLE IF EXISTS [CouponType];
 CREATE TABLE [CouponType] (
@@ -118,6 +116,7 @@ CREATE TABLE [Account] (
 	[email] NVARCHAR(255) UNIQUE NOT NULL,
 	[phone_number] NVARCHAR(20) NOT NULL,
 	[image_id] INT,
+	[active] BIT,
 	[role_id] INT NOT NULL DEFAULT '2',
 	[created_at] DATETIME DEFAULT CURRENT_TIMESTAMP,
 	[updated_at] DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -137,7 +136,7 @@ CREATE TABLE [Notification] (
 
 DROP TABLE IF EXISTS [AccountAddress];
 CREATE TABLE [AccountAddress] (
-	[address_id] INT NOT NULL,
+	[address_id] INT,
 	[account_id] INT,
 	PRIMARY KEY ([address_id], [account_id]),
 	CONSTRAINT [account_address_ibfk_1] FOREIGN KEY ([address_id]) REFERENCES [Address] ([address_id]),
@@ -336,21 +335,21 @@ DROP TABLE IF EXISTS [Order];
 CREATE TABLE [Order] (
 	[order_id] INT PRIMARY KEY IDENTITY,
 	[order_tracking_number] NVARCHAR(50),
-	[account_id] INT NOT NULL,
+	[account_id] INT,
+	[account_email] NVARCHAR(255),
 	[coupon_id] INT,
 	[coupon_code] NVARCHAR(200),
 	[total_price] decimal(18,2) NOT NULL,
 	[total_quantity] INT NOT NULL,
 	[order_status_id] INT NOT NULL,
 	[payment_method_id] INT NOT NULL,
-	[address_id] INT NOT NULL,
+	[address] NVARCHAR(300),
 	[created_at] DATETIME DEFAULT CURRENT_TIMESTAMP,
 	[updated_at] DATETIME DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT [order_ibfk_1] FOREIGN KEY ([payment_method_id]) REFERENCES [PaymentMethod] ([payment_method_id]),
 	CONSTRAINT [order_ibfk_2] FOREIGN KEY ([account_id]) REFERENCES [Account] ([id]),
 	CONSTRAINT [order_ibfk_3] FOREIGN KEY ([order_status_id]) REFERENCES [OrderStatus] ([order_status_id]),
 	CONSTRAINT [order_ibfk_4] FOREIGN KEY ([coupon_id]) REFERENCES [Coupon] ([coupon_id]),
-	CONSTRAINT [order_ibfk_5] FOREIGN KEY ([address_id]) REFERENCES [Address] ([address_id])
 ) 
 
 DROP TABLE IF EXISTS [OrderDetail];

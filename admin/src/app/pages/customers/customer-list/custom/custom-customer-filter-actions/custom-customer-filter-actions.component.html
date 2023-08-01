@@ -10,11 +10,17 @@
                     <input type="email" nbInput fullWidth placeholder="Email" formControlName="email">
                     <div class="alert w-100 alert-danger mt-1"
                         *ngIf="addCustomerFormGroup.get('email').invalid && (addCustomerFormGroup.get('email').dirty || addCustomerFormGroup.get('email').touched)">
-                        <div *ngIf="addCustomerFormGroup.get('email').errors['required']">
+                        <div *ngIf="addCustomerFormGroup.get('email').errors['notblank']">
                             Email is required
                         </div>
+                        <div *ngIf="addCustomerFormGroup.get('email').errors['pattern']">
+                            Invalid email format 
+                        </div>
                         <div *ngIf="addCustomerFormGroup.get('email').errors['maxlength']">
-                            Email must not exceed 100 characters
+                            Email must not exceed 50 characters
+                        </div>
+                        <div *ngIf="addCustomerFormGroup.get('email').errors['emailExists']">
+                            This email already exists
                         </div>
                     </div>
                 </div>
@@ -23,11 +29,17 @@
                     <input type="password" nbInput fullWidth placeholder="Password" formControlName="password">
                     <div class="alert w-100 alert-danger mt-1"
                         *ngIf="addCustomerFormGroup.get('password').invalid && (addCustomerFormGroup.get('password').dirty || addCustomerFormGroup.get('password').touched)">
-                        <div *ngIf="addCustomerFormGroup.get('password').errors['required']">
+                        <div *ngIf="addCustomerFormGroup.get('password').errors['notblank']">
                             Password is required
                         </div>
+                        <div *ngIf="addCustomerFormGroup.get('password').errors['minlength']">
+                            Password must have at least 8 character
+                        </div>
                         <div *ngIf="addCustomerFormGroup.get('password').errors['maxlength']">
-                            Password must not exceed 100 characters
+                            Password must not exceed 50 characters
+                        </div>
+                        <div *ngIf="addCustomerFormGroup.get('password').errors['pattern']">
+                            Password must have at least 1 character and 1 number
                         </div>
                     </div>
                 </div>
@@ -37,7 +49,7 @@
                     <input type="text" nbInput fullWidth placeholder="Full Name" formControlName="fullName">
                     <div class="alert w-100 alert-danger mt-1"
                         *ngIf="addCustomerFormGroup.get('fullName').invalid && (addCustomerFormGroup.get('fullName').dirty || addCustomerFormGroup.get('fullName').touched)">
-                        <div *ngIf="addCustomerFormGroup.get('fullName').errors['required']">
+                        <div *ngIf="addCustomerFormGroup.get('fullName').errors['notblank']">
                             Full Name is required
                         </div>
                         <div *ngIf="addCustomerFormGroup.get('fullName').errors['maxlength']">
@@ -50,13 +62,22 @@
                     <input type="text" nbInput fullWidth placeholder="Phone Number" formControlName="phoneNumber">
                     <div class="alert w-100 alert-danger mt-1"
                         *ngIf="addCustomerFormGroup.get('phoneNumber').invalid && (addCustomerFormGroup.get('phoneNumber').dirty || addCustomerFormGroup.get('phoneNumber').touched)">
-                        <div *ngIf="addCustomerFormGroup.get('phoneNumber').errors['required']">
+                        <div *ngIf="addCustomerFormGroup.get('phoneNumber').errors['notblank']">
                             Phone Number is required
                         </div>
                         <div *ngIf="addCustomerFormGroup.get('phoneNumber').errors['maxlength']">
-                            Phone Number must not exceed 100 characters
+                            Phone Number must not exceed 10 characters
+                        </div>
+                        <div *ngIf="addCustomerFormGroup.get('phoneNumber').errors['pattern']">
+                            Password only contains number
                         </div>
                     </div>
+                </div>
+                <div class="col-12 mt-3">
+                    <nb-checkbox (checkedChange)="addCustomerFormGroup.get('active').setValue($event)"
+                        [checked]="addCustomerFormGroup.get('active').value" status="warning">
+                        Active
+                    </nb-checkbox>
                 </div>
 
                 <div class="col-lg-6 col-md-12 mt-3">

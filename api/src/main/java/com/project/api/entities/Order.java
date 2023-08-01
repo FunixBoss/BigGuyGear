@@ -36,12 +36,14 @@ public class Order implements Serializable {
 	private Integer orderId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "account_id", nullable = false)
+	@JoinColumn(name = "account_id")
 	private Account account;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "address_id", nullable = false)
-	private Address address;
+	@Column(name = "account_email")
+	private String accountEmail;
+
+	@Column(name = "address")
+	private String address;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "coupon_id")
@@ -81,7 +83,7 @@ public class Order implements Serializable {
 	public Order() {
 	}
 
-	public Order(Account account, Address address, OrderStatus orderStatus, PaymentMethod paymentMethod,
+	public Order(Account account, String address, OrderStatus orderStatus, PaymentMethod paymentMethod,
 			BigDecimal totalPrice, int totalQuantity, Date createdAt, Date updatedAt) {
 		this.account = account;
 		this.address = address;
@@ -93,7 +95,7 @@ public class Order implements Serializable {
 		this.updatedAt = updatedAt;
 	}
 
-	public Order(Account account, Address address, Coupon coupon, OrderStatus orderStatus, PaymentMethod paymentMethod,
+	public Order(Account account, String address, Coupon coupon, OrderStatus orderStatus, PaymentMethod paymentMethod,
 			String orderTrackingNumber, BigDecimal totalPrice, int totalQuantity, Date createdAt, Date updatedAt,
 			Set<OrderDetail> orderDetails) {
 		this.account = account;

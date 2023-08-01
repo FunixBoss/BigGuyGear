@@ -6,6 +6,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import javax.persistence.*;
 
@@ -72,5 +73,10 @@ public class Coupon implements Serializable {
 		this.expiredAt = expiredAt;
 		this.orders = orders;
 		this.accountCoupons = accountCoupons;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(couponId);
 	}
 }
