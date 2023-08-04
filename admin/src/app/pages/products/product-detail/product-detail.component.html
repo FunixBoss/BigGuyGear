@@ -4,7 +4,8 @@
             <nb-tab tabTitle="Basic Information" tabIcon="list-outline">
                 <ngx-product-detail-basic *ngIf="product" [product]="product"></ngx-product-detail-basic>
             </nb-tab>
-            <nb-tab tabTitle="Comments" tabIcon="message-square-outline">
+            <nb-tab tabTitle="Comments" tabIcon="message-square-outline"
+                [badgeText]="numberOfComments" badgeStatus="success">
                 <ngx-product-detail-comments *ngIf="comments" [comments]="comments"></ngx-product-detail-comments>
             </nb-tab>
             <nb-tab tabTitle="Analysis" tabIcon="calendar-outline">

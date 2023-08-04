@@ -16,6 +16,8 @@ export class ProductDetailComponent implements OnInit {
 
   product;
   comments: ProductReview[];
+  numberOfComments: string;
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private productService: ProductService,
@@ -30,6 +32,16 @@ export class ProductDetailComponent implements OnInit {
           this.product.imageUrls = this.product.imageUrls.map(img => PRODUCT_IMAGE_DIRECTORY + img)
           this.product.productVariants.map(variant => {
             variant.imageUrl = VARIANT_IMAGE_DIRECTORY + variant.imageUrl
+          })
+
+          this.productService.countTotalComments(this.product.productId).subscribe(data => {
+            if(data > 99) {
+              this.numberOfComments = '99+'
+            } else {
+              this.numberOfComments = data + ''
+            }
+            console.log(data);
+            
           })
         })
     })

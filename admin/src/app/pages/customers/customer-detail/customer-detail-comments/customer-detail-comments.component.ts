@@ -1,14 +1,11 @@
-import { map, startWith } from 'rxjs/operators';
 import { Component, Input, OnChanges, SimpleChanges, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { Product } from '../../../../@core/models/product/product.model';
-import { ImagesCarouselComponent } from '../../images-carousel.component';
 import { ProductReview } from '../../../../@core/models/product/product-review.model';
 import { ACCOUNT_IMAGE_DIRECTORY } from '../../../../@core/utils/image-storing-directory';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
-  selector: 'ngx-product-detail-comments',
-  templateUrl: './product-detail-comments.component.html',
+  selector: 'ngx-customer-detail-comments',
+  templateUrl: './customer-detail-comments.component.html',
   styles: [
     `
 			i {
@@ -28,9 +25,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 		`,
   ],
 })
-export class ProductDetailCommentsComponent implements OnChanges {
-  @ViewChild(ImagesCarouselComponent) carousel: ImagesCarouselComponent;
-
+export class CustomerDetailCommentsComponent implements OnChanges {
   @Input() comments: ProductReview[]
   filteredComments: ProductReview[]
   filterMode: boolean

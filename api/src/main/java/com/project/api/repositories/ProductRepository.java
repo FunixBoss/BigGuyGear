@@ -31,5 +31,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     Double countAvgRating(@Param("productId") Integer productId);
 
     List<Product> findByProductNameStartingWith(String keyword);
+    @Query("SELECT COUNT(pr) FROM Product p JOIN p.productReviews pr WHERE p.productId = :productId")
+    Integer countProductReviewsByProductId(Integer productId);
 
 }

@@ -3,6 +3,7 @@ package com.project.api.controllers.admin;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.api.dtos.AccountDTO;
+import com.project.api.dtos.AccountDetailDTO;
 import com.project.api.dtos.AddressDTO;
 import com.project.api.dtos.CategoryDTO;
 import com.project.api.entities.Account;
@@ -33,9 +34,18 @@ public class AccountController {
     private AddressService addressService;
 
     @GetMapping("findAll")
-    public ResponseEntity<List<AccountDTO>> findAllCategoriesWithImage() {
+    public ResponseEntity<List<AccountDTO>> findAll() {
         try {
             return new ResponseEntity<>(this.accountService.findAll(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("findById/{accountId}")
+    public ResponseEntity<AccountDetailDTO> findById(@PathVariable Integer accountId) {
+        try {
+            return new ResponseEntity<>(accountService.findById(accountId), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

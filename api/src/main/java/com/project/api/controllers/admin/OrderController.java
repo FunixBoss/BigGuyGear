@@ -3,6 +3,7 @@ package com.project.api.controllers.admin;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.api.dtos.OrderFindAllDTO;
+import com.project.api.dtos.OrderFindDetailDTO;
 import com.project.api.dtos.request.OrderRequestDTO;
 import com.project.api.entities.Order;
 import com.project.api.entities.OrderStatus;
@@ -28,6 +29,15 @@ public class OrderController {
             return new ResponseEntity<>(orderService.findAll(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(new ArrayList<>(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("findById/{orderId}")
+    public ResponseEntity<OrderFindDetailDTO> findByid(@PathVariable Integer orderId) {
+        try {
+            return new ResponseEntity<>(orderService.findById(orderId), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 

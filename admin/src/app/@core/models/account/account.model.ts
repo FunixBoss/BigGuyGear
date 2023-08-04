@@ -4,6 +4,7 @@ import { Wishlist } from "./wishlist.model";
 import { Address } from "../address/address.model";
 import { Order } from "../order/order.model";
 import { Image } from "../Image";
+import { ProductReview } from "../product/product-review.model";
 
 export class Account {
     id: number
@@ -12,7 +13,7 @@ export class Account {
     email: string;
     phoneNumber: string;
     role?: Role;
-    image: Image;
+    image?: Image;
     active: boolean;
     createdAt: Date
     updatedAt: Date
@@ -21,4 +22,5 @@ export class Account {
     wishlist?: Wishlist[];
     orders?: Order[]
     totalOrders?: number;
+    productReviews?: ProductReview[]
 }

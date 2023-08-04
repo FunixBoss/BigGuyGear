@@ -68,8 +68,11 @@
                 <tbody>
                     <tr *ngFor="let variant of product.productVariants">
                         <th class="d-flex justify-content-center">
-                            <img [src]="variant.imageUrl !== 'http://localhost:9090/assets/upload/variant/null' ?
-                                variant.imageUrl: 'assets/images/no-image.jpg'" [height]="75" class="d-block" >
+                            <img [src]="
+                                variant.imageUrl !== 'http://localhost:9090/assets/upload/variant/null' ?
+                                variant.imageUrl :
+                                'assets/images/no-image.jpg'" 
+                                [height]="75" class="d-block" >
                         </th>
                         <th class="align-middle text-center">
                             <p>{{variant.productSize.sizeName | uppercase}}</p>

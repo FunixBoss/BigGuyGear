@@ -23,4 +23,9 @@ export class ProductReviewService {
     const url: string = `${this.baseUrlService.baseURL}/products/${productId}/productReviews`
     return this.httpClient.get<ProductReview[]>(url)
   }
+
+  findByAccountId(productId: number): Observable<ProductReview[]> {
+    const url: string = `${this.baseUrlService.baseURL}/accounts/${productId}/productReviews`
+    return this.httpClient.get<ProductReview[]>(url)
+  }
 }

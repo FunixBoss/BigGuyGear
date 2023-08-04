@@ -35,7 +35,7 @@ public class OrderDetail implements Serializable {
 	private Order order;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "product_id", nullable = false)
+	@JoinColumn(name = "product_id")
 	private Product product;
 
 	@Column(name = "product_name")

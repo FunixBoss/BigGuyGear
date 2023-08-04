@@ -1,7 +1,6 @@
 package com.project.api.services.impl;
 
-import com.project.api.dtos.AccountDTO;
-import com.project.api.dtos.AddressDTO;
+import com.project.api.dtos.*;
 import com.project.api.entities.Account;
 import com.project.api.repositories.AccountRepository;
 import com.project.api.repositories.OrderRepository;
@@ -31,10 +30,9 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private RoleRepository roleRepository;
 
-
-
     @Autowired
     private ImageUploadUtils imageUploadUtils;
+
     @Autowired
     private OrderRepository orderRepository;
 
@@ -160,5 +158,29 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account save(Account account) {
         return accountRepository.save(account);
+    }
+
+    @Override
+    public AccountDetailDTO findById(Integer accountId) {
+        try {
+            Account account = this.accountRepository.findById(accountId).get();
+            List<AddressDTO> addresses = account.getAddresses().stream()
+                    .map(AddressDTO::new)
+                    .toList();
+            List<ProductReviewDTO> productReviews = account.getProductReviews().stream()
+                    .map(ProductReviewDTO::new)
+                    .toList();
+            List<OrderFindAllDTO> orders = account.getOrders().stream()
+                    .map(OrderFindAllDTO::new)
+                    .toList();
+            AccountDetailDTO accountDetailDTO = new AccountDetailDTO(account);
+            accountDetailDTO.setAddresses(addresses);
+            accountDetailDTO.setProductReviews(productReviews);
+            accountDetailDTO.setOrders(orders);
+            return accountDetailDTO;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

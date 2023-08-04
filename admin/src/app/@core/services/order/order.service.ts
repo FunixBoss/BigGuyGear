@@ -31,7 +31,7 @@ export class OrderService {
 
 
   findById(id: number): Observable<Order> {
-    const url: string = `${this.baseUrlService.baseURL}/order/${id}`
+    const url: string = `${this.baseUrlService.baseURL}/orders/findById/${id}`
     return this.httpClient.get<Order>(url)
   }
   

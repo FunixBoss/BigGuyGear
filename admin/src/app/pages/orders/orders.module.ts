@@ -13,6 +13,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CustomOrderActionComponent } from './order-list/custom/custom-order-action.component';
 import { CustomOrderFilterActionsComponent } from './order-list/custom/custom-order-filter-actions.component';
 import { CustomOrderStatusActionComponent } from './order-list/custom/custom-order-status-action.component';
+import { ThemeModule } from '../../@theme/theme.module';
 
 
 
@@ -24,7 +25,7 @@ import { CustomOrderStatusActionComponent } from './order-list/custom/custom-ord
     OrderAddComponent,
     CustomOrderActionComponent,
     CustomOrderFilterActionsComponent,
-    CustomOrderStatusActionComponent
+    CustomOrderStatusActionComponent,
   ],
   imports: [
     RouterModule,
@@ -44,8 +45,8 @@ import { CustomOrderStatusActionComponent } from './order-list/custom/custom-ord
     FormsModule,
     NbAutocompleteModule,
     ReactiveFormsModule,
-    NbIconModule
-    
+    NbIconModule,
+    ThemeModule
   ]
 })
 export class OrdersModule { }

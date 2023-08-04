@@ -1,6 +1,8 @@
 package com.project.api.services.impl;
 
+import com.project.api.dtos.OrderDetailDTO;
 import com.project.api.dtos.OrderFindAllDTO;
+import com.project.api.dtos.OrderFindDetailDTO;
 import com.project.api.dtos.request.OrderRequestDTO;
 import com.project.api.dtos.request.ProductRequestDTO;
 import com.project.api.entities.*;
@@ -27,6 +29,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private AddressRepository addressRepository;
+
     @Autowired
     private OrderStatusRepository orderStatusRepository;
 
@@ -40,6 +43,23 @@ public class OrderServiceImpl implements OrderService {
             return new ArrayList<>();
         }
 
+    }
+
+    @Override
+    public OrderFindDetailDTO findById(Integer orderId) {
+        try {
+            Order order = orderRepository.findById(orderId).get();
+            List<OrderDetailDTO> orderDetailDTOS = order.getOrderDetails().stream()
+                    .map(OrderDetailDTO::new)
+                    .collect(Collectors.toList());
+            OrderFindDetailDTO orderFindDetailDTO = new OrderFindDetailDTO(order);
+            orderFindDetailDTO.setOrderDetails(orderDetailDTOS);
+
+            return orderFindDetailDTO;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override

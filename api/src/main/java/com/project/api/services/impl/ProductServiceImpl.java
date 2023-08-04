@@ -3,6 +3,7 @@ package com.project.api.services.impl;
 import com.project.api.dtos.*;
 import com.project.api.entities.*;
 import com.project.api.repositories.*;
+import com.project.api.services.OrderDetailService;
 import com.project.api.services.ProductReviewService;
 import com.project.api.services.ProductService;
 import com.project.api.services.ProductVariantService;
@@ -37,6 +38,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductReviewService productReviewService;
+
+    @Autowired
+    private OrderDetailService orderDetailService;
 
     @Override
     public ProductDetailDTO findById(Integer productId) {
@@ -281,6 +285,10 @@ public class ProductServiceImpl implements ProductService {
             product.getImages().forEach(image -> {
                 imageUploadUtils.delete("product", image.getImageUrl());
             });
+            product.getOrderDetails().forEach(orderDetail -> {
+                orderDetail.setProduct(null);
+                this.orderDetailService.save(orderDetail);
+            });
             this.productRepository.deleteById(product.getProductId());
             return true;
         } catch (Exception e) {
@@ -391,6 +399,16 @@ public class ProductServiceImpl implements ProductService {
         } catch (Exception e) {
             e.printStackTrace();
             return new ArrayList<>();
+        }
+    }
+
+    @Override
+    public Integer countTotalComments(Integer productId) {
+        try {
+            return productRepository.countProductReviewsByProductId(productId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

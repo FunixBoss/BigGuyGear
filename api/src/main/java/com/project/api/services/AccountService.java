@@ -1,6 +1,7 @@
 package com.project.api.services;
 
 import com.project.api.dtos.AccountDTO;
+import com.project.api.dtos.AccountDetailDTO;
 import com.project.api.entities.Account;
 
 import java.util.List;
@@ -14,7 +15,8 @@ public interface AccountService {
     Boolean deleteById(Integer id);
     Boolean checkEmailExisting(String email);
     List<AccountDTO> findByEmailKeyword(String keyword);
-
     Account save(Account account);
+
+    AccountDetailDTO findById(Integer accountId);
 
 }

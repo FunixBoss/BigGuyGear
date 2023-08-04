@@ -277,4 +277,14 @@ public class ProductController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping("{productId}/countComments")
+    public ResponseEntity<Integer> countComments(@PathVariable Integer productId) {
+        try {
+            return new ResponseEntity<>(productService.countTotalComments(productId), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
 }

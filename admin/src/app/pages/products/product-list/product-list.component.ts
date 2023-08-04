@@ -88,17 +88,17 @@ export class ProductListComponent implements OnInit, AfterViewInit {
             columnTitle: ''
           },
           columns: {
-            productId: {
-              title: 'ID',
-              type: 'number',
-              width: '3%'
-            },
             image: {
               title: 'Image',
               type: 'custom',
               sort: false,
               filter: false,
               renderComponent: CustomCategoryImageComponent
+            },
+            productId: {
+              title: 'ID',
+              type: 'number',
+              width: '3%'
             },
             productName: {
               title: 'Name',

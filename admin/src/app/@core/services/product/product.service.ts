@@ -51,6 +51,11 @@ export class ProductService {
     return this.httpClient.get<Product>(url);
   }
 
+  countTotalComments(id: number): Observable<number> {
+    const url: string = `${this.baseUrlService.baseURL}/products/${id}/countComments`
+    return this.httpClient.get<number>(url);
+  }
+
   insert(product: Product): Observable<boolean> {
     const url: string = `${this.baseUrlService.baseURL}/products`
     return this.httpClient.post<boolean>(url, product);

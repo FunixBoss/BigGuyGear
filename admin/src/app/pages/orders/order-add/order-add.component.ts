@@ -370,7 +370,7 @@ export class OrderAddComponent implements OnInit, AfterViewInit {
   }
 
   mapFormValue(): any {
-    let order: Order = new Order()
+    let order: any = new Order()
     order.accountEmail = this.accountForm.get('email').value
     if (this.accountForm.get('applyCoupon').value) {
       order.coupon = this.appliedCoupon

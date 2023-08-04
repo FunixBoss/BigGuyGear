@@ -74,7 +74,7 @@ public class Product implements Serializable {
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "product", cascade = CascadeType.REMOVE)
 	private Set<CartDetail> cartDetails = new HashSet<CartDetail>(0);
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "product", cascade = CascadeType.REMOVE)
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "product")
 	private Set<OrderDetail> orderDetails = new HashSet<OrderDetail>(0);
 
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
