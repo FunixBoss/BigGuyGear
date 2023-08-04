@@ -12,6 +12,7 @@ import { Ng2CompleterModule } from 'ng2-completer';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CustomOrderActionComponent } from './order-list/custom/custom-order-action.component';
 import { CustomOrderFilterActionsComponent } from './order-list/custom/custom-order-filter-actions.component';
+import { CustomOrderStatusActionComponent } from './order-list/custom/custom-order-status-action.component';
 
 
 
@@ -22,7 +23,8 @@ import { CustomOrderFilterActionsComponent } from './order-list/custom/custom-or
     OrderListComponent,
     OrderAddComponent,
     CustomOrderActionComponent,
-    CustomOrderFilterActionsComponent
+    CustomOrderFilterActionsComponent,
+    CustomOrderStatusActionComponent
   ],
   imports: [
     RouterModule,

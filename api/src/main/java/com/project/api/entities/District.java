@@ -1,6 +1,7 @@
 package com.project.api.entities;
 // Generated Jul 25, 2023, 8:08:56 PM by Hibernate Tools 4.3.6.Final
 
+import com.project.api.dtos.DistrictDTO;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -64,6 +65,11 @@ public class District implements Serializable {
 	public District(String code, String name) {
 		this.code = code;
 		this.name = name;
+	}
+
+	public District(DistrictDTO districtDTO) {
+		this.code = districtDTO.getCode();
+		this.fullName = districtDTO.getFullName();
 	}
 
 	public District(String code, AdministrativeUnit administrativeUnit, Province province, String name,

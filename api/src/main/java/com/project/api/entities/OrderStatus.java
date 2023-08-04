@@ -1,10 +1,12 @@
 package com.project.api.entities;
 // Generated Jul 25, 2023, 8:08:56 PM by Hibernate Tools 4.3.6.Final
 
+import com.project.api.dtos.OrderStatusDTO;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -41,6 +43,12 @@ public class OrderStatus implements Serializable {
 	public OrderStatus() {
 	}
 
+	public OrderStatus(OrderStatusDTO orderStatusDTO) {
+		this.orderStatusId = orderStatusDTO.getOrderStatusId();
+		this.statusName = orderStatusDTO.getStatusName();
+		this.description = orderStatusDTO.getDescription();
+	}
+
 	public OrderStatus(String statusName, String description) {
 		this.statusName = statusName;
 		this.description = description;
@@ -50,5 +58,10 @@ public class OrderStatus implements Serializable {
 		this.statusName = statusName;
 		this.description = description;
 		this.orders = orders;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(orderStatusId);
 	}
 }

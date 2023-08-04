@@ -50,6 +50,10 @@ export class AddressService {
   }
 
   getAddressStringFormAddress(address: Address) {
-    return `${address.roadName}, ${address.ward.fullName}, ${address.district.fullName}, ${address.province.fullName}`
+    const wardName = address.ward != null ? address.ward.fullName : null
+    const districtName = address.district != null ? address.district.fullName : null
+    const provinceName = address.province != null ? address.province.fullName : null
+
+    return `${address.roadName}, ${wardName}, ${districtName}, ${provinceName}`
   }
 }

@@ -19,6 +19,7 @@ public class CouponDTO {
     private Date expiredAt;
 
 
+    public CouponDTO() { }
     public CouponDTO(Coupon coupon) {
         this.couponId = coupon.getCouponId();
         this.couponType = new CouponTypeDTO(coupon.getCouponType());

@@ -19,18 +19,8 @@ export class ProductReviewService {
     return this.httpClient.get<ProductReview[]>(url)
   }
 
-  insert(productReview: ProductReview): Observable<ProductReview> {
-    const url: string = `${this.baseUrlService.baseURL}/product-review/create`
-    return this.httpClient.post<ProductReview>(url, productReview);
-  }
-
-  update(productReview: ProductReview): Observable<boolean> {
-    const url: string = `${this.baseUrlService.baseURL}/product-review/update`
-    return this.httpClient.post<boolean>(url, productReview);
-  }
-
-  delete(productReviewId: number): Observable<boolean> {    
-    const url: string = `${this.baseUrlService.baseURL}/product-review/delete/${productReviewId}`
-    return this.httpClient.delete<boolean>(url); 
+  findByProductId(productId: number): Observable<ProductReview[]> {
+    const url: string = `${this.baseUrlService.baseURL}/products/${productId}/productReviews`
+    return this.httpClient.get<ProductReview[]>(url)
   }
 }

@@ -10,20 +10,12 @@ public class ProductFindAllDTO {
     private Integer productId;
     private String productName;
 
-    private Integer categoryId;
-    private String categoryName;
-
-    private Integer productBrandId;
-    private String brandName;
-
-    private Integer productSaleId;
-    private String saleName;
-
-    private Integer productStyleId;
-    private String styleName;
+    private CategoryDTO category;
+    private ProductBrandDTO productBrand;
+    private ProductSaleDTO productSale;
+    private ProductStyleDTO productStyle;
 
     private String imageUrl;
-
     private Boolean active;
     private Boolean sale;
     private Boolean top;
@@ -35,25 +27,30 @@ public class ProductFindAllDTO {
     private Integer totalRating;
     private Double avgRating;
 
-    public ProductFindAllDTO(Integer productId, String productName, Integer categoryId, String categoryName,
-                             Integer productBrandId, String brandName, Integer productSaleId, String saleName,
-                             Integer productStyleId, String styleName,  Boolean active, Boolean sale,
-                             Boolean top, Boolean new_, Date createdAt, Date updatedAt) {
-        this.productId = productId;
-        this.productName = productName;
-        this.categoryId = categoryId;
-        this.categoryName = categoryName;
-        this.productBrandId = productBrandId;
-        this.brandName = brandName;
-        this.productSaleId = productSaleId;
-        this.saleName = saleName;
-        this.productStyleId = productStyleId;
-        this.styleName = styleName;
-        this.active = active;
-        this.sale = sale;
-        this.top = top;
-        this.new_ = new_;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+    public ProductFindAllDTO(Product product) {
+        this.productId = product.getProductId();
+        this.productName = product.getProductName();
+        if(product.getCategory() != null ) {
+            this.category = new CategoryDTO(product.getCategory());
+        }
+
+        if(product.getProductBrand() != null) {
+            this.productBrand = new ProductBrandDTO(product.getProductBrand());
+        }
+
+        if(product.getProductSale() != null) {
+            this.productSale = new ProductSaleDTO(product.getProductSale());
+        }
+
+        if(product.getProductStyle() != null) {
+            this.productStyle = new ProductStyleDTO(product.getProductStyle());
+        }
+        this.imageUrl = product.getImages().iterator().next().getImageUrl();
+        this.active = product.getActive();
+        this.sale = product.getSale();
+        this.top = product.getTop();
+        this.new_ = product.getNew_();
+        this.createdAt = product.getCreatedAt();
+        this.updatedAt = product.getUpdatedAt();
     }
 }

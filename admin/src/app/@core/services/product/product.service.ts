@@ -1,10 +1,14 @@
+import { map } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { Observable, of, BehaviorSubject } from 'rxjs';
-import { Product, ProductDetailDTO, ProductFindAllDTO } from '../../models/product/product.model';
+
+import { Product } from '../../models/product/product.model';
 import { BaseURLService } from '../base-url.service';
 import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs';
 import { ProductSale } from '../../models/sale/product-sale.model';
+import { ProductSize } from '../../models/product/product-size.model';
+import { ProductColor } from '../../models/product/product-color.model';
 
 export class ToastState {
   bahavior: String;
@@ -32,23 +36,18 @@ export class ProductService {
     private httpClient: HttpClient
   ) { }
 
-  findByNameKeyword(productName: string): Observable<Product[]> {
-    const url: string = `${this.baseUrlService.baseURL}/productByIdOrName/${productName}`
+  findByNameKeyword(nameKeyword: string): Observable<Product[]> {
+    const url: string = `${this.baseUrlService.baseURL}/products/findByNameKeyword?keyword=${nameKeyword}`
     return this.httpClient.get<Product[]>(url);
   }
 
-  findAll(): Observable<ProductFindAllDTO[]> {
+  findAll(): Observable<Product[]> {
     const url = `${this.baseUrlService.baseURL}/products/findAll`
-    return this.httpClient.get<ProductFindAllDTO[]>(url);
+    return this.httpClient.get<Product[]>(url);
   }
 
-  findById(id: number): Observable<ProductDetailDTO> {
+  findById(id: number): Observable<Product> {
     const url: string = `${this.baseUrlService.baseURL}/products/${id}`
-    return this.httpClient.get<ProductDetailDTO>(url);
-  }
-
-  findDetailById(id: number): Observable<Product> {
-    const url: string = `${this.baseUrlService.baseURL}/product/detail/${id}`
     return this.httpClient.get<Product>(url);
   }
 
@@ -159,8 +158,58 @@ export class ProductService {
     return this.httpClient.delete<boolean>(url);
   } 
 
-  getDetails(productId: number): Observable<Product> {
-    const url: string = `${this.baseUrlService.baseURL}/product/details1/${productId}`;
-    return this.httpClient.get<Product>(url)
+  isExist(productId: number): Observable<boolean> {
+    const url: string = `${this.baseUrlService.baseURL}/products/isExist?productId=${productId}`;
+    return this.httpClient.get<boolean>(url)
   }
+
+
+
+// FOR ADDING ORDER 
+  findSizesFromProductId(id: number): Observable<ProductSize[]> {
+    const url: string = `${this.baseUrlService.baseURL}/products/${id}/sizes/`
+    return this.httpClient.get<ProductSize[]>(url).pipe(
+      map(colors => removeDuplicateSize(colors))
+    ); 
+  }
+
+  findColorFromSize(productId: number, productSize: ProductSize): Observable<ProductColor[]> {
+    let formData: FormData = new FormData()
+    formData.append("productId", productId.toString())
+    formData.append("sizeJson", JSON.stringify(productSize))
+    const url: string = `${this.baseUrlService.baseURL}/products/findColorsBySizeAndId`
+    return this.httpClient.post<ProductColor[]>(url, formData);
+  }
+
+  findPrice(productId: number, productSize: ProductSize, productColor: ProductColor): Observable<number |  null> {
+    let formData: FormData = new FormData()
+    formData.append("productId", productId.toString())
+    formData.append("sizeJson", JSON.stringify(productSize))
+    formData.append("colorJson", JSON.stringify(productColor))
+
+    const url: string = `${this.baseUrlService.baseURL}/products/findPrice`
+    return this.httpClient.post<number>(url, formData); 
+  }
+
+  findMaxQuantity(productId: number, productSize: ProductSize, productColor: ProductColor, price: number): Observable<number> {
+    let formData: FormData = new FormData()
+    formData.append("productId", productId.toString())
+    formData.append("sizeJson", JSON.stringify(productSize))
+    formData.append("colorJson", JSON.stringify(productColor))
+    formData.append("price", JSON.stringify(price))
+
+
+    const url: string = `${this.baseUrlService.baseURL}/products/findMaxQuantity`
+    return this.httpClient.post<number>(url, formData); 
+  }
+}
+
+
+export function removeDuplicateSize(sizes: ProductSize[]): ProductSize[] {
+  return sizes.filter((value, index) => {
+    const _value = JSON.stringify(value);
+    return index === sizes.findIndex(obj => {
+      return JSON.stringify(obj) === _value;
+    });
+  });
 }

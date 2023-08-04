@@ -14,4 +14,5 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
 
     List<Account> findByEmailStartingWith(String keyword);
 
+    Account findByEmail(String email);
 }

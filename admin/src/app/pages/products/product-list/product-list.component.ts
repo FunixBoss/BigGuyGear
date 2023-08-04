@@ -107,6 +107,7 @@ export class ProductListComponent implements OnInit, AfterViewInit {
             category: {
               title: 'Category',
               type: 'string',
+              width: "8%",
               filter: {
                 type: 'list',
                 config: {
@@ -120,6 +121,7 @@ export class ProductListComponent implements OnInit, AfterViewInit {
             brand: {
               title: 'Brand',
               type: 'string',
+              width: "8%",
               filter: {
                 type: 'list',
                 config: {
@@ -133,6 +135,7 @@ export class ProductListComponent implements OnInit, AfterViewInit {
             style: {
               title: 'Style',
               type: 'string',
+              width: "8%",
               filter: {
                 type: 'list',
                 config: {
@@ -146,6 +149,7 @@ export class ProductListComponent implements OnInit, AfterViewInit {
             sale: {
               title: 'Sale',
               type: 'string',
+              width: "8%",
               filter: {
                 type: 'list',
                 config: {
@@ -228,10 +232,10 @@ export class ProductListComponent implements OnInit, AfterViewInit {
           return {
             productId: pro.productId,
             productName: pro.productName,
-            category: pro.categoryName,
-            brand: pro.brandName,
-            style: pro.styleName,
-            sale: pro.saleName,
+            category: pro.category.categoryName,
+            brand: pro.productBrand.brandName,
+            style: pro.productStyle.styleName,
+            sale: pro.productSale.saleName,
             image: PRODUCT_IMAGE_DIRECTORY + pro.imageUrl,
             status: JSON.stringify({
               new: pro.new_,

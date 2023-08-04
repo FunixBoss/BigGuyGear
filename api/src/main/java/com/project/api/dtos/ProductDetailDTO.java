@@ -1,7 +1,8 @@
 package com.project.api.dtos;
 
-import com.project.api.entities.Category;
+import com.project.api.entities.Image;
 import com.project.api.entities.Product;
+import jdk.jfr.Category;
 import lombok.Data;
 
 import java.util.Date;
@@ -13,17 +14,10 @@ public class ProductDetailDTO {
     private Integer productId;
     private String productName;
 
-    private Integer categoryId;
-    private String categoryName;
-
-    private Integer productBrandId;
-    private String brandName;
-
-    private Integer productSaleId;
-    private String saleName;
-
-    private Integer productStyleId;
-    private String styleName;
+    private CategoryDTO category;
+    private ProductBrandDTO productBrand;
+    private ProductSaleDTO productSale;
+    private ProductStyleDTO productStyle;
 
     private String description;
     private List<String> imageUrls;
@@ -39,51 +33,29 @@ public class ProductDetailDTO {
     private Integer totalRating;
     private Double avgRating;
 
-    public ProductDetailDTO(Integer productId, String productName, Integer categoryId, String categoryName,
-                            Integer productBrandId, String brandName, Integer productSaleId, String saleName,
-                            Integer productStyleId, String styleName, Boolean active, Boolean sale,
-                            Boolean top, Boolean new_, Date createdAt, Date updatedAt) {
-        this.productId = productId;
-        this.productName = productName;
-        this.categoryId = categoryId;
-        this.categoryName = categoryName;
-        this.productBrandId = productBrandId;
-        this.brandName = brandName;
-        this.productSaleId = productSaleId;
-        this.saleName = saleName;
-        this.productStyleId = productStyleId;
-        this.styleName = styleName;
-        this.active = active;
-        this.sale = sale;
-        this.top = top;
-        this.new_ = new_;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
-
     public ProductDetailDTO(Product product) {
         this.productId = product.getProductId();
         this.productName = product.getProductName();
 
         if(product.getCategory() != null ) {
-            this.categoryId = product.getCategory().getCategoryId();
-            this.categoryName = product.getCategory().getCategoryName();
+            this.category = new CategoryDTO(product.getCategory());
         }
 
         if(product.getProductBrand() != null) {
-            this.productBrandId = product.getProductBrand().getProductBrandId();
-            this.brandName = product.getProductBrand().getBrandName();
+            this.productBrand = new ProductBrandDTO(product.getProductBrand());
         }
 
         if(product.getProductSale() != null) {
-            this.productSaleId = product.getProductSale().getProductSaleId();
-            this.saleName = product.getProductSale().getSaleName();
+            this.productSale = new ProductSaleDTO(product.getProductSale());
         }
 
         if(product.getProductStyle() != null) {
-            this.productStyleId = product.getProductStyle().getProductStyleId();
-            this.styleName = product.getProductStyle().getStyleName();
+            this.productStyle = new ProductStyleDTO(product.getProductStyle());
         }
+
+        this.imageUrls = product.getImages().stream()
+                .map(Image::getImageUrl)
+                .collect(Collectors.toList());
         this.productVariants = product.getProductVariants().stream()
                 .map(ProductVariantDTO::new)
                 .collect(Collectors.toList());;

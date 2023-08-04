@@ -49,6 +49,7 @@ GO
 
 INSERT INTO [OrderStatus]
 VALUES 
+('Canceled', 'The order was canceled'),
 ('Hanling', 'The order was paid, and admin are handling for shipping'),
 ('Delivering', 'The goods are shipping'),
 ('Completed', 'The order was completed');

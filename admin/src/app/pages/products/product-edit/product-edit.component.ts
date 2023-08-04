@@ -1,3 +1,4 @@
+import { map } from 'rxjs/operators';
 import { PRODUCT_IMAGE_DIRECTORY, VARIANT_IMAGE_DIRECTORY } from './../../../@core/utils/image-storing-directory';
 import { ProductCategory } from './../../../@core/models/product/product-category.model';
 import { ProductCategoryService } from './../../../@core/services/product/product-category.service';
@@ -10,7 +11,7 @@ import { ProductService } from '../../../@core/services/product/product.service'
 import { ProductColorService } from '../../../@core/services/product/product-color.service';
 import { ProductColor } from '../../../@core/models/product/product-color.model';
 import { ProductStyle } from '../../../@core/models/product/product-style.model';
-import { Product, ProductDetailDTO } from '../../../@core/models/product/product.model';
+import { Product } from '../../../@core/models/product/product.model';
 import { CustomValidator } from '../../../@core/validators/custom-validator';
 import { ImagesCarouselComponent } from '../images-carousel.component';
 import { ProductVariant } from '../../../@core/models/product/product-variant.model';
@@ -66,36 +67,10 @@ export class ProductEditComponent implements OnInit {
       params => {
         this.edittingProductId = params['id']
         this.productService.findById(+this.edittingProductId).subscribe(
-          (dto: ProductDetailDTO) => {
-            this.edittingProduct = {
-              productId: dto.productId,
-              productName: dto.productName,
-              description: dto.description,
-              category: (dto.productBrandId != null ? 
-                { categoryId: dto.categoryId, categoryName: dto.categoryName } :
-                null
-              ),
-              productBrand: (dto.productBrandId != null ? 
-                { productBrandId: dto.productBrandId, brandName: dto.brandName } : 
-                null
-              ),
-              productSale: (dto.productSaleId != null ? 
-                { productSaleId: dto.productSaleId, saleName: dto.saleName } : 
-                null
-              ),
-              productStyle: (dto.productStyleId != null ? 
-                { productStyleId: dto.productStyleId, styleName: dto.styleName } : 
-                null 
-              ),
-              active: dto.active,
-              sale: dto.sale,
-              top: dto.top,
-              new_: dto.new_,
-              productVariants: dto.productVariants,
-              images: dto.imageUrls.map(url => {
-                return PRODUCT_IMAGE_DIRECTORY + url
-              })
-            };
+          (data: Product) => {
+            this.edittingProduct = data
+            this.edittingProduct.imageUrls = this.edittingProduct.imageUrls
+              .map(img => PRODUCT_IMAGE_DIRECTORY + img)
           }
         )
       }
@@ -159,8 +134,6 @@ export class ProductEditComponent implements OnInit {
         this.sizes = sizeData._embedded.productSizes
 
         this.fillFormValues();
-        console.log(this.variants.value);
-        
       },
       error => {
         console.error(error);
@@ -198,7 +171,7 @@ export class ProductEditComponent implements OnInit {
       const style = this.styles.find(s => s.productStyleId == this.edittingProduct.productStyle.productStyleId);
       this.product.get('style').setValue(style)
     }
-    this.carousel.show(this.edittingProduct.images);
+    this.carousel.show(this.edittingProduct.imageUrls);
     
     if (this.edittingProduct.productVariants.length == 0 ||
       this.edittingProduct.productVariants == null) {
@@ -329,7 +302,7 @@ export class ProductEditComponent implements OnInit {
     this.productService.update(editedProduct).subscribe(data => {
       if (data) {
         this.utilsService.updateToastState(new ToastState('Edit Product Successfully!', "success"))
-        // this.router.navigate(['/admin/product/list'])
+        this.router.navigate(['/admin/product/list'])
       } else {
         this.utilsService.updateToastState(new ToastState('Edit Product Failed!', "danger"))
       }

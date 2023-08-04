@@ -73,12 +73,12 @@ export function isCouponCantBeUsed(couponService: ProductCouponService) {
 }
 
 
-export function isProductidNotExisting(productService: ProductService) {
-    // return (control: AbstractControl): Observable<ValidationErrors | null> => {
-    // Use the AccountService to check if the email exists
-    // return productService.findById(+control.value).pipe(
-    //     map(product => product == null ? { productNotExisting: true } : null)
-    // );
-    // };
-    return;
+export function isProductNotExisting(productService: ProductService) {
+    return (control: AbstractControl): Observable<ValidationErrors | null> => {
+        let productName = control.value
+        return productService.findByNameKeyword(productName).pipe(
+            map((products: any[]) => products.length == 0 ? { productNotExist: true } : null),
+            catchError(() => of(null))
+        )
+    };
 }

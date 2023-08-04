@@ -4,7 +4,7 @@
   "homepage": "https://d-themes.com/angular/molla/demo1",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --port=4300 --configuration=production",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",

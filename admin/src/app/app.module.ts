@@ -23,6 +23,7 @@ import {
 } from '@nebular/theme';
 import { PagesModule } from './pages/pages.module';
 import { CommonModule, registerLocaleData } from '@angular/common';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [AppComponent],
@@ -47,6 +48,7 @@ import { CommonModule, registerLocaleData } from '@angular/common';
     PagesModule,
     NbWindowModule.forRoot(),
     NbCardModule,
+    NgbModule
   ],
   bootstrap: [AppComponent],
   // providers: [

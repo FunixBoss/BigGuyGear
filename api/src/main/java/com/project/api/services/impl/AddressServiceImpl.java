@@ -2,6 +2,7 @@ package com.project.api.services.impl;
 
 import com.project.api.dtos.AddressDTO;
 import com.project.api.dtos.CategoryDTO;
+import com.project.api.entities.Address;
 import com.project.api.entities.Category;
 import com.project.api.repositories.AddressRepository;
 import com.project.api.repositories.CategoryRepository;
@@ -32,4 +33,10 @@ public class AddressServiceImpl implements AddressService {
             return new ArrayList<>();
         }
     }
+
+    @Override
+    public Address save(Address address) {
+        return addressRepository.save(address);
+    }
+
 }

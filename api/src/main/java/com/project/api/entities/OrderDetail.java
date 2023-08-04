@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -43,11 +44,8 @@ public class OrderDetail implements Serializable {
 	@Column(name = "quantity", nullable = false)
 	private int quantity;
 
-	@Column(name = "height")
-	private Integer height;
-
-	@Column(name = "width")
-	private Integer width;
+	@Column(name = "size")
+	private String size;
 
 	@Column(name = "color")
 	private String color;
@@ -65,16 +63,22 @@ public class OrderDetail implements Serializable {
 		this.price = price;
 	}
 
-	public OrderDetail(Order order, Product product, String productName, int quantity, Integer height,
-			Integer width, String color, BigDecimal price) {
+	public OrderDetail(Order order, Product product, String productName, int quantity,
+			String size, String color, BigDecimal price) {
 		this.order = order;
 		this.product = product;
 		this.productName = productName;
 		this.quantity = quantity;
-		this.height = height;
-		this.width = width;
+		this.size = size;
 		this.color = color;
 		this.price = price;
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(orderDetailId);
+	}
+
+
 
 }

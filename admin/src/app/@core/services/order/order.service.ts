@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
+
 import { Order } from '../../models/order/order.model';
 import { BaseURLService } from '../base-url.service';
 import { HttpClient } from '@angular/common/http';
@@ -25,8 +27,6 @@ export class OrderService {
   constructor(
     private baseUrlService: BaseURLService,
     private httpClient: HttpClient,
-    private orderStatusService: OrderStatusService,
-    private paymentMethodService: PaymentMethodService
   ) { }
 
 
@@ -37,18 +37,43 @@ export class OrderService {
   
 
   findAll(): Observable<Order[]> {
-    const url: string = `${this.baseUrlService.baseURL}/order`
+    const url: string = `${this.baseUrlService.baseURL}/orders/findAll`
     return this.httpClient.get<Order[]>(url)
   }
 
-  insert(order: Order): Observable<Order> {
-    const url: string = `${this.baseUrlService.baseURL}/order/create`
+  insert(order: any): Observable<Order> {
+    const url: string = `${this.baseUrlService.baseURL}/orders/create`
     return this.httpClient.post<Order>(url, order);
   }
 
   updateOrderStatus(orderId: number, orderStatus: OrderStatus): Observable<boolean> {
-    const url: string = `${this.baseUrlService.baseURL}/order/update/${orderId}`
-    return this.httpClient.post<boolean>(url, orderStatus);
+    const order = {
+      orderId: orderId
+    }
+    let formData = new FormData()
+    formData.append("order", JSON.stringify(order));
+    formData.append("orderStatus", JSON.stringify(orderStatus));
+    const url: string = `${this.baseUrlService.baseURL}/orders/update-status`
+    return this.httpClient.post<boolean>(url, formData);
+  }
+
+  updateOrdersStatus(orders: Order[], status: OrderStatus): Observable<boolean>{
+    const mappedOrders = orders.map(o => {
+      return { 
+        orderId: o.orderId
+      }
+    })
+    const mappedStatus = {
+      orderStatusId: status.orderStatusId,
+      statusName: status.statusName,
+      description: status.description
+    }
+    let formData = new FormData()
+    formData.append("orders", JSON.stringify(mappedOrders));
+    formData.append("orderStatus", JSON.stringify(mappedStatus));
+
+    const url: string = `${this.baseUrlService.baseURL}/orders/update-orders-status`
+    return this.httpClient.post<boolean>(url, formData);
   }
 
   delete(orderId: number): Observable<boolean> {    
@@ -56,23 +81,16 @@ export class OrderService {
     return this.httpClient.delete<boolean>(url); 
   }
 
-  findSizesFromProductId(id: number): Observable<string[]> {
-    const url: string = `${this.baseUrlService.baseURL}/findSize/${id}`
-    return this.httpClient.get<string[]>(url); 
-  }
-
-  findColorFromSize(id: number, size: string): Observable<string[]> {
-    const url: string = `${this.baseUrlService.baseURL}/findColor/${id}/${size}`
-    return this.httpClient.get<string[]>(url); 
-  }
-
-  findPrice(id: number, size: string, color: string): Observable<string> {
-    const url: string = `${this.baseUrlService.baseURL}/findPrice/${id}/${size}/${color}/`
-    return this.httpClient.get<string>(url); 
-  }
-
   findOrderStatusById(orderId: number): Observable<OrderStatus> {
-    const url: string = `${this.baseUrlService.baseURL}/order/${orderId}/order-status`
-    return this.httpClient.get<OrderStatus>(url); 
+    const url: string = `${this.baseUrlService.baseURL}/orders/${orderId}/orderStatus`
+    return this.httpClient.get<OrderStatus>(url).pipe( 
+      map(data => {
+        return {
+          orderStatusId: data.orderStatusId,
+          statusName: data.statusName,
+          description: data.description
+        }
+      })
+    );
   }
 }

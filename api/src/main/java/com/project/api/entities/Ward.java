@@ -1,6 +1,7 @@
 package com.project.api.entities;
 // Generated Jul 25, 2023, 8:08:56 PM by Hibernate Tools 4.3.6.Final
 
+import com.project.api.dtos.WardDTO;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -60,6 +61,11 @@ public class Ward implements Serializable {
 	public Ward(String code, String name) {
 		this.code = code;
 		this.name = name;
+	}
+
+	public Ward(WardDTO wardDTO) {
+		this.code = wardDTO.getCode();
+		this.fullName = wardDTO.getFullName();
 	}
 
 	public Ward(String code, AdministrativeUnit administrativeUnit, District district, String name,

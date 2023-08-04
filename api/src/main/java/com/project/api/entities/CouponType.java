@@ -1,6 +1,7 @@
 package com.project.api.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.project.api.dtos.CouponTypeDTO;
 import lombok.Data;
 
 import java.util.HashSet;
@@ -36,6 +37,11 @@ public class CouponType implements java.io.Serializable {
 	private Set<Coupon> coupons = new HashSet<Coupon>(0);
 
 	public CouponType() {
+	}
+
+	public CouponType(CouponTypeDTO couponTypeDTO) {
+		this.couponTypeId = couponTypeDTO.getCouponTypeId();
+		this.typeName = couponTypeDTO.getTypeName();
 	}
 
 	public CouponType(String typeName) {

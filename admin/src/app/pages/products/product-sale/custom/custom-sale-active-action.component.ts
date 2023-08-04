@@ -19,9 +19,6 @@ export class CustomSaleActiveActionComponent implements ViewCell, OnInit {
     @Input() value: string | number;
     @Input() rowData: any;
 
-    @ViewChild('onDeleteTemplate') deleteWindow: TemplateRef<any>;
-    deleteWindowRef: NbWindowRef;
-
     constructor() { }
 
     ngOnInit(): void {

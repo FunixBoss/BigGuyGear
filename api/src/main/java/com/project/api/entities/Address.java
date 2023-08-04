@@ -1,6 +1,7 @@
 package com.project.api.entities;
 // Generated Jul 25, 2023, 8:08:56 PM by Hibernate Tools 4.3.6.Final
 
+import com.project.api.dtos.AddressDTO;
 import lombok.Data;
 
 import java.util.HashSet;
@@ -68,6 +69,21 @@ public class Address implements java.io.Serializable {
 		this.roadName = roadName;
 		this.accounts = accounts;
 		this.orders = orders;
+	}
+
+	public Address(AddressDTO addressDTO) {
+		this.addressId = addressDTO.getAddressId();
+		this.province = new Province(addressDTO.getProvince());
+		this.district = new District(addressDTO.getDistrict());
+		this.ward = new Ward(addressDTO.getWard());
+		this.roadName = addressDTO.getRoadName();
+	}
+
+
+	@Override
+	public String toString() {
+		return roadName + ", " + ward.getFullName() + ", " +
+				district.getFullName() + ", " + province.getFullName();
 	}
 
 	@Override

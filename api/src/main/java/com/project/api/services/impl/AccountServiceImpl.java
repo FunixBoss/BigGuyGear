@@ -4,6 +4,7 @@ import com.project.api.dtos.AccountDTO;
 import com.project.api.dtos.AddressDTO;
 import com.project.api.entities.Account;
 import com.project.api.repositories.AccountRepository;
+import com.project.api.repositories.OrderRepository;
 import com.project.api.repositories.RoleRepository;
 import com.project.api.services.AccountService;
 import com.project.api.services.AddressService;
@@ -34,6 +35,8 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private ImageUploadUtils imageUploadUtils;
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Override
     public List<AccountDTO> findAll() {
@@ -43,6 +46,16 @@ public class AccountServiceImpl implements AccountService {
         } catch (Exception e) {
             e.printStackTrace();
             return new ArrayList<>();
+        }
+    }
+
+    @Override
+    public Account findByEmail(String email) {
+        try {
+            return accountRepository.findByEmail(email);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
@@ -142,5 +155,10 @@ public class AccountServiceImpl implements AccountService {
             e.printStackTrace();
             return new ArrayList<>();
         }
+    }
+
+    @Override
+    public Account save(Account account) {
+        return accountRepository.save(account);
     }
 }
