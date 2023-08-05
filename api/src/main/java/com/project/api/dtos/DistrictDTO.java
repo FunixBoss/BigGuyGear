@@ -9,6 +9,7 @@ public class DistrictDTO {
     private String code;
     private String fullName;
 
+    public DistrictDTO() {}
     public DistrictDTO(District district) {
         this.code = district.getCode();
         this.fullName = district.getFullName();

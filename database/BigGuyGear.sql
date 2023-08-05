@@ -254,6 +254,17 @@ CREATE TABLE [ProductReview] (
 	CONSTRAINT [product_review_ibfk_2] FOREIGN KEY ([product_id]) REFERENCES[Product] ([product_id])
 )
 
+INSERT INTO [ProductReview] ([account_id], [product_id], [content], [rating])
+VALUES
+(1, 1, 'Comment ABC', 5),
+(2, 1, 'Comment 6', 3),
+(3, 1, 'Comment 7', 2),
+(2, 1, 'Comment 8', 1)
+GO
+
+
+
+
 DROP TABLE IF EXISTS [ProductColor];
 CREATE TABLE [ProductColor] (
 	[product_color_id] INT PRIMARY KEY IDENTITY,
@@ -357,10 +368,9 @@ CREATE TABLE [OrderDetail] (
 	[order_detail_id] INT PRIMARY KEY IDENTITY,
 	[order_id] INT NOT NULL,
 	[product_name] NVARCHAR(250),
-	[product_id] INT NOT NULL,
+	[product_id] INT,
 	[quantity] INT NOT NULL,
-	[height] INT,
-	[width] INT,
+	[size] NVARCHAR(50),
 	[color] NVARCHAR(50),
 	[price] decimal(18,2) NOT NULL,
 	CONSTRAINT [order_detail_ibfk_1] FOREIGN KEY ([order_id]) REFERENCES [Order] ([order_id]),

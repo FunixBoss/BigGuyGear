@@ -11,6 +11,8 @@ public class CouponTypeDTO {
     private Integer couponTypeId;
     private String typeName;
 
+    public CouponTypeDTO() {}
+
     public CouponTypeDTO(CouponType couponType) {
         this.couponTypeId = couponType.getCouponTypeId();
         this.typeName = couponType.getTypeName();

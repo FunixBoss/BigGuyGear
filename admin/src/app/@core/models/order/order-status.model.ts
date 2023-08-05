@@ -1,7 +1,7 @@
 export class OrderStatus {
     orderStatusId: number;
     statusName: string;
-    statusDescription: string;
+    description: string;
 }
 
 export class GetOrderStatusResponse {

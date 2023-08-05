@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { NbAccordionModule, NbActionsModule, NbAlertModule, NbButtonModule, NbCardModule, NbCheckboxModule, NbDatepickerModule, NbIconModule, NbInputModule, NbListModule, NbRadioModule, NbSelectModule, NbUserModule } from '@nebular/theme';
+import { NbAccordionModule, NbActionsModule, NbAlertModule, NbButtonModule, NbCardModule, NbCheckboxModule, NbDatepickerModule, NbFormFieldModule, NbIconModule, NbInputModule, NbListModule, NbRadioModule, NbSelectModule, NbUserModule } from '@nebular/theme';
 import { NbTabsetModule } from '@nebular/theme';
 import { ThemeModule } from '../../@theme/theme.module';
 import { ProductsRoutingModule, routedComponents } from './products-routing.module';
@@ -36,6 +36,9 @@ import { ProductSaleMultiComponent } from './product-sale/product-sale-multi/pro
 import { CustomProductStatusComponent } from './product-list/custom/custom-product-status.component';
 import { CustomProductStatusFilterComponent } from './product-list/custom/custom-product-status-filter.component';
 import { ProductListMultiComponent } from './product-list/product-list-multi/product-list-multi.component';
+import { ProductDetailBasicComponent } from './product-detail/product-detail-basic/product-detail-basic.component';
+import { ProductDetailCommentsComponent } from './product-detail/product-detail-comments/product-detail-comments.component';
+import { NgbModule, NgbRatingModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   imports: [
@@ -60,7 +63,9 @@ import { ProductListMultiComponent } from './product-list/product-list-multi/pro
     FormsModule,
     ReactiveFormsModule,
     NbIconModule,
-    NbAlertModule
+    NbAlertModule,
+    NgbRatingModule,
+    NbFormFieldModule
   ],
   declarations: [
     ...routedComponents,
@@ -98,8 +103,10 @@ import { ProductListMultiComponent } from './product-list/product-list-multi/pro
     CustomSaleActiveActionComponent,
     ProductSaleAddComponent,
     ProductSaleEditComponent,
-    ProductSaleMultiComponent
+    ProductSaleMultiComponent,
 
+    ProductDetailBasicComponent,
+    ProductDetailCommentsComponent
   ],
 })
 export class ProductsModule { }

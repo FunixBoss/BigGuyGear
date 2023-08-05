@@ -2,10 +2,11 @@ package com.project.api.controllers.admin;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.api.dtos.ProductDetailDTO;
-import com.project.api.dtos.ProductFindAllDTO;
+import com.project.api.dtos.*;
 import com.project.api.entities.Product;
+import com.project.api.entities.ProductColor;
 import com.project.api.entities.ProductSale;
+import com.project.api.entities.ProductSize;
 import com.project.api.services.ProductService;
 import com.project.api.services.ProductVariantService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -29,6 +31,15 @@ public class ProductController {
     public ResponseEntity<ProductDetailDTO> findById(@PathVariable Integer productId) {
         try {
             return new ResponseEntity<>(this.productService.findById(productId), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("{productId}/productReviews")
+    public ResponseEntity<List<ProductReviewDTO>> findProductReviews(@PathVariable Integer productId) {
+        try {
+            return new ResponseEntity<>(this.productService.findProductReviews(productId), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -190,4 +201,90 @@ public class ProductController {
         }
     }
 
+    @GetMapping("isExist")
+    public ResponseEntity<Boolean> isExist(@RequestParam Integer productId) {
+        try {
+            return new ResponseEntity<>(productService.existById(productId), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("findByNameKeyword")
+    public ResponseEntity<List<ProductFindAllDTO>> findByNameKeyword(@RequestParam String keyword) {
+        try {
+            return new ResponseEntity<>(productService.findByNameKeyword(keyword), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/{productId}/sizes")
+    public ResponseEntity<List<ProductSizeDTO>> findSizesByProductId(@PathVariable Integer productId) {
+        try {
+            return new ResponseEntity<>(productService.findSizesByProductId(productId), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("findColorsBySizeAndId")
+    public ResponseEntity<List<ProductColorDTO>> findColorsBySizeAndId(
+            @RequestParam Integer productId,
+            @RequestParam String sizeJson) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            ProductSize productSize = mapper.readValue(sizeJson, ProductSize.class);
+
+            return new ResponseEntity<>(productService.findColorsByProductIdAndSize(productId, productSize), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("findPrice")
+    public ResponseEntity<BigDecimal> findPrice(
+            @RequestParam Integer productId,
+            @RequestParam String sizeJson,
+            @RequestParam String colorJson) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            ProductSize productSize = mapper.readValue(sizeJson, ProductSize.class);
+            ProductColor productColor = mapper.readValue(colorJson, ProductColor.class);
+            return new ResponseEntity<>(productService.findPrice(productId, productSize, productColor), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("findMaxQuantity")
+    public ResponseEntity<BigDecimal> findMaxQuantity(
+            @RequestParam Integer productId,
+            @RequestParam String sizeJson,
+            @RequestParam String colorJson,
+            @RequestParam String price) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            ProductSize productSize = mapper.readValue(sizeJson, ProductSize.class);
+            ProductColor productColor = mapper.readValue(colorJson, ProductColor.class);
+            BigDecimal productPrice = mapper.readValue(price, BigDecimal.class);
+            return new ResponseEntity<>(productService.findPrice(productId, productSize, productColor), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("{productId}/countComments")
+    public ResponseEntity<Integer> countComments(@PathVariable Integer productId) {
+        try {
+            return new ResponseEntity<>(productService.countTotalComments(productId), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
 }

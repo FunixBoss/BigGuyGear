@@ -1,5 +1,5 @@
 import { Component, Input, ViewChild, TemplateRef } from "@angular/core";
-import { FormBuilder, FormGroup } from "@angular/forms";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { NbWindowRef, NbWindowService } from "@nebular/theme";
 import { ViewCell } from "ng2-smart-table";
@@ -7,6 +7,7 @@ import { ToastState, UtilsService } from "../../../../@core/services/utils.servi
 import { OrderStatusService } from "../../../../@core/services/order/order-status.service";
 import { OrderService } from "../../../../@core/services/order/order.service";
 import { OrderStatus } from "../../../../@core/models/order/order-status.model";
+import { forkJoin } from "rxjs";
 
 @Component({
     selector: 'ngx-custom-action',
@@ -17,7 +18,7 @@ import { OrderStatus } from "../../../../@core/models/order/order-status.model";
                     <nb-icon icon="folder-outline"></nb-icon>
                 </button>
             </div>
-            <div class="col-lg-46 d-flex justify-content-center">
+            <div class="col-lg-6 d-flex justify-content-center">
                 <button nbButton status="warning" (click)="onEdit()">
                     <nb-icon icon="edit-2-outline"></nb-icon>
                 </button>
@@ -28,11 +29,22 @@ import { OrderStatus } from "../../../../@core/models/order/order-status.model";
             <div class="d-flex flex-column" [formGroup]="editStatusFormGroup">
                 <nb-select fullWidth placeholder="Order Status" formControlName="orderStatus">
                     <nb-select-label>
-                        Order Status: {{ editStatusFormGroup.get('orderStatus').value['statusName'] }}
+                        Order Status: {{ 
+                            editStatusFormGroup.get('orderStatus').value !== null ? 
+                            editStatusFormGroup.get('orderStatus').value['statusName'] :
+                            null
+                        }}
                     </nb-select-label>
                     <nb-option *ngFor="let status of orderStatuses"
                         [value]="status">{{status.statusName}}</nb-option>
                 </nb-select>
+
+                <div class="alert alert-danger mt-1"
+                    *ngIf="editStatusFormGroup.get('orderStatus').invalid && (editStatusFormGroup.get('orderStatus').dirty || editStatusFormGroup.get('orderStatus').touched)">
+                    <div *ngIf="editStatusFormGroup.get('orderStatus').errors['required']">
+                        Order Status is required
+                    </div>
+                </div>
                 <button nbButton status="success" class="mt-3" (click)="editStatus()">
                     SAVE
                 </button>
@@ -71,7 +83,7 @@ export class CustomOrderActionComponent implements ViewCell {
         private router: Router
     ) { 
         this.editStatusFormGroup = this.formBuilder.group({
-            orderStatus: [''],
+            orderStatus: [null, Validators.required],
         })
     }
 
@@ -83,12 +95,16 @@ export class CustomOrderActionComponent implements ViewCell {
         this.windowRef = this.windowService.open(
             this.editOrderStatusWindow, { title: 'Edit Order Status' },
         );
-        this.orderStatusService.findAll().subscribe(data => this.orderStatuses = data._embedded.orderStatuses)
-        this.orderService.findOrderStatusById(this.rowData.orderId).subscribe(
-            data => {
-                this.editStatusFormGroup.get('orderStatus').setValue(data)
-            }
-        )
+
+        this.orderStatusService.findAll().subscribe(data => {
+            this.orderStatuses = data._embedded.orderStatuses.map(data => {
+                return {
+                    orderStatusId: data.orderStatusId,
+                    statusName: data.statusName,
+                    description: data.description
+                }
+            })
+        })
     }
 
     editStatus() {

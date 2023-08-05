@@ -229,13 +229,6 @@
                     <nb-accordion-item *ngFor="let productForm of products.controls; let i = index">
                         <nb-accordion-item-header class="d-flex justify-content-between align-items-center">
                             <p class="font-weight-bold">Product #{{i + 1}}</p>
-                            <p>
-                                {{ productForm.get('id').value === null ? '' : 'id:' + productForm.get('id').value}}
-                                {{ productForm.get('size').value === null ? '' : '- s:' + productForm.get('size').value}}
-                                {{ productForm.get('price').value === null ? '' : ' - ' + (productForm.get('price').value | currency: 'USD')}}
-                                {{ productForm.get('quantity').value === null ? '' : '*' + productForm.get('quantity').value }}
-                                {{ productForm.get('color').value === null ? '' : ' - ' + productForm.get('color').value }}
-                            </p>
                             <ng-container *ngIf="i !== 0">
                                 <button nbButton [size]="'small'" [status]="'danger'" 
                                     class="mr-5" (click)="removeProduct(i)">
@@ -250,14 +243,14 @@
                             </ng-container>
                         </nb-accordion-item-header>
                         <nb-accordion-item-body [formGroup]="productForm">
-                            <input  type="text" placeholder="Product ID" formControlName="id"
+                            <input  type="text" placeholder="Product Name" formControlName="name"
                                 nbInput fullWidth [nbAutocomplete]="product" class="inputs-group"/>
                             <div class="alert alert-danger mt-1" 
-                                *ngIf="productForm.get('id').invalid && (productForm.get('id').dirty || productForm.get('id').touched)">
-                                <div *ngIf="productForm.get('id').errors['notblank']">
-                                    Product Id is required
+                                *ngIf="productForm.get('name').invalid && (productForm.get('name').dirty || productForm.get('name').touched)">
+                                <div *ngIf="productForm.get('name').errors['notblank']">
+                                    Product name is required
                                 </div>
-                                <div *ngIf="productForm.get('id').errors['productNotExisting']">
+                                <div *ngIf="productForm.get('name').errors['productNotExist']">
                                     Product does not exist
                                 </div>
                             </div> 
@@ -266,7 +259,7 @@
                                     (click)="selectProduct(product, i)">
                                     <div class="row">
                                         <div class="col-3">
-                                            <img [src]="utilsService.getImageFromBase64(product?.images[0]?.imageUrl)" class="d-block w-100">
+                                            <img [src]="'http://localhost:9090/assets/upload/product/' + product.imageUrl" class="d-block w-100">
                                         </div>
                                         <div class="col-9 my-auto">
                                             <p class="font-weight-bold">{{ product.productName }}</p>
@@ -277,10 +270,10 @@
 
                             <nb-select fullWidth placeholder="Size" class="inputs-group" formControlName="size">
                                 <nb-select-label>
-                                    Size: {{ productForm.get('size').value }}
+                                    Size: {{ productForm.get('size').value !== null ? productForm.get('size').value['sizeName'] : null }}
                                 </nb-select-label>
                                 <nb-option *ngFor="let siz of productForm.get('sizes').value" [value]="siz">
-                                    {{siz}}
+                                    {{siz.sizeName}}
                                 </nb-option>
                             </nb-select>
                             <div class="alert alert-danger mt-1" 
@@ -292,10 +285,10 @@
 
                             <nb-select fullWidth placeholder="Color" class="inputs-group" formControlName="color">
                                 <nb-select-label>
-                                    Color: {{ productForm.get('color').value }}
+                                    Color: {{ productForm.get('color').value !== null ? productForm.get('color').value['colorName'] : null}}
                                 </nb-select-label>
                                 <nb-option *ngFor="let color of productForm.get('colors').value" [value]="color">
-                                    {{color}}
+                                    {{color.colorName}}
                                 </nb-option>
                             </nb-select>
                             <div class="alert alert-danger mt-1" 
@@ -307,12 +300,21 @@
 
                             <input  type="number" placeholder="Price" nbInput fullWidth
                                 class="inputs-group" formControlName="price" disabled/>
+
                             <input  type="number" placeholder="Quantity" nbInput fullWidth 
                                 class="inputs-group" formControlName="quantity"/>
                             <div class="alert alert-danger mt-1" 
                                 *ngIf="productForm.get('quantity').invalid && (productForm.get('quantity').dirty || productForm.get('quantity').touched)">
                                 <div *ngIf="productForm.get('quantity').errors['required']">
                                     Quantity is required
+                                </div>
+                                <div *ngIf="productForm.get('quantity').errors['min']">
+                                    The min quantity is 1
+                                </div>
+                                <div *ngIf="productForm.get('maxQuantity').value !== null">
+                                    <div *ngIf="productForm.get('quantity').errors['max']">
+                                        The maximum quantity is {{productForm.get('maxQuantity').value}}
+                                    </div>
                                 </div>
                             </div> 
                         </nb-accordion-item-body>

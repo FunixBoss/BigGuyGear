@@ -33,8 +33,13 @@ export class AccountService {
   }
 
   findById(id: number): Observable<Account> {
-    const url: string = `${this.baseUrlService.baseURL}/accounts/detail/${id}`
+    const url: string = `${this.baseUrlService.baseURL}/accounts/findById/${id}`
     return this.httpClient.get<Account>(url);
+  }
+
+  countTotalComments(id: number): Observable<number> {
+    const url: string = `${this.baseUrlService.baseURL}/accounts/${id}/countComments`
+    return this.httpClient.get<number>(url);
   }
 
   insert(account: Account): Observable<Account> {

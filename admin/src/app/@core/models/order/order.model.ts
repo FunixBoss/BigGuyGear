@@ -10,14 +10,13 @@ export class Order {
     orderId: number;
     orderTrackingNumber: string;
     accountEmail: string
+    address: string;
+    couponCode: string;
+    orderStatus?: OrderStatus
+    paymentMethod: PaymentMethod
     totalPrice: number;
     totalQuantity: number;
-    coupon?: Coupon;
-    orderStatus?: OrderStatus
-    address: Address;
-    paymentMethod: PaymentMethod
     orderDetails?: OrderDetail[];
     createdAt: Date
     updatedAt: Date
-    products?: Product[]
 }

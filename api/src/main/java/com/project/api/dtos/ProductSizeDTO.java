@@ -12,6 +12,8 @@ public class ProductSizeDTO {
     private String sizeName;
     private String sizeType;
 
+    public ProductSizeDTO() {}
+
     public ProductSizeDTO(ProductSize productSize) {
         this.productSizeId = productSize.getProductSizeId();
         this.sizeName = productSize.getSizeName();

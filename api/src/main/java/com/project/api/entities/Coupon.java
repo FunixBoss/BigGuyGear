@@ -1,6 +1,7 @@
 package com.project.api.entities;
 // Generated Jul 25, 2023, 8:08:56 PM by Hibernate Tools 4.3.6.Final
 
+import com.project.api.dtos.CouponDTO;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -53,6 +54,16 @@ public class Coupon implements Serializable {
 	private Set<AccountCoupon> accountCoupons = new HashSet<AccountCoupon>(0);
 
 	public Coupon() {
+	}
+
+	public Coupon(CouponDTO couponDTO) {
+		this.couponId = couponDTO.getCouponId();
+		this.couponType = new CouponType(couponDTO.getCouponType());
+		this.code = couponDTO.getCode();
+		this.discount = couponDTO.getDiscount();
+		this.description = couponDTO.getDescription();
+		this.startedAt = couponDTO.getStartedAt();
+		this.expiredAt = couponDTO.getExpiredAt();
 	}
 
 	public Coupon(CouponType couponType, String code, int discount, Date startedAt, Date expiredAt) {

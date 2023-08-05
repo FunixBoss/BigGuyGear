@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import javax.persistence.*;
 
@@ -107,5 +108,10 @@ public class Account implements java.io.Serializable {
 		this.notifications = notifications;
 		this.carts = carts;
 		this.accountCoupons = accountCoupons;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
 	}
 }

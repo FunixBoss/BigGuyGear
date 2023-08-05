@@ -8,6 +8,7 @@ public class WardDTO {
     private String code;
     private String fullName;
 
+    public WardDTO () {}
     public WardDTO(Ward ward) {
         this.code = ward.getCode();
         this.fullName = ward.getFullName();

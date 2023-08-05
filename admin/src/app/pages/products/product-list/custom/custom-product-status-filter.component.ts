@@ -7,8 +7,7 @@ import { distinctUntilChanged } from 'rxjs-compat/operator/distinctUntilChanged'
 @Component({
     template: `
         <div class="" [formGroup]="form">
-            <nb-select fullWidth multiple placeholder="Status..." 
-                formControlName="selectedItems">
+            <nb-select fullWidth multiple placeholder="Status..." formControlName="selectedItems">
                 <nb-option value="new">NEW</nb-option>
                 <nb-option value="top">TOP</nb-option>
                 <nb-option value="active">ACTIVE</nb-option>
@@ -33,13 +32,6 @@ export class CustomProductStatusFilterComponent extends DefaultFilter implements
     ngOnInit() {
         this.form.get('selectedItems').valueChanges
             .subscribe((value: string[]) => {
-                // const mappedStatuses = {
-                //     new: value.includes('new'),
-                //     top: value.includes('top'),
-                //     active: value.includes('active'),
-                //     sale: value.includes('sale'),
-                // }
-                // this.query = (value.length > 0) ? JSON.stringify(mappedStatuses) : '';
                 this.query = (value.length > 0) ? JSON.stringify(value) : '';
 
                 this.setFilter();

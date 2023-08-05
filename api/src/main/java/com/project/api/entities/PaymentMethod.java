@@ -1,6 +1,7 @@
 package com.project.api.entities;
 // Generated Jul 25, 2023, 8:08:56 PM by Hibernate Tools 4.3.6.Final
 
+import com.project.api.dtos.PaymentMethodDTO;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -41,6 +42,10 @@ public class PaymentMethod implements Serializable {
 		this.methodName = methodName;
 	}
 
+	public PaymentMethod(PaymentMethodDTO paymentMethodDTO) {
+		this.paymentMethodId = paymentMethodDTO.getPaymentMethodId();
+		this.methodName = paymentMethodDTO.getMethodName();
+	}
 	public PaymentMethod(String methodName, Set<Order> orders) {
 		this.methodName = methodName;
 		this.orders = orders;

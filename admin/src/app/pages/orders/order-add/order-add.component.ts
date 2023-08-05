@@ -19,12 +19,14 @@ import { Province } from '../../../@core/models/address/provinces.model';
 import { District } from '../../../@core/models/address/districts.model';
 import { Address } from '../../../@core/models/address/address.model';
 import { Product } from '../../../@core/models/product/product.model';
-import { CustomValidator, isCouponCantBeUsed, isCouponNotExisting, isEmailNotExisting, isProductidNotExisting } from '../../../@core/validators/custom-validator';
+import { CustomValidator, isCouponCantBeUsed, isCouponNotExisting, isEmailNotExisting, isProductNotExisting } from '../../../@core/validators/custom-validator';
 import { Order } from '../../../@core/models/order/order.model';
 import { AddressService } from '../../../@core/services/account/address.service';
 import { ProductCouponService } from '../../../@core/services/product/product-coupon.service';
 import { Router } from '@angular/router';
-import { ACCOUNT_IMAGE_DIRECTORY } from '../../../@core/utils/image-storing-directory';
+import { ProductSize } from '../../../@core/models/product/product-size.model';
+import { isEqual } from 'lodash';
+import { Coupon } from '../../../@core/models/coupon/coupon.model';
 
 @Component({
   selector: 'ngx-order-add',
@@ -34,7 +36,7 @@ import { ACCOUNT_IMAGE_DIRECTORY } from '../../../@core/utils/image-storing-dire
 export class OrderAddComponent implements OnInit, AfterViewInit {
   @ViewChild(CompleterCmp, { static: false }) completer: CompleterCmp;
   @ViewChildren(NbAccordionItemComponent) accordions: QueryList<NbAccordionItemComponent>;
-  
+
   addOrderFormGroup: FormGroup
   // basic information
 
@@ -44,6 +46,7 @@ export class OrderAddComponent implements OnInit, AfterViewInit {
   districts: District[]
   wards: Ward[]
   existingAddresses: Address[]
+  appliedCoupon: Coupon;
 
   addressOptions = [
     { value: 'existing', label: 'Use Existing Address', disabled: true },
@@ -57,21 +60,21 @@ export class OrderAddComponent implements OnInit, AfterViewInit {
     private accountService: AccountService,
     private formBuilder: FormBuilder,
     private productService: ProductService,
-    public utilsService: UtilsService,
+    private utilsService: UtilsService,
     private addressService: AddressService,
     private couponService: ProductCouponService,
     private router: Router
   ) { }
-  
+
 
   settingFormGroup() {
     this.addOrderFormGroup = this.formBuilder.group({
       accountForm: this.formBuilder.group({
-        email: ['', 
+        email: ['',
           [CustomValidator.notBlank],
           [isEmailNotExisting(this.accountService)]],
         applyCoupon: [false],
-        coupon: ['', 
+        coupon: ['',
           [Validators.required],
           [isCouponNotExisting(this.couponService), isCouponCantBeUsed(this.couponService)]],
 
@@ -103,9 +106,15 @@ export class OrderAddComponent implements OnInit, AfterViewInit {
     this.settingFormGroup()
     this.addProduct()
     this.accountCompleter()
+    this.onAddressOptionChange()
     this.onAddressChange()
+    this.onCouponChange()
   }
-  
+
+  ngAfterViewInit(): void {
+    this.accordions.first.toggle()
+  }
+
   accountCompleter$: Observable<Account[]>;
   accountCompleter() {
     this.accountCompleter$ = this.accountForm.get('email').valueChanges.pipe(
@@ -121,12 +130,13 @@ export class OrderAddComponent implements OnInit, AfterViewInit {
 
     this.addressService.findByAccountId(account.id).subscribe(data => {
       this.existingAddresses = data
-      if(this.existingAddresses.length > 0) {
-        this.addressOptions[1].disabled = false
+      if (this.existingAddresses.length > 0) {
         this.addressOptions[0].disabled = false
+        this.addressOptions[1].disabled = false
         this.accountForm.get('addressOption').setValue('existing')
       } else {
-        this.addressOptions[1].disabled = false 
+        this.addressOptions[0].disabled = true
+        this.addressOptions[1].disabled = false
         this.accountForm.get('addressOption').setValue('new')
         this.loadProvinces()
       }
@@ -162,6 +172,13 @@ export class OrderAddComponent implements OnInit, AfterViewInit {
     );
   }
 
+  onAddressOptionChange() {
+    this.accountForm.get('addressOption').valueChanges.subscribe(data => {
+      if(data == 'new') {
+        this.loadProvinces()
+      }
+    });
+  }
 
   onAddressChange() {
     this.accountForm.get('province').valueChanges.subscribe(data => {
@@ -178,57 +195,189 @@ export class OrderAddComponent implements OnInit, AfterViewInit {
       });
     });
   }
-  
-  ngAfterViewInit(): void {
-    // this.accordions.first.toggle()
-    1
+
+  onCouponChange() {
+    const couponControl = this.accountForm.get('coupon');
+    couponControl.statusChanges.subscribe((status) => {
+      if (status === 'VALID') {
+        this.couponService
+          .findByCode(couponControl.value)
+          .subscribe(data => {
+            this.appliedCoupon = data
+            this.countTotalPriceAndTotalQuantity()
+          })
+      } else {
+        this.appliedCoupon = null
+        this.countTotalPriceAndTotalQuantity()
+      }
+    })
   }
-  
-  
-
-  
 
 
 
+
+
+
+
+
+  // FOR PRODUCTS
+  productCompleter$: Observable<any[]>
+  productCompleter(productFormIndex: number) {
+    this.productCompleter$ = this.products.at(productFormIndex).get('name').valueChanges.pipe(
+      startWith(''),
+      switchMap(enteredProductName => {
+        return this.productService.findByNameKeyword(enteredProductName)
+      })
+    );
+  }
+
+
+  addProduct(): void {
+    const productForm = this.formBuilder.group({
+      product: [],
+      name: ['', [CustomValidator.notBlank], [isProductNotExisting(this.productService)]],
+      size: [, [Validators.required]],
+      sizes: [],
+      color: [, [Validators.required]],
+      colors: [],
+      price: [],
+      maxQuantity: [],
+      quantity: [, [Validators.required, Validators.min(1)]],
+    })
+    this.products.push(productForm)
+    this.productCompleter(this.products.controls.length - 1)
+  }
+
+  removeProduct(productFormIndex: number): void { this.products.removeAt(productFormIndex) }
+
+  selectProduct(product: Product, productFormIndex: number) {
+    let productForm = this.products.controls[productFormIndex];
+    productForm.get('name').setValue(product.productName)
+
+    // select the selected
+    if (isEqual(productForm.get('product').value, product)) {
+      return;
+    }
+    productForm.get('product').setValue(product);
+    productForm.get('size').setValue(null)
+    productForm.get('color').setValue(null)
+    productForm.get('price').setValue(null)
+
+    // load sizes
+    this.productService.findSizesFromProductId(product.productId).subscribe(
+      (data: ProductSize[]) => {
+        productForm.get('sizes').setValue(data)
+      }
+    )
+
+    // load color from size 
+    const sizeControl = productForm.get('size')
+    sizeControl.valueChanges.subscribe(() => {
+      this.productService.findColorFromSize(product.productId, sizeControl.value).subscribe(
+        data => { productForm.get('colors').setValue(data) }
+      )
+    })
+
+    // load price
+    const colorControl = productForm.get('color')
+    colorControl.valueChanges.subscribe(() => {
+      this.productService.findPrice(product.productId, sizeControl.value, colorControl.value).subscribe(
+        data => {
+          if (data != null) {
+            productForm.get('price').setValue(data)
+
+            // set max quantity
+            this.productService.findPrice(product.productId, sizeControl.value, colorControl.value).subscribe(
+              data => {
+                productForm.get('maxQuantity').setValue(data)
+                productForm.get('quantity').setValidators(Validators.max(data))
+              }
+            )
+          }
+        }
+      )
+    })
+
+    productForm.get('quantity').valueChanges.subscribe(() => { this.countTotalPriceAndTotalQuantity() })
+  }
+
+  countTotalPriceAndTotalQuantity() {
+    let totalQuantity: number = 0;
+    let totalPrice: number = 0;
+
+    for (let i = 0; i < this.products.length; i++) {
+      const productForm: FormGroup = this.products.at(i) as FormGroup;
+      totalQuantity += parseInt(productForm.get('quantity').value, 10);
+      totalPrice += parseFloat(productForm.get('price').value) * totalQuantity;
+    }
+    if (this.accountForm.get('applyCoupon').value && this.appliedCoupon != null) {
+      if (this.appliedCoupon.couponType.typeName == 'Fixed') {
+        totalPrice -= this.appliedCoupon.discount
+        if(totalPrice < 0) {
+          totalPrice = 0
+        }
+      } else {
+        totalPrice *= (1 - this.appliedCoupon.discount / 100)
+      }
+    }
+    this.accountForm.get('totalQuantity').setValue(totalQuantity);
+    this.accountForm.get('totalPrice').setValue(totalPrice);
+  }
+
+
+
+
+  // FOR SUBMIT
   onSubmit() {
-    let order: Order = this.mapFormValue()
-    console.log(order)
+    
+    if(this.accountForm.get('addressOption').value == 'new') {
+      this.accountForm.get('address').setErrors(null)
+    } else if (this.accountForm.get('addressOption').value == 'existing') {
+      this.accountForm.get('province').setErrors(null)
+      this.accountForm.get('district').setErrors(null)
+      this.accountForm.get('ward').setErrors(null)
+      this.accountForm.get('roadName').setErrors(null)
+    }
 
-    if(this.addOrderFormGroup.invalid) {
+    if(!this.accountForm.get('applyCoupon').value) {
+      this.accountForm.get('coupon').setErrors(null)
+    }
+
+    console.log(this.addOrderFormGroup);
+
+    if (this.addOrderFormGroup.invalid) {
       this.addOrderFormGroup.markAllAsTouched();
       this.utilsService.updateToastState(new ToastState('Add Order Failed!', "danger"))
       return;
     }
 
-    // let order: Order = this.mapFormValue()
-    // console.log(order)
+    let order: Order = this.mapFormValue()
+    console.log(order)
 
     this.orderService.insert(order).subscribe(
       data => {
-        if(data) {
+        if (data) {
           this.utilsService.updateToastState(new ToastState('Add Order Successfully!!', "success"))
           this.router.navigate(['/admin/orders/list'])
         }
-      },  
+      },
       error => {
         this.utilsService.updateToastState(new ToastState('Add Order Failed!', "danger"))
         console.log(error);
-        
+
       }
-    
     )
-
-
   }
 
   mapFormValue(): any {
-    let order: Order   = new Order()
+    let order: any = new Order()
     order.accountEmail = this.accountForm.get('email').value
-    if(this.accountForm.get('applyCoupon').value) {
-      this.couponService.findByCode(this.accountForm.get('coupon').value)
-        .subscribe(data => order.coupon = data)
+    if (this.accountForm.get('applyCoupon').value) {
+      order.coupon = this.appliedCoupon
+    } else {
+      order.coupon = null
     }
-    if(this.accountForm.get('addressOption').value == 'new') {
+    if (this.accountForm.get('addressOption').value == 'new') {
       order.address = {
         addressId: null,
         roadName: this.accountForm.get('roadName').value,
@@ -245,102 +394,19 @@ export class OrderAddComponent implements OnInit, AfterViewInit {
     order.totalPrice = this.accountForm.get('totalPrice').value;
     order.products = [];
 
-    // for(let i = 0; i < this.products.length; i++) {
-    //   const productForm: FormGroup = this.products.at(i) as FormGroup;
-    //   let product: any = {}
-    //   product.productId = productForm.get('id').value
-    //   product.size = productForm.get('size').value
-    //   product.color = productForm.get('color').value
-    //   product.quantity = productForm.get('quantity').value
-    //   product.price = parseFloat(productForm.get('price').value)
-    //   order.products.push(product)
-    // }
-    return order;
-  }
-
-  
-  
-
-
-  productCompleter$: Observable<Product[]>
-  productCompleter(productFormIndex: number) {
-    this.productCompleter$ = this.products.at(productFormIndex).get('id').valueChanges.pipe(
-      startWith(''),
-      switchMap(enteredProductName => {
-        if(this.products.at(productFormIndex).get('id').value == '') {
-          return this.productService.findByNameKeyword('')
-        }
-        return this.productService.findByNameKeyword(enteredProductName)
-      })
-    );
-  }
-
-
-  addProduct(): void {
-    const productForm = this.formBuilder.group({
-      id: [,  CustomValidator.notBlank, isProductidNotExisting(this.productService)],
-      size: [, [Validators.required]] ,
-      sizes: [],
-      color: [, [Validators.required]],
-      colors: [],
-      price: [],
-      quantity: [, [Validators.required, Validators.min(1), Validators.max(100000)]],
-    })
-    this.products.push(productForm)
-    this.productCompleter(this.products.controls.length - 1)
-  }
-
-  removeProduct(productFormIndex: number): void { this.products.removeAt(productFormIndex) }
-
-  selectProduct(product: Product, productFormIndex: number) {
-    let productForm = this.products.controls[productFormIndex];
-    productForm.get('id').setValue(product.productId)
-
-    // load sizes
-    this.orderService.findSizesFromProductId(product.productId).subscribe(
-      data => {productForm.get('sizes').setValue(data)}
-    )
-
-    // load color from size 
-    const sizeControl = productForm.get('size')
-    sizeControl.valueChanges.subscribe(
-      () => {
-        this.orderService.findColorFromSize(product.productId, sizeControl.value).subscribe(
-          data => {productForm.get('colors').setValue(data)}
-        )
-
-      }
-    )
-
-    // load price
-    const colorControl = productForm.get('color')
-    colorControl.valueChanges.subscribe(
-      () => {
-        this.orderService.findPrice(product.productId, sizeControl.value, colorControl.value).subscribe(
-          data => {productForm.get('price').setValue(data)}
-        )
-      }
-    )
-
-    const quantityControl = productForm.get('quantity')
-    quantityControl.valueChanges.subscribe(
-      () => {
-        this.countTotalPriceAndTotalQuantity()
-      }
-    )
-  }
-
-  countTotalPriceAndTotalQuantity() {
-    let totalQuantity: number = 0;
-    let totalPrice: number = 0;
-    
     for(let i = 0; i < this.products.length; i++) {
       const productForm: FormGroup = this.products.at(i) as FormGroup;
-      totalQuantity += parseInt(productForm.get('quantity').value, 10);
-      totalPrice += parseFloat(productForm.get('price').value) * totalQuantity;
+      let product: any = {
+        productId: productForm.get('product').value['productId'],
+        productName: productForm.get('product').value['productName'],
+        productSize: productForm.get('size').value,
+        productColor: productForm.get('color').value,
+        quantity: productForm.get('quantity').value,
+        price: productForm.get('price').value
+      }
+      order.products.push(product)
     }
-    this.accountForm.get('totalQuantity').setValue(totalQuantity);
-    this.accountForm.get('totalPrice').setValue(totalPrice);
+    return order;
   }
 
 }

@@ -1,18 +1,17 @@
 package com.project.api.services.impl;
 
-import com.project.api.dtos.ProductDetailDTO;
-import com.project.api.dtos.ProductFindAllDTO;
+import com.project.api.dtos.*;
 import com.project.api.entities.*;
-import com.project.api.repositories.ProductColorRepository;
-import com.project.api.repositories.ProductRepository;
-import com.project.api.repositories.ProductSizeRepository;
-import com.project.api.repositories.ProductVariantRepository;
+import com.project.api.repositories.*;
+import com.project.api.services.OrderDetailService;
+import com.project.api.services.ProductReviewService;
 import com.project.api.services.ProductService;
 import com.project.api.services.ProductVariantService;
 import com.project.api.utilities.ImageUploadUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -33,15 +32,21 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ImageUploadUtils imageUploadUtils;
+
     @Autowired
     private ProductVariantService productVariantService;
+
+    @Autowired
+    private ProductReviewService productReviewService;
+
+    @Autowired
+    private OrderDetailService orderDetailService;
 
     @Override
     public ProductDetailDTO findById(Integer productId) {
         try {
             Product product =  productRepository.findById(productId).get();
             ProductDetailDTO productDTO = new ProductDetailDTO(product);
-            productDTO.setImageUrls(productRepository.getImageUrls(product.getProductId()));
             productDTO.setTotalLikes(productRepository.countTotalLikes(product.getProductId()));
             productDTO.setTotalSold(productRepository.countTotalSold(product.getProductId()));
             productDTO.setTotalRating(productRepository.countTotalRating(product.getProductId()));
@@ -55,7 +60,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductFindAllDTO> findAllDTO() {
-        List<ProductFindAllDTO> products = productRepository.findAllDTO();
+        List<ProductFindAllDTO> products = productRepository.findAll().stream()
+                .map(ProductFindAllDTO::new)
+                .collect(Collectors.toList());
         products.forEach(pro -> {
             pro.setImageUrl(productRepository.getImageUrls(pro.getProductId()).get(0));
             pro.setTotalLikes(productRepository.countTotalLikes(pro.getProductId()));
@@ -278,6 +285,10 @@ public class ProductServiceImpl implements ProductService {
             product.getImages().forEach(image -> {
                 imageUploadUtils.delete("product", image.getImageUrl());
             });
+            product.getOrderDetails().forEach(orderDetail -> {
+                orderDetail.setProduct(null);
+                this.orderDetailService.save(orderDetail);
+            });
             this.productRepository.deleteById(product.getProductId());
             return true;
         } catch (Exception e) {
@@ -294,6 +305,110 @@ public class ProductServiceImpl implements ProductService {
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    @Override
+    public Boolean existById(Integer productId) {
+        try {
+            return productRepository.existsById(productId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public List<ProductFindAllDTO> findByNameKeyword(String keyword) {
+        try {
+            return  productRepository.findByProductNameStartingWith(keyword).stream()
+                    .map(ProductFindAllDTO::new).collect(Collectors.toList());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    @Override
+    public List<ProductSizeDTO> findSizesByProductId(Integer productId) {
+        try {
+            Product product = productRepository.findById(productId).get();
+            return product.getProductVariants().stream()
+                    .map(variant -> variant.getProductSize())
+                    .map(ProductSizeDTO::new)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    @Override
+    public List<ProductColorDTO> findColorsByProductIdAndSize(Integer productId, ProductSize productSize) {
+        try {
+            Product product = productRepository.findById(productId).get();
+            return product.getProductVariants().stream()
+                    .filter(variant -> variant.getProductSize().getProductSizeId()
+                            .compareTo(productSize.getProductSizeId()) == 0)
+                    .map(variant -> variant.getProductColor())
+                    .map(ProductColorDTO::new)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    @Override
+    public BigDecimal findPrice(Integer productId, ProductSize productSize, ProductColor productColor) {
+        try {
+            Product product = productRepository.findById(productId).get();
+            return product.getProductVariants().stream()
+                    .filter(variant -> {
+                        return variant.getProductSize().getProductSizeId().compareTo(productSize.getProductSizeId()) == 0 &&
+                                variant.getProductColor().getProductColorId().compareTo(productColor.getProductColorId()) == 0;})
+                    .map(variant -> variant.getPrice())
+                    .findFirst().get();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public Integer findMaxQuantity(Integer productId, ProductSize productSize, ProductColor productColor, BigDecimal price) {
+        try {
+            Product product = productRepository.findById(productId).get();
+            return product.getProductVariants().stream()
+                    .filter(variant -> {
+                        return variant.getProductSize().getProductSizeId().compareTo(productSize.getProductSizeId()) == 0 &&
+                                variant.getProductColor().getProductColorId().compareTo(productColor.getProductColorId()) == 0 &&
+                                variant.getPrice().compareTo(price) == 0;})
+                    .map(variant -> variant.getQuantity())
+                    .findFirst().get();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public List<ProductReviewDTO> findProductReviews(Integer productId) {
+        try {
+            return productReviewService.findByProductId(productId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    @Override
+    public Integer countTotalComments(Integer productId) {
+        try {
+            return productRepository.countProductReviewsByProductId(productId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

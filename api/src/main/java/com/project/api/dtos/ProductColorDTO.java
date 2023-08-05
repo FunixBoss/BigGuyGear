@@ -10,6 +10,7 @@ public class ProductColorDTO {
     private String colorName;
     private String colorType;
 
+    public ProductColorDTO() {}
     public ProductColorDTO(ProductColor productColor) {
         this.productColorId = productColor.getProductColorId();
         this.colorName = productColor.getColorName();

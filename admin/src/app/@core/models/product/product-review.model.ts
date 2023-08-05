@@ -3,10 +3,12 @@ import { Product } from "./product.model";
 
 export class ProductReview {
     productReviewId: number;
-    account: Account;
-    product: Product;
+    imageUrl: string;
+    accountEmail: string;
+    account?: Account;
+    product?: Product;
     content: string;
     rating: number;
-    createdAt: Date;
+    createdAt: string;
     updatedAt: Date;
 }

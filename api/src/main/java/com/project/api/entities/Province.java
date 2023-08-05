@@ -1,6 +1,7 @@
 package com.project.api.entities;
 // Generated Jul 25, 2023, 8:08:56 PM by Hibernate Tools 4.3.6.Final
 
+import com.project.api.dtos.ProvinceDTO;
 import lombok.Data;
 
 import java.util.HashSet;
@@ -74,6 +75,11 @@ public class Province implements java.io.Serializable {
 		this.codeName = codeName;
 		this.districts = districts;
 		this.addresses = addresses;
+	}
+
+	public Province(ProvinceDTO provinceDTO) {
+		this.code = provinceDTO.getCode();
+		this.fullName = provinceDTO.getFullName();
 	}
 
 	@Override

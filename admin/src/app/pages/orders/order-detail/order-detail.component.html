@@ -4,74 +4,113 @@
             <h6>
                 Order Detail
             </h6>
-            <button nbButton status="warning" (click)="onEdit()">
-                <nb-icon icon="edit-outline"></nb-icon>
-            </button>
         </div>
     </nb-card-header>
 </nb-card>
-<div class="row">
-    <div class="col-lg-6 col-md-12">
-        <nb-card>
-            <nb-card-header>
-                Basic Information
-            </nb-card-header>
-            <nb-card-body>
-                <div class="row">
-                    <div class="col-lg-6">
-                        <p><span class="font-weight-bold">Id: </span>{{data?.orderId}}</p>
-                        <p><span class="font-weight-bold">Customer Email: </span>{{data?.account.accountEmail}}</p>
-                        <p><span class="font-weight-bold">Total Quantity: </span>{{data?.totalQuantity}}</p>
-                        <p><span class="font-weight-bold">Total Price: </span>{{data?.totalPrice}}</p>
-                        <p><span class="font-weight-bold">Coupon Applied: </span>{{ data?.couponApplied }}</p>
-                        <p><span class="font-weight-bold">Order Status: </span>{{data?.orderStatus.statusName}}</p>
-                        <p><span class="font-weight-bold">Payment method: </span>{{data?.paymentMethod.paymentMethodName}} </p>
-                        <p><span class="font-weight-bold">Shipping Address: </span>{{data?.shippingAddress}}</p>
-                        <p><span class="font-weight-bold">Created At: </span>{{data?.createdAt | date: 'short'}}</p>
-                    </div>
-                </div>
-            </nb-card-body>
-            <nb-card-footer></nb-card-footer>
-        </nb-card>
-    </div>
-    <div class="col-lg-6 col-md-12">
-        <nb-card>
-            <nb-card-header class="d-flex justify-content-between align-items-center">
-                <p class="font-weight-bold">Order's Products</p>
-                <div>
-                    <button nbButton size="small" status="info" class="mr-2" (click)="collapseAll()">Collapse All</button>
-                    <button nbButton size="small" status="warning" (click)="openAll()">Open All</button>
-                </div>
-            </nb-card-header>
-            <nb-card-body>
-                <nb-accordion multi>
-                    <nb-accordion-item *ngFor="let detail of data?.products; let i = index">
-                        <nb-accordion-item-header class="d-flex justify-content-between align-items-center">
-                            <p class="font-weight-bold">Product #{{i + 1}}</p>
-                            <p>
-                                id: {{detail.productId}}
-                                h:{{detail.height}}cm -
-                                w:{{detail.width}}cm -
-                                {{detail.price | currency: 'USD'}}*{{detail.quantity}}
-                            </p>    
-                            <div class=""></div>
-                        </nb-accordion-item-header>
-                        <nb-accordion-item-body>
-                            <div class="row">
-                                <div class="col-lg-1"></div>
-                                <div class="col-lg-7 col-md-12">
-                                    <p><span class="font-weight-bold">Height:</span> {{detail.height}}cm</p>
-                                    <p><span class="font-weight-bold">Width:</span> {{detail.width}}cm</p>
-                                    <p><span class="font-weight-bold">Price:</span> {{detail.price | currency: 'USD'}}</p>
-                                    <p><span class="font-weight-bold">Quantity:</span> {{detail.quantity}}</p>
-                                    <p><span class="font-weight-bold">Color:</span> {{detail.color}}</p>
+<ng-container *ngIf="order !== undefined">
+    <div class="row">
+        <div class="col-lg-6 col-md-12">
+            <nb-card>
+                <nb-card-header>
+                    Basic Information
+                </nb-card-header>
+                <nb-card-body>
+                    <div class="row">
+                        <div class="col-12">
+                            <p><span class="font-weight-bold">Tracking Number: </span>{{order.orderTrackingNumber}}</p>
+                            <p><span class="font-weight-bold">Customer Email: </span>{{order.accountEmail}}</p>
+                            <p><span class="font-weight-bold">Coupon Applied: </span>{{ order.couponCode !== null ?
+                                order.couponCode : 'NONE' }}</p>
+                            <p><span class="font-weight-bold">Payment method: </span>{{order.paymentMethod.methodName}}
+                            </p>
+                            <p><span class="font-weight-bold">Shipping Address: </span>{{order.address}}</p>
+                            <p><span class="font-weight-bold">Created At: </span>{{order.createdAt | date: 'short'}}</p>
+                            <p><span class="font-weight-bold">Total Quantity: </span>{{order.totalQuantity}}</p>
+                            <p><span class="font-weight-bold">Total Price: </span>{{order.totalPrice | currency: 'USD'}}
+                            </p>
+                            <div class="d-flex align-items-center">
+                                <div class="font-weight-bold">Status: </div>
+                                <div class="pl-3" *ngIf="order.orderStatus.statusName==='Canceled'">
+                                    <h6><span class="badge badge-pill badge-danger">Canceled</span></h6>
+                                </div>
+                                <div class="pl-3" *ngIf="order.orderStatus.statusName==='Hanling'">
+                                    <h6><span class="badge badge-pill badge-info">Handling</span></h6>
+                                </div>
+                                <div class="pl-3" *ngIf="order.orderStatus.statusName==='Delivering'">
+                                    <h6><span class="badge badge-pill badge-warning">Delivering</span></h6>
+                                </div>
+                                <div class="pl-3" *ngIf="order.orderStatus.statusName==='Completed'">
+                                    <h6><span class="badge badge-pill badge-success">Completed</span></h6>
                                 </div>
                             </div>
-                        </nb-accordion-item-body>
-                    </nb-accordion-item>
-                </nb-accordion>
-            </nb-card-body>
-        </nb-card>
-    </div>
+                        </div>
+                    </div>
+                </nb-card-body>
+            </nb-card>
+        </div>
+        <div class="col-lg-6 col-md-12">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col" style="width: 20%;" class="align-middle text-center">
+                            <p><span class="font-weight-bold">Image</span></p>
+                        </th>
+                        <th scope="col" style="width: 20%;" class="align-middle text-center">
+                            <p><span class="font-weight-bold">Name</span></p>
+                        </th>
+                        <th scope="col" style="width: 20%;" class="align-middle text-center">
+                            <p><span class="font-weight-bold">Size</span></p>
+                        </th>
+                        <th scope="col" style="width: 20%;" class="align-middle text-center">
+                            <p><span class="font-weight-bold">Color</span></p>
+                        </th>
+                        <th scope="col" style="width: 20%;" class="align-middle text-center">
+                            <p><span class="font-weight-bold">Unit Price</span></p>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container *ngFor="let detail of order.orderDetails">
+                        <tr>
+                            <ng-container *ngIf="detail.productId !== null">
+                                <a [href]="'/admin/products/detail/' + detail.productId">
+                                    <th class="d-flex justify-content-center">
+                                        <img [src]="
+                                            detail.imageUrl !== null ?
+                                            'http://localhost:9090/assets/upload/product/' + detail.imageUrl :
+                                            'assets/images/no-image.jpg'" 
+                                            [height]="75" class="d-block">
+                                    </th>
+                                </a>
+                            </ng-container>
+                            <ng-container *ngIf="detail.productId === null">
+                                <th class="d-flex justify-content-center">
+                                    <img [src]="'assets/images/no-image.jpg'" 
+                                        [height]="75" class="d-block">
+                                </th>
+                            </ng-container>
+                            
+                            <th class="align-middle text-center">
+                                <p>{{detail.productName}}</p>
+                            </th>
+                            <th class="align-middle text-center">
+                                <p>{{detail.size | uppercase}}</p>
+                            </th>
+                            <th class="align-middle text-center">
+                                <p>{{detail.color | ngxCapitalize}}</p>
+                            </th>
+                            <th class="align-middle text-center">
+                                <p>
+                                    {{detail.price | currency: 'USD'}} *
+                                    <span class="text-monospace">{{detail.quantity}}</span>
+                                </p>
+                            </th>
+                        </tr>
+                    </ng-container>
+                    
+                </tbody>
+            </table>
+        </div>
 
-</div>
+    </div>
+</ng-container>

@@ -4,12 +4,11 @@ import { Order } from "./order.model";
 
 export class OrderDetail {
     orderDetailId: number;
-    order?: Order
-    productId: number;
-    height: number;
-    width: number;
-    color: ProductColor;
+    productId?: number;
+    productName: string;
+    imageUrl?: string;
+    size: string;
+    color: string;
     quantity: number;
     price: number;
-    imageUrl?: string;
 }
