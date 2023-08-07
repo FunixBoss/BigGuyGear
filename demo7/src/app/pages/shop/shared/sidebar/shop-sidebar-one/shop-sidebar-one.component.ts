@@ -2,6 +2,9 @@ import { Component, OnInit, Input, ViewChild } from '@angular/core';
 
 import { shopData } from '../../data';
 import { ActivatedRoute, Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { categories } from '../../../../blog/shared/data';
 
 @Component({
 	selector: 'molla-shop-sidebar-one',
@@ -10,7 +13,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 
 export class ShopSidebarOneComponent implements OnInit {
-
+	private apiUrl = 'http://localhost:9090/api/categories'; // URL API của danh mục
+	getCategories(): Observable<any> {
+		return this.x.get<any>(this.apiUrl);
+	  }
+	categories:any[];
 	@Input() toggle = false;
 	shopData = shopData;
 	params = {};
@@ -18,9 +25,11 @@ export class ShopSidebarOneComponent implements OnInit {
 
 	@ViewChild('priceSlider') priceSlider: any;
 
-	constructor(public activeRoute: ActivatedRoute, public router: Router) {
+	constructor(public activeRoute: ActivatedRoute, public router: Router , public x:HttpClient) {
 		activeRoute.queryParams.subscribe(params => {
 			this.params = params;
+			console.log(params);
+			
 			if (params['minPrice'] && params['maxPrice']) {
 				this.priceRange = [
 					params['minPrice'] / 10,
@@ -37,6 +46,19 @@ export class ShopSidebarOneComponent implements OnInit {
 	}
 
 	ngOnInit(): void {
+		this.getCategories().subscribe(
+			result => {
+					this.categories = result._embedded.categories;
+					console.log(this.categories);
+					
+					
+					
+			},
+			error => {
+			  console.log('Lỗi khi lấy dữ liệu từ API:', error);
+			}
+		  );;
+		
 	}
 
 	containsAttrInUrl(type: string, value: string) {
