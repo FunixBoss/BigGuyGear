@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/product-styles")
+@RequestMapping("api/admin/product-styles")
 public class ProductStyleController {
 
     @Autowired

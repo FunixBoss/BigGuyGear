@@ -232,10 +232,10 @@ export class ProductListComponent implements OnInit, AfterViewInit {
           return {
             productId: pro.productId,
             productName: pro.productName,
-            category: pro.category.categoryName,
-            brand: pro.productBrand.brandName,
-            style: pro.productStyle.styleName,
-            sale: pro.productSale.saleName,
+            category: pro.category != null ? pro.category.categoryName : null,
+            brand: pro.productBrand != null ? pro.productBrand.brandName : null,
+            style: pro.productStyle != null ? pro.productStyle.styleName : null,
+            sale: pro.productSale != null ? pro.productSale.saleName : null,
             image: PRODUCT_IMAGE_DIRECTORY + pro.imageUrl,
             status: JSON.stringify({
               new: pro.new_,

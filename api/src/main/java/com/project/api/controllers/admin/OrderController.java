@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/orders")
+@RequestMapping("api/admin/orders")
 public class OrderController {
 
     @Autowired

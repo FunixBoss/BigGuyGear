@@ -13,7 +13,6 @@ import {
 } from './utils';
 
 import { UserService } from './services/users.service';
-import { UserActivityService } from './services/user-activity/user-activity.service';
 import { OrdersChartService } from './services/orders-profit-chart/orders-chart.service';
 import { ProfitChartService } from './services/orders-profit-chart/profit-chart.service';
 import { TrafficListService } from './services/traffic/traffic-list.service';
@@ -27,7 +26,6 @@ import { AccountService } from './services/account/account.service';
 
 const SERVICES: Provider[] = [
   UserService,
-  UserActivityService,
   OrdersChartService,
   ProfitChartService,
   TrafficListService,

@@ -46,6 +46,7 @@ export class CustomCustomerActionComponent implements ViewCell, OnInit{
             password: [],
             fullName: [, [Validators.required, Validators.maxLength(100)]],
             phoneNumber: [, [Validators.required, Validators.maxLength(100)]],
+            active: [false],
             image: [, Validators.required],
         })
         this.fillFormValues()
@@ -56,6 +57,7 @@ export class CustomCustomerActionComponent implements ViewCell, OnInit{
         this.editCustomerFormGroup.get('email').setValue(this.rowData.email)
         this.editCustomerFormGroup.get('fullName').setValue(this.rowData.fullName)
         this.editCustomerFormGroup.get('phoneNumber').setValue(this.rowData.phoneNumber)
+        this.editCustomerFormGroup.get('active').setValue(this.rowData.active)
         this.editCustomerFormGroup.get('image').setValue(this.rowData.imageUrl)
     }
 
@@ -82,6 +84,7 @@ export class CustomCustomerActionComponent implements ViewCell, OnInit{
         account.password = this.editCustomerFormGroup.get('password').value
         account.fullName = this.editCustomerFormGroup.get('fullName').value
         account.phoneNumber = this.editCustomerFormGroup.get('phoneNumber').value
+        account.active = this.editCustomerFormGroup.get('active').value
         account.image = this.editCustomerFormGroup.get('image').value
         console.log(account);
         

@@ -51,6 +51,13 @@
                         </div>
                     </div>
 
+                    <div class="col-12 mt-3">
+                        <nb-checkbox (checkedChange)="editCustomerFormGroup.get('active').setValue($event)"
+                            [checked]="editCustomerFormGroup.get('active').value" status="warning">
+                            Active
+                        </nb-checkbox>
+                    </div>
+
                     <div class="col-lg-6 col-md-12 mt-3">
                         <div class="input-group">
                             <div class="input-group-prepend">

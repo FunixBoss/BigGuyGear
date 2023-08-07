@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/coupons")
+@RequestMapping("api/admin/coupons")
 public class CouponController {
 
     @Autowired

@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/accounts")
+@RequestMapping("api/admin/accounts")
 public class AccountController {
 
     @Autowired

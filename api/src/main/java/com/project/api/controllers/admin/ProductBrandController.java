@@ -17,7 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/product-brands")
+@RequestMapping("api/admin/product-brands")
 public class ProductBrandController {
 
     @Autowired

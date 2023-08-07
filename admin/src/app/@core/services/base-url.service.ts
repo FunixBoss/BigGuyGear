@@ -4,7 +4,7 @@ import { Injectable } from "@angular/core";
     providedIn: 'root'
 })
 export class BaseURLService {
-    private _baseURL: string = "http://localhost:9090/api"
+    private _baseURL: string = "http://localhost:9090/api/admin"
     get baseURL(): string{
         return this._baseURL ;
     }

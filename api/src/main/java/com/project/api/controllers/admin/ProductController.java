@@ -18,7 +18,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/products")
+@RequestMapping("api/admin/products")
 public class ProductController {
 
     @Autowired

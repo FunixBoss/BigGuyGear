@@ -9,10 +9,10 @@
                     <h6>{{product.productName}}</h6>
                     <p><span class="font-weight-bold">Id: </span>{{product.productId}}</p>
 
-                    <p><span class="font-weight-bold">Category: </span>{{product.category.categoryName}}</p>
-                    <p><span class="font-weight-bold">Brand: </span>{{product.productBrand.brandName}}</p>
-                    <p><span class="font-weight-bold">Style: </span>{{product.productStyle.styleName}}</p>
-                    <p><span class="font-weight-bold">Sale: </span>{{product.productSale.saleName}}</p>
+                    <p><span class="font-weight-bold">Category: </span>{{product.category !== null ? product.category.categoryName : ''}}</p>
+                    <p><span class="font-weight-bold">Brand: </span>{{product.productBrand !== null ? product.productBrand.brandName : ''}}</p>
+                    <p><span class="font-weight-bold">Style: </span>{{product.productStyle !== null ? product.productStyle.styleName : ''}}</p>
+                    <p><span class="font-weight-bold">Sale: </span>{{product.productSale !== null ? product.productSale.saleName : ''}}</p>
 
                     <p><span class="font-weight-bold">Total Sold: </span>{{product.totalSold}}</p>
                     <p><span class="font-weight-bold">Total Likes: </span>{{product.totalLikes}}</p>
