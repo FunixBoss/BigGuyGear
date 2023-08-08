@@ -61,11 +61,11 @@ export class ProductTwoComponent implements OnInit {
 	addToWishlist(event: Event) {
 		event.preventDefault();
 
-		if (this.isInWishlist()) {
-			this.router.navigate(['/shop/wishlist']);
-		} else {
-			this.wishlistService.addToWishList(this.product);
-		}
+		// if (this.isInWishlist()) {
+		// 	this.router.navigate(['/shop/wishlist']);
+		// } else {
+		// 	this.wishlistService.addToWishList(this.product);
+		// }
 	}
 
 	addToCompare(event: Event) {
@@ -80,7 +80,8 @@ export class ProductTwoComponent implements OnInit {
 	}
 
 	isInWishlist() {
-		return this.wishlistService.isInWishlist(this.product);
+		// return this.wishlistService.isInWishlist(this.product);
+		return false;
 	}
 
 	isInCompare() {

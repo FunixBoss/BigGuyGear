@@ -77,6 +77,10 @@ export class ApiService {
 		return this.http.get(`${environment.SERVER_URL}/${environment.demo}`);
 	}
 
+
+	public fetchHomeData2(): Observable<any> {
+		return this.http.get(`http://localhost:9090/api/admin/products/findAll`);
+	}
 	/**
 	 * Get products by demo
 	 */

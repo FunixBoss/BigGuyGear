@@ -51,6 +51,9 @@ public class ProductServiceImpl implements ProductService {
             productDTO.setTotalSold(productRepository.countTotalSold(product.getProductId()));
             productDTO.setTotalRating(productRepository.countTotalRating(product.getProductId()));
             productDTO.setAvgRating(productRepository.countAvgRating(product.getProductId()));
+            List<BigDecimal> minAndMaxPrice = findMinAndMaxPrice(product.getProductId());
+            productDTO.setMinPrice(minAndMaxPrice.get(0));
+            productDTO.setMaxPrice(minAndMaxPrice.get(1));
             return productDTO;
         } catch (Exception e) {
             e.printStackTrace();
@@ -69,8 +72,37 @@ public class ProductServiceImpl implements ProductService {
             pro.setTotalSold(productRepository.countTotalSold(pro.getProductId()));
             pro.setTotalRating(productRepository.countTotalRating(pro.getProductId()));
             pro.setAvgRating(productRepository.countAvgRating(pro.getProductId()));
+
+            List<BigDecimal> minAndMaxPrice = findMinAndMaxPrice(pro.getProductId());
+            pro.setMinPrice(minAndMaxPrice.get(0));
+            pro.setMaxPrice(minAndMaxPrice.get(1));
         });
         return products;
+    }
+
+    private List<BigDecimal> findMinAndMaxPrice(Integer productId) {
+        Product product = productRepository.findById(productId).get();
+        BigDecimal minPrice = BigDecimal.valueOf(10000);
+        BigDecimal maxPrice = BigDecimal.valueOf(0);
+        Set<ProductVariant> variants = product.getProductVariants();
+
+        if(variants.size() == 1) {
+            minPrice = variants.iterator().next().getPrice();
+            maxPrice = variants.iterator().next().getPrice();
+        } else if (variants.size() > 1) {
+            for (ProductVariant variant : variants) {
+                int compareValue = variant.getPrice().compareTo(minPrice);
+                if(compareValue == - 1) {
+                    minPrice = variant.getPrice();
+                } else if (compareValue == 1) {
+                    maxPrice = variant.getPrice();
+                }
+            }
+        }
+        List<BigDecimal> minAndMax = new ArrayList<>();
+        minAndMax.add(minPrice);
+        minAndMax.add(maxPrice);
+        return  minAndMax;
     }
 
     @Override

@@ -77,21 +77,21 @@
                                     </ng-template>
                                 </ng-template>
                             </td>
-                            <td class="stock-col">
+                            <!-- <td class="stock-col">
                                 <span class="in-stock" *ngIf="product.stock > 0">In stock</span>
                                 <span class="out-of-stock" *ngIf="product.stock < 1">Out of stock</span>
-                            </td>
-                            <td class="action-col">
+                            </td> -->
+                            <!-- <td class="action-col">
                                 <button class="btn btn-block btn-outline-primary-2" *ngIf="product.stock > 0"
                                     (click)="wishlistService.moveToCart( product )"><i class="icon-cart-plus"></i>Add to
                                     Cart</button>
                                 <button class="btn btn-block btn-outline-primary-2 disabled"
                                     *ngIf="product.stock < 1">Out
                                     of Stock</button>
-                            </td>
-                            <td class="remove-col"><button class="btn-remove"
+                            </td> -->
+                            <!-- <td class="remove-col"><button class="btn-remove"
                                     (click)="wishlistService.removeFromWishList( product )"><i
-                                        class="icon-close"></i></button></td>
+                                        class="icon-close"></i></button></td> -->
                         </tr>
                     </tbody>
                 </table>

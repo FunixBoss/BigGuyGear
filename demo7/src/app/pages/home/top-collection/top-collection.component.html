@@ -18,7 +18,7 @@
                     <ng-template #loadedBlock>
                         <owl-carousel carouselClasses="owl-simple carousel-with-shadow carousel-equal-height" [options]="sliderOption">
                             <molla-product-twelve  [product]="product"
-                                *ngFor="let product of (products | catFilter : cat) | slice:0:6">
+                                *ngFor="let product of (products) | slice:0:6">
                             </molla-product-twelve>
                         </owl-carousel>
                     </ng-template>

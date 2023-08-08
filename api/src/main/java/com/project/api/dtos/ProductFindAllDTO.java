@@ -3,6 +3,7 @@ package com.project.api.dtos;
 import com.project.api.entities.*;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
@@ -26,6 +27,8 @@ public class ProductFindAllDTO {
     private Integer totalLikes;
     private Integer totalRating;
     private Double avgRating;
+    private BigDecimal minPrice;
+    private BigDecimal maxPrice;
 
     public ProductFindAllDTO(Product product) {
         this.productId = product.getProductId();
